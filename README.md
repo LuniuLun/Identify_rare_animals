@@ -1,4 +1,4 @@
-# Instagram clone project
+# Identify_rare_animals
 This is a website that helps identify rare animals. In this application, we using Python, ReactJS.
 
 ## Set up enviroment 
