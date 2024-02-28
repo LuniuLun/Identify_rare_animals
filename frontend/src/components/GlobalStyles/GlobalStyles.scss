@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inclusive+Sans&family=Montserrat:wght@100;300;400;500;600;700&display=swap');
+
+:root {
+
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: 'Inclusive Sans', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    line-height: 1.8rem;
+    text-rendering: optimizeSpeed;
+}
+
+a{
+    text-decoration: none;
+}
+
+button{
+    border: 0;
+}
+
+
+/* Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 10px;
+    border-radius: 50%;
+}
+
+::-webkit-scrollbar-track {
+    background-color: var(--grey-background-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--grey-text-color);
+    border-radius: 8px;
+}
+
+// ::-webkit-scrollbar-thumb:hover {
+//     background: var(--background-color);
+// }
