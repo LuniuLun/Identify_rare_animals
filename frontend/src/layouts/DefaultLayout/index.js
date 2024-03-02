@@ -1,8 +1,17 @@
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import styles from "./DefaultLayout.module.scss"
+import classNames from 'classnames/bind'
+const cx = classNames.bind(styles)
+
 function DefaultLayout({ children }) {
     return (
-        <div>
-            Default Layout
-            <div>{children}</div>
+        <div className={cx("wrapper")}>
+            <Header/>
+            <div className={cx("content")}>
+                <div>{children}</div>
+                <Footer/>
+            </div>
         </div>
     );
 }

@@ -1,0 +1,55 @@
+.wrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 18px;
+    background-color: #eeeeee;
+}   
+
+.right-item {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+}
+
+.wrapper-find-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.find-icon{
+    font-size: 1.4rem;
+    padding: 8px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.list-options {
+
+}
+
+.link {
+    color: var(--black-text-color);
+    margin-right: 20px;
+}
+
+.link span {
+    font-size: 1.4rem;
+}
+
+.link .down-icon {
+    font-size: 1.2rem;
+    margin-left: 4px;
+}
+
+.left-item {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
