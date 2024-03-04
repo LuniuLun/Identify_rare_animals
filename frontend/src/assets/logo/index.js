@@ -13,8 +13,8 @@ const LogoSVG = ({className}) => (
     >
         <title>iNaturalist_Header</title>
         <desc>Created with Sketch.</desc>
-        <g id="iNaturalist_Header" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-            <g id="iNaturalist-Wordmark" fill-rule="nonzero">
+        <g id="iNaturalist_Header" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+            <g id="iNaturalist-Wordmark" fillRule="nonzero">
                 <path
                     d="M41.3,77.6285714 L41.3,209 L5.9,209 L5.9,80.4732283 L41.3,77.6285714 Z M32.0676903,2.47172875 C43.693401,-0.864639334 57.6486766,-0.209738279 59,0.898039331 L58.7172226,1.13823135 C55.5650769,3.7502206 48.1833148,8.11621016 47.8686171,29.2014886 L47.8610961,29.8658629 C47.7624235,42.5887346 41.3534011,51.1131524 33.9701837,55.4526059 C26.500105,59.8431118 5.78445601,61.9542481 0,59.2744623 C3.69451863,56.0783303 5.09922748,45.297062 5.86633739,37.8703258 L6.16335886,34.9051686 L6.26717764,33.950136 C7.46982901,23.5073264 11.520005,8.36854173 32.0676903,2.47172875 Z"
                     id="i"
