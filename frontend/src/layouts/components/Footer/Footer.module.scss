@@ -1,0 +1,106 @@
+.wrapper {
+    margin-top: 20px;
+}
+
+.top-items {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 40px 100px;
+    background-color: var(--greyish-background-color);
+}
+
+.right-items {
+    display: flex;
+    flex-direction: row;
+}
+
+.left-link-lists {
+    display: flex;
+    flex-direction: column;
+    margin-right: 40px;
+}
+
+.right-link-lists {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.top-items .link {
+    color: #000;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin: 4px;
+}
+
+.middle-items {}
+
+.interaction {}
+
+.btn {
+    margin: 10px;
+    padding: 8px 28px;
+    text-align: center;
+    border-radius: 30px;
+    background-color: var(--primary-color);
+    color: var(--white-text-color);
+    font-size: 1.8rem;
+}
+
+.btn_donate {
+
+    margin-right: 10px;
+}
+
+.btn_store {}
+
+.contact {}
+
+.icon {
+    font-size: 3rem;
+    margin: 24px;
+}
+
+.facebook_icon {
+    color: #1877F2;
+}
+
+.instagram_icon {
+    color: #FD8961;
+}
+
+.twitter_icon {
+    color: #4099FF;
+}
+
+.app-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.app_store,
+.google_play {
+    height: 40px;
+    width: 140px;
+    margin: 10px;
+}
+
+.bottom-item {
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--grey-background-color);
+}
+
+.bottom-item span {
+    color: #9d9d9d;
+    font-weight: 500;
+    font-size: 1.4rem;
+}
+
+.bottom-item .link {
+    color: var(--white-text-color);
+}
