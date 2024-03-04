@@ -3,6 +3,7 @@ import styles from "./Home.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faCircleRight } from "@fortawesome/free-solid-svg-icons";
 import AnimalCard from "../../components/AnimalCard";
+import UploadFileComponent from "../../components/FileUpload";
 const cx = classNames.bind(styles);
 
 function Home() {
@@ -12,9 +13,10 @@ function Home() {
                 <span>Observations</span>
                 <div className={cx("right-items")}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
+                    <UploadFileComponent />
                     <input className={cx("species")} placeholder="Species" />
                     <input className={cx("name-animal")} placeholder="Animal" />
-                    <buton className={cx("btn_find")}>Go</buton>
+                    <button className={cx("btn_find")}>Go</button>
                 </div>
             </div>
             <div className={cx("statistic")}>
@@ -52,7 +54,7 @@ function Home() {
             </div>
             <div className={cx("content")}>
                 {[1, 2, 3, 4, 5, 6].map((item, index) => {
-                    return <AnimalCard/>
+                    return <AnimalCard key={index}/>;
                 })}
             </div>
         </div>
