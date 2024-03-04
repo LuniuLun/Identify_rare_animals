@@ -1,4 +1,4 @@
-.wrapper{
+.wrapper {
     width: 100%;
     display: flex;
     align-items: center;
@@ -6,24 +6,24 @@
     justify-content: space-between;
     padding: 2px 18px;
     background-color: #eeeeee;
-}   
+    border-bottom: 1px solid rgba(0, 0, 0, 0.075);
+}
 
 .right-item {
     display: flex;
     align-items: center;
 }
 
-.logo {
-}
+.logo {}
 
-.wrapper-find-icon{
+.wrapper-find-icon {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-right: 20px;
 }
 
-.find-icon{
+.find-icon {
     font-size: 1.4rem;
     padding: 8px;
     border-radius: 50%;
@@ -38,7 +38,7 @@
 .link {
     color: var(--black-text-color);
     padding: 18px 12px;
-    
+
 }
 
 .link span {
@@ -53,10 +53,11 @@
 
 .left-item {
     font-size: 1.4rem;
-    font-weight: 600;    padding: 18px 0;
+    font-weight: 600;
+    padding: 18px 0;
 }
 
-.active{
+.active {
     border-bottom: 3px solid;
     border-color: var(--primary-color);
 }
