@@ -2,6 +2,7 @@ import classNames from "classnames/bind";
 import styles from "./Home.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faCircleRight } from "@fortawesome/free-solid-svg-icons";
+import AnimalCard from "../../components/AnimalCard";
 const cx = classNames.bind(styles);
 
 function Home() {
@@ -50,36 +51,9 @@ function Home() {
                 </div>
             </div>
             <div className={cx("content")}>
-                <div className={cx("card")}>
-                    <img className={cx("img-animal")} src="/img/con_cong.jpg" alt="" />
-                    <span className={cx("name-animal")}>Pavo muticus imperator</span>
-                    <span className={cx("time-upload")}>Mar 24</span>
-                </div>
-                <div className={cx("card")}>
-                    <img className={cx("img-animal")} src="/img/con_cong.jpg" alt="" />
-                    <span className={cx("name-animal")}>Pavo muticus imperator</span>
-                    <span className={cx("time-upload")}>Mar 24</span>
-                </div>
-                <div className={cx("card")}>
-                    <img className={cx("img-animal")} src="/img/con_cong.jpg" alt="" />
-                    <span className={cx("name-animal")}>Pavo muticus imperator</span>
-                    <span className={cx("time-upload")}>Mar 24</span>
-                </div>
-                <div className={cx("card")}>
-                    <img className={cx("img-animal")} src="/img/con_cong.jpg" alt="" />
-                    <span className={cx("name-animal")}>Pavo muticus imperator</span>
-                    <span className={cx("time-upload")}>Mar 24</span>
-                </div>
-                <div className={cx("card")}>
-                    <img className={cx("img-animal")} src="/img/con_cong.jpg" alt="" />
-                    <span className={cx("name-animal")}>Pavo muticus imperator</span>
-                    <span className={cx("time-upload")}>Mar 24</span>
-                </div>
-                <div className={cx("card")}>
-                    <img className={cx("img-animal")} src="/img/con_cong.jpg" alt="" />
-                    <span className={cx("name-animal")}>Pavo muticus imperator</span>
-                    <span className={cx("time-upload")}>Mar 24</span>
-                </div>
+                {[1, 2, 3, 4, 5, 6].map((item, index) => {
+                    return <AnimalCard/>
+                })}
             </div>
         </div>
     );
