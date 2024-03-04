@@ -1,0 +1,103 @@
+.wrapper {
+    display: flex;
+}
+
+.slide {
+    height: 100vh;
+    width: 50%;
+    background-color: #83a24c;
+}
+
+.register-modal, .login-modal {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.tittle {
+    margin: 50px 200px;
+    font-size: 2.6rem;
+    font-weight: 500;
+    line-height: 3rem;
+    text-align: center;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.information {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.information input {
+    border: 1px solid #dedede;
+    background-color: #f4f4f4;
+    color: var(--grey-text-color);
+    border-radius: 7px;
+    font-size: 1.4rem;
+    font-weight: 100;
+    padding: 10px 40px;
+    outline: 0;
+    min-width: 300px;
+    margin-bottom: 20px;
+}
+
+.icon {
+    color: var(--primary-color);
+    font-size: 1.6rem;
+}
+
+.letter-icon {
+    position: absolute;
+    left: 12px;
+    bottom: 31px;
+}
+
+.username {
+    position: relative;
+}
+
+.lock-icon {
+    position: absolute;
+    left: 12px;
+    bottom: 32px;
+}
+
+.password {
+    position: relative;
+}
+
+.link-forgetPassword {
+    position: absolute;
+    right: 0;
+    top: 104px;
+    color: var(--blue-color);
+    font-size: 1.2rem;
+}
+
+.btn_login,
+.btn_signup {
+    margin: 40px 0;
+    padding: 12px 0;
+    border-radius: 40px;
+    background-color: var(--primary-color);
+    color: var(--white-text-color);
+    font-size: 1.8rem;
+}
+
+.footer .change-modal {
+    cursor: pointer;
+}
+
+.footer {
+    text-decoration: underline;
+    display: flex;
+}

@@ -15,7 +15,7 @@ function Header() {
                     <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
                 </button>
                 <div className={cx("list-options")}>
-                    <Link className={cx("link", "active")} to={"/"}>
+                    <Link className={cx("link")} to={"/"}>
                         <span>Explore</span>
                     </Link>
                     <Link className={cx("link")} to={"/"}>
@@ -29,8 +29,8 @@ function Header() {
                 </div>
             </div>
             <div className={cx("left-item")}>
-                <Link className={cx("link")} to={"/"}>
-                    Log In or Sign Up
+                <Link className={cx("link")} to={"/login"}>
+                    Log In
                 </Link>
             </div>
         </div>
