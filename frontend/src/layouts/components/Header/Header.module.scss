@@ -4,7 +4,7 @@
     align-items: center;
     flex-direction: row;
     justify-content: space-between;
-    padding: 2px 18px;
+    padding: 0px 18px;
     background-color: #eeeeee;
     border-bottom: 1px solid rgba(0, 0, 0, 0.075);
 }
@@ -54,10 +54,63 @@
 .left-item {
     font-size: 1.4rem;
     font-weight: 600;
-    padding: 18px 0;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    position: relative;
 }
 
 .active {
     border-bottom: 3px solid;
     border-color: var(--primary-color);
+}
+
+.ava-user {
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+.list-options-user {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    position: absolute;
+    top: 80%;
+    right: 0;
+    z-index: 1000;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
+.option-user {
+    color: var(--grey-text-color);
+    font-weight: 400;
+    font-size: 1.4rem;
+    padding: 10px 10px 10px 20px;
+
+}
+
+.option-user:nth-child(4) {
+    border-top: 1px solid #ccc;
+    margin-top: 4px;
+}
+
+.option-user:nth-child(3) {
+    margin-bottom: 4px;
+}
+
+.option-user:hover{
+    background-color: var(--greyish-background-color);
 }
