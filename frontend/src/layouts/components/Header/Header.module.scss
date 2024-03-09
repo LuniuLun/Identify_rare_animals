@@ -60,7 +60,7 @@
     position: relative;
 }
 
-.btn_addAnimal{
+.btn_addAnimal {
     padding: 7px 10px;
     background-color: var(--primary-color);
     color: var(--white-text-color);
@@ -123,9 +123,37 @@
     margin-bottom: 4px;
 }
 
-.option-user:hover{
+.option-user:hover {
     background-color: var(--greyish-background-color);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .add-animal-modal {
     position: fixed;
@@ -140,14 +168,33 @@
     z-index: 99999;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .body {
+    min-width: 50%;
+    height: 60%;
     display: flex;
     background-color: #fff;
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.275);
     position: relative;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.5s ease;
+    animation: fadeIn 0.5s ease forwards;
 }
+
 
 .close-icon {
     position: absolute;
@@ -157,6 +204,10 @@
     color: #ccc;
     padding: 8px 10px;
     cursor: pointer;
+}
+
+.wrapper-detail-animal {
+    display: flex;
 }
 
 .form-detail {
@@ -204,7 +255,25 @@
 }
 
 .animal-image {
-    height: 500px;
     width: 500px;
     border-radius: 6px;
+}
+
+.add-image{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.introduction{
+    align-items: center;
+    padding: 30px;
+    color: var(--white-text-color);
+    font-size: 2.2rem;
+    font-weight: 500;
+    display: flex;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    border-radius: 8px;
 }
