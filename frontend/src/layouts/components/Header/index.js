@@ -5,17 +5,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDays, faLocationDot, faXmark } from "@fortawesome/free-solid-svg-icons";
 import LogoSVG from "../../../assets/logo";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
 const cx = classNames.bind(styles);
 
 function Header() {
-    const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(false);
     const [showListOptionsUser, setShowListOptionsUser] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [isHavingImage, setIsHavingImage] = useState(false);
     const [yourImage, setImage] = useState([]);
+
+    useEffect(() => {
+        if (sessionStorage.getItem("userID") !== null) {
+            setIsLogin(true);
+        }
+    }, []);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         accept: "image/*",
@@ -88,7 +94,11 @@ function Header() {
                                 <button onClick={openModal} className={cx("option-user")}>
                                     Uploads
                                 </button>
-                                <Link to={"/login"} className={cx("option-user")}>
+                                <Link
+                                    to={"/login"}
+                                    className={cx("option-user")}
+                                    onClick={sessionStorage.removeItem("userID")}
+                                >
                                     Sign out
                                 </Link>
                             </div>
@@ -137,7 +147,9 @@ function Header() {
                                     {isDragActive ? (
                                         <p className={cx("introduction")}>Drop the image here...</p>
                                     ) : (
-                                        <p className={cx("introduction")}>Drag & drop image here or click to select image</p>
+                                        <p className={cx("introduction")}>
+                                            Drag & drop image here or click to select image
+                                        </p>
                                     )}
                                 </div>
                             </div>

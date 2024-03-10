@@ -3,13 +3,56 @@ import styles from "./Login.module.scss";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock, faUnlock, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import axios from "axios";
 const cx = classNames.bind(styles);
 
-function Login() {
+function Login({ setLoginStatus }) {
     const [showLoginForm, setShowLoginForm] = useState(true);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const warningFillInforRef = useRef(null);
+    const warningFailedLoginRef = useRef(null);
     const changeForm = () => {
         setShowLoginForm(!showLoginForm);
+    };
+    const checkLogin = () => {
+        if (username?.trim() !== "" && password?.trim() !== "") {
+            if (warningFillInforRef.current !== null) {
+                warningFillInforRef.current.style.display = "none";
+            }
+            const requestData = {
+                username: username,
+                password: password,
+            };
+            axios
+                .post("http://127.0.0.1:5000/login", requestData, {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log(res);
+                        sessionStorage.setItem("userID", res.data.id);
+                        if (res.data.id === 1) {
+                            window.location.href = "http://localhost:3000/admin";
+                        } else {
+                            window.location.href = "http://localhost:3000";
+                        }
+                    } else {
+                        if (warningFailedLoginRef.current !== null) {
+                            warningFailedLoginRef.current.style.display = "block";
+                        }
+                    }
+                })
+                .catch(() => {});
+        } else if (warningFillInforRef.current !== null && warningFailedLoginRef.current !== null) {
+            console.log(username, password);
+            warningFillInforRef.current.style.display = "block";
+            warningFailedLoginRef.current.style.display = "none";
+        }
     };
     return (
         <div className={cx("wrapper")}>
@@ -20,14 +63,33 @@ function Login() {
                     <div className={cx("login-form")}>
                         <div className={cx("information", "username")}>
                             <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
-                            <input className={cx("inputUsername")} placeholder="Username or email" />
+                            <input
+                                onChange={(e) => setUsername(e.target.value)}
+                                className={cx("inputUsername")}
+                                placeholder="Username or email"
+                            />
                         </div>
                         <div className={cx("information", "password")}>
                             <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faLock} />
-                            <input className={cx("inputPassword")} placeholder="Password" />
+                            <input
+                                type="password"
+                                onChange={(e) => setPassword(e.target.value)}
+                                className={cx("inputPassword")}
+                                placeholder="Password"
+                            />
                         </div>
+
+                        <p ref={warningFillInforRef} className={cx("danger-infor")}>
+                            Hãy điền đầy đủ thông tin.
+                        </p>
+
+                        <p ref={warningFailedLoginRef} className={cx("danger-infor-login")}>
+                            Rất tiếc, mật khẩu của bạn không đúng. Vui lòng kiểm tra lại mật khẩu.
+                        </p>
                         <Link className={cx("link-forgetPassword")}>Forget your password?</Link>
-                        <button className={cx("btn_login")}>Log In</button>
+                        <button className={cx("btn_login")} onClick={checkLogin}>
+                            Log In
+                        </button>
                     </div>
                     <span className={cx("footer")}>
                         Don't have an account?{" "}
