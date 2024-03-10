@@ -13,7 +13,6 @@ function Home() {
                 <span>Observations</span>
                 <div className={cx("right-items")}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
-                    <UploadFileComponent />
                     <input className={cx("species")} placeholder="Species" />
                     <input className={cx("name-animal")} placeholder="Animal" />
                     <button className={cx("btn_find")}>Go</button>
