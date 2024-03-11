@@ -2,7 +2,7 @@ import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faL, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDays, faLocationDot, faXmark } from "@fortawesome/free-solid-svg-icons";
 import LogoSVG from "../../../assets/logo";
 import { Fragment, useEffect, useState } from "react";
@@ -20,6 +20,8 @@ function Header() {
     useEffect(() => {
         if (sessionStorage.getItem("userID") !== null) {
             setIsLogin(true);
+        } else {
+            setIsLogin(false);
         }
     }, []);
 
@@ -85,10 +87,10 @@ function Header() {
                         <FontAwesomeIcon className={cx("down-icon")} icon={faChevronDown} onFocus={setOpenOptions} />
                         {showListOptionsUser === true ? (
                             <div className={cx("list-options-user")}>
-                                <Link to={"/Profile"} className={cx("option-user")}>
+                                <Link to={"/Profile"} className={cx("option-user")} onClick={setOpenOptions}>
                                     Profile
                                 </Link>
-                                <Link to={"/"} className={cx("option-user")}>
+                                <Link to={"/"} className={cx("option-user")} onClick={setOpenOptions}>
                                     Your Observations
                                 </Link>
                                 <button onClick={openModal} className={cx("option-user")}>
@@ -97,7 +99,11 @@ function Header() {
                                 <Link
                                     to={"/login"}
                                     className={cx("option-user")}
-                                    onClick={sessionStorage.removeItem("userID")}
+                                    onClick={() => {
+                                        sessionStorage.removeItem("userID");
+                                        setIsLogin(false);
+                                        setOpenOptions();
+                                    }}
                                 >
                                     Sign out
                                 </Link>

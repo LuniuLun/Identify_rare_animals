@@ -35,15 +35,17 @@ function Login({ setLoginStatus }) {
                 .then((res) => {
                     if (res.status === 200) {
                         console.log(res);
-                        sessionStorage.setItem("userID", res.data.id);
-                        if (res.data.id === 1) {
-                            window.location.href = "http://localhost:3000/admin";
+                        if (res.data !== null) {
+                            sessionStorage.setItem("userID", res.data.id);
+                            if (res.data.id === 1) {
+                                window.location.href = "http://localhost:3000/admin";
+                            } else {
+                                window.location.href = "http://localhost:3000";
+                            }
                         } else {
-                            window.location.href = "http://localhost:3000";
-                        }
-                    } else {
-                        if (warningFailedLoginRef.current !== null) {
-                            warningFailedLoginRef.current.style.display = "block";
+                            if (warningFailedLoginRef.current !== null) {
+                                warningFailedLoginRef.current.style.display = "block";
+                            }
                         }
                     }
                 })
