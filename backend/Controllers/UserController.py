@@ -21,8 +21,11 @@ class UserController:
     
     def check_login(self, username, password):
         user = self.user_dao.check_login(username, password)
-        return {
-            "id": user.get_id(),
-            "name": user.get_name(),
-            "email": user.get_email()
-        }
+        if user != None:            
+            return {
+                "id": user.get_id(),
+                "name": user.get_name(),
+                "email": user.get_email()
+            }
+        else:
+            return None

@@ -8,12 +8,7 @@ app = Flask(__name__)
 
 CORS(app)
 
-from Controllers.UserController import UserController  # Import UserController từ thư mục Controllers
-
-# Bạn có thể tiếp tục import các controllers khác tương tự ở đây
-
-# Các dòng code khác của ứng dụng Flask
-
+from Controllers.UserController import UserController  
 
 
 @app.route("/users", methods=["GET"])
@@ -38,6 +33,27 @@ def login():
     password = data['password']
     print(name + password)
     return jsonify(user_controller.check_login(name, password))
+
+@app.route("/upload_image", methods=["POST"])
+def upload_image():
+
+    if 'file' not in request.files:
+
+        return jsonify({"error": "No file part"}), 400
+
+
+
+    file = request.files['file']
+    print(file)
+    # Further processing of the uploaded image
+
+    # Pass the image to your controller or business object for processing
+
+    return jsonify({"message": "Image uploaded successfully"})
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
