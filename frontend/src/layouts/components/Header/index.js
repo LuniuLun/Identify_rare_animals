@@ -2,9 +2,8 @@ import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faL, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDays, faLocationDot, faXmark } from "@fortawesome/free-solid-svg-icons";
-import LogoSVG from "../../../assets/logo";
 import { Fragment, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -52,7 +51,7 @@ function Header() {
     return (
         <div className={cx("wrapper")}>
             <div className={cx("right-item")}>
-                <LogoSVG className={cx("logo")} />
+                <Link to={"/"} className={cx("logo")}><p>R</p>aniland</Link>
                 <button className={cx("wrapper-find-icon")}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
                 </button>

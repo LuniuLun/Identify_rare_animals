@@ -3,7 +3,7 @@ import styles from "./Login.module.scss";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock, faUnlock, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 const cx = classNames.bind(styles);
 
@@ -13,9 +13,21 @@ function Login({ setLoginStatus }) {
     const [password, setPassword] = useState("");
     const warningFillInforRef = useRef(null);
     const warningFailedLoginRef = useRef(null);
+    const wrapperRef = useRef(null);
+    const loginModal = useRef(null);
+    const registerModal = useRef(null);
     const changeForm = () => {
         setShowLoginForm(!showLoginForm);
     };
+
+    useEffect(() => {
+        if (showLoginForm === true) {
+            wrapperRef.current.style.backgroundImage = "url(/img/background_login.png)";
+        } else {
+            // Reset background image when showLoginForm is false
+            wrapperRef.current.style.backgroundImage = "url(/img/background_register.png)";
+        }
+    }, [showLoginForm]);
     const checkLogin = () => {
         if (username?.trim() !== "" && password?.trim() !== "") {
             if (warningFillInforRef.current !== null) {
@@ -57,77 +69,84 @@ function Login({ setLoginStatus }) {
         }
     };
     return (
-        <div className={cx("wrapper")}>
-            <div className={cx("slide")}></div>
+        <div ref={wrapperRef} className={cx("wrapper")}>
             {showLoginForm === true ? (
-                <div className={cx("login-modal")}>
-                    <div className={cx("tittle")}>Welcome Back!</div>
-                    <div className={cx("login-form")}>
-                        <div className={cx("information", "username")}>
-                            <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
-                            <input
-                                onChange={(e) => setUsername(e.target.value)}
-                                className={cx("inputUsername")}
-                                placeholder="Username or email"
-                            />
-                        </div>
-                        <div className={cx("information", "password")}>
-                            <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faLock} />
-                            <input
-                                type="password"
-                                onChange={(e) => setPassword(e.target.value)}
-                                className={cx("inputPassword")}
-                                placeholder="Password"
-                            />
-                        </div>
+                <div ref={loginModal} className={cx("login-modal")}>
+                    <div className={cx("content")}>
+                        <div className={cx("tittle")}>Welcome</div>
+                        <div className={cx("login-form")}>
+                            <div className={cx("information", "username")}>
+                                <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
+                                <input
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    className={cx("inputUsername")}
+                                    placeholder="Username or email"
+                                />
+                            </div>
+                            <div className={cx("information", "password")}>
+                                <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faLock} />
+                                <input
+                                    type="password"
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className={cx("inputPassword")}
+                                    placeholder="Password"
+                                />
+                            </div>
 
-                        <p ref={warningFillInforRef} className={cx("danger-infor")}>
-                            Hãy điền đầy đủ thông tin.
-                        </p>
+                            <p ref={warningFillInforRef} className={cx("danger-infor")}>
+                                Hãy điền đầy đủ thông tin.
+                            </p>
 
-                        <p ref={warningFailedLoginRef} className={cx("danger-infor-login")}>
-                            Rất tiếc, mật khẩu của bạn không đúng. Vui lòng kiểm tra lại mật khẩu.
-                        </p>
-                        <Link className={cx("link-forgetPassword")}>Forget your password?</Link>
-                        <button className={cx("btn_login")} onClick={checkLogin}>
-                            Log In
-                        </button>
+                            <p ref={warningFailedLoginRef} className={cx("danger-infor-login")}>
+                                Rất tiếc, mật khẩu của bạn không đúng. Vui lòng kiểm tra lại mật khẩu.
+                            </p>
+                            <Link className={cx("link-forgetPassword")}>Forget your password?</Link>
+                            <button className={cx("btn_login")} onClick={checkLogin}>
+                                Log In
+                            </button>
+                        </div>
+                        <span className={cx("footer")}>
+                            Don't have an account?{" "}
+                            <div onClick={changeForm} className={cx("change-modal")}>
+                                Sign up
+                            </div>
+                        </span>
                     </div>
-                    <span className={cx("footer")}>
-                        Don't have an account?{" "}
-                        <div onClick={changeForm} className={cx("change-modal")}>
-                            Sign up
-                        </div>
-                    </span>
                 </div>
             ) : (
-                <div className={cx("register-modal")}>
-                    <div className={cx("tittle")}>Join the largest group of naturalists in the world!</div>
-                    <div className={cx("login-form")}>
-                        <div className={cx("information", "email")}>
-                            <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
-                            <input className={cx("inputEmail")} placeholder="Email" />
+                <div ref={registerModal} className={cx("register-modal")}>
+                    <div className={cx("content")}>
+                        <div className={cx("tittle")}>Join with us</div>
+                        <div className={cx("login-form")}>
+                            <div className={cx("information", "email")}>
+                                <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
+                                <input className={cx("inputEmail")} placeholder="Email" />
+                            </div>
+                            <div className={cx("information", "username")}>
+                                <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faUser} />
+                                <input className={cx("inputUsername")} placeholder="Username" />
+                            </div>
+                            <div className={cx("information", "password")}>
+                                <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faUnlock} />
+                                <input type="password" className={cx("inputPassword")} placeholder="Password" />
+                            </div>
+                            <div className={cx("information", "confimationPassowrd")}>
+                                <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faLock} />
+                                <input
+                                    className={cx("inputConfirmationPassword")}
+                                    placeholder="Password confirmation"
+                                    type="password"
+                                />
+                            </div>
+                            <button className={cx("btn_signup")}>Sign up</button>
                         </div>
-                        <div className={cx("information", "username")}>
-                            <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faUser} />
-                            <input className={cx("inputUsername")} placeholder="Username" />
-                        </div>
-                        <div className={cx("information", "password")}>
-                            <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faUnlock} />
-                            <input className={cx("inputPassword")} placeholder="Password" />
-                        </div>
-                        <div className={cx("information", "confimationPassowrd")}>
-                            <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faLock} />
-                            <input className={cx("inputConfirmationPassword")} placeholder="Password confirmation" />
-                        </div>
-                        <button className={cx("btn_signup")}>Sign up</button>
+                        <span className={cx("footer")}>
+                            Already have an account?{" "}
+                            <div onClick={changeForm} className={cx("change-modal")}>
+                                Log in
+                            </div>
+                        </span>
                     </div>
-                    <span className={cx("footer")}>
-                        Already have an account?{" "}
-                        <div onClick={changeForm} className={cx("change-modal")}>
-                            Log in
-                        </div>
-                    </span>
                 </div>
             )}
         </div>
