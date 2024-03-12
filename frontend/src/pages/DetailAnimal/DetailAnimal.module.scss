@@ -1,139 +1,240 @@
 .wrapper {
-    
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 20px 180px;
+    background-color: #fff;
+
 }
 
 .title {
-
+    font-size: 3rem;
+    font-weight: 500;
+    font-style: italic;
+    padding: 30px 10px;
+    background-color: var(--greyish-background-color);
 }
 
 .top-items {
+    display: flex;
+    border: 1px solid rgba(0, 0, 0, 0.17);
+}
 
+.wrapper-image-animal {
+    padding: 20px 0;
+    border: 1px solid rgba(0, 0, 0, 0.17);
 }
 
 .image-animal {
-
+    height: 400px;
+    width: 600px;
+    padding: 0 40px;
 }
 
 .bio {
-
+    display: flex;
+    height: 20%;
+    flex-direction: column;
+    flex: 1;
 }
 
 .user {
-
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.17);
 }
 
 .ava-user {
-
+    height: 46px;
+    width: 46px;
+    border-radius: 50%;
+    margin-right: 8px;
 }
 
 .username {
-
+    font-size: 1.8rem;
+    color: var(--black-text-color);
+    margin: 4px;
+    font-weight: 500;
 }
 
 .quantity-observation {
-
+    display: flex;
+    margin: 4px;
+    font-size: 1.4rem;
+    color: var(--grey-text-color);
 }
 
 .scope-icon {
-
+    color: var(--primary-color);
+    font-size: 1.6rem;
+    margin-right: 4px;
 }
 
 .location {
-
+    display: flex;
+    padding: 20px;
 }
 
-.time-observation {
-
-}
-
-.time-submit label, .time-observation label {
-
-}
-
-.time-submit input, .time-observation input {
-
-}
-
+.time-observation,
 .time-submit {
-
+    display: flex;
+    flex-direction: column;
+    width: 50%;
 }
 
-.title {
+.time-submit label,
+.time-observation label {
+    color: #000;
+    font-weight: 500;
+    font-size: 1.4rem;
+    flex: 1;
+}
 
+.time-submit input,
+.time-observation input {
+    border: 0;
+    outline: 0;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--grey-text-color);
 }
 
 .buttom-items {
-
+    padding: 30px 40px;
+    border: 1px solid rgba(0, 0, 0, 0.17);
+    width: 100%;
 }
 
 .information {
-
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+    width: 100%;
 }
 
-.information span  {
-
+.information>span,
+.conservation>span {
+    width: 100%;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    color: var(--black-text-color);
+    font-weight: 800;
 }
 
 .detail-information {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+}
 
+.short-detail-information {
+    display: flex;
+    padding: 10px 0;
+    align-items: center;
 }
 
 .detail-information label {
-
+    padding: 6px 0;
+    color: var(--black-text-color);
+    font-weight: 500;
 }
 
-.detail-information input {
-
+.short-detail-information>span,
+.detail-information>span {
+    margin: 6px;
+    color: var(--greyish-text-color);
+    outline: 0;
+    border: 0;
+    height: auto;
+    resize: vertical;
+    line-height: 2rem;
 }
 
 .wrapper-two-infomation {
-
+    display: flex;
 }
 
-.information {
-
+.information-status {
+    width: 80%;
 }
 
-.detail-information {
+.information {}
 
+.detail-information {}
+
+.Status {}
+
+.conservation {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
 }
 
-.Status {
-
-}
-
-.information {
-
-}
-
-.detail-information {
-
-}
+.detail-information {}
 
 .list-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    color: var(--black-text-color);
+    font-weight: 600;
+    margin: 0 6px 0 13px;
+}
 
+.list-label>p {
+    border: 1px solid #ccc;
 }
 
 .list-label li {
-
+    list-style: none;
 }
 
 .list-status {
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    margin: 10px 0;
 }
 
 .list-status li {
+    list-style: none;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    font-weight: 600;
+    height: 30px;
+    width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+.list-status li:nth-child(4) {
+    background-color: rgba(212, 88, 54, 0.941);
+    color: var(--white-text-color);
 }
 
 .left-quantity {
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
 }
 
 .left-quantity label {
-
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--black-text-color);
+    width: 80%;
 }
 
 .left-quantity input {
-
+    outline: 0;
+    border: 0;
+    color: rgba(163, 69, 43, 0.941);
+    font-weight: 800;
+    width: 20%;
 }
