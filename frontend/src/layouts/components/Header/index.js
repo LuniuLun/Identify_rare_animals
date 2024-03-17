@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDays, faLocationDot, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
-
+import axios from "axios";
 const cx = classNames.bind(styles);
 
 function Header() {
@@ -15,7 +15,8 @@ function Header() {
     const [showModal, setShowModal] = useState(false);
     const [isHavingImage, setIsHavingImage] = useState(false);
     const [yourImage, setImage] = useState([]);
-
+    const [speciesName, setSpeciesName] = useState("");
+    const speciesNameRef = useRef();
     useEffect(() => {
         if (sessionStorage.getItem("userID") !== null) {
             setIsLogin(true);
@@ -26,7 +27,7 @@ function Header() {
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         accept: "image/*",
-        onDrop: (acceptedFiles) => {
+        onDrop: async (acceptedFiles) => {
             setImage(
                 acceptedFiles.map((upFile) =>
                     Object.assign(upFile, {
@@ -34,6 +35,32 @@ function Header() {
                     })
                 )
             );
+            if (acceptedFiles.length === 0) {
+                console.error("Không có tập tin nào được thả hoặc các tập tin không phải là hình ảnh hợp lệ.");
+                return;
+            }
+
+            const file = acceptedFiles[acceptedFiles.length - 1]; // Lấy tập tin đầu tiên
+            const requestData = new FormData();
+            requestData.append("file", file);
+            axios
+                .post("http://127.0.0.1:5000/upload_image", requestData, {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "multipart/form-data",
+                    },
+                })
+                .then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        console.log(res.data.predicted_label.predicted_label);
+                        setSpeciesName(res.data.predicted_label.predicted_label);
+                    }
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
+
             setIsHavingImage(true);
         },
     });
@@ -51,7 +78,9 @@ function Header() {
     return (
         <div className={cx("wrapper")}>
             <div className={cx("right-item")}>
-                <Link to={"/"} className={cx("logo")}><p>R</p>aniland</Link>
+                <Link to={"/"} className={cx("logo")}>
+                    <p>R</p>aniland
+                </Link>
                 <button className={cx("wrapper-find-icon")}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
                 </button>
@@ -129,7 +158,12 @@ function Header() {
                                     <div className={cx("title")}>Editing observation:</div>
                                     <div className={cx("information")}>
                                         <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("icon")} />
-                                        <input className={cx("species-name")} placeholder="Species name" />
+                                        <input
+                                            value={speciesName}
+                                            className={cx("species-name")}
+                                            placeholder="Species name"
+                                            readOnly
+                                        />
                                     </div>
                                     <div className={cx("information")}>
                                         <FontAwesomeIcon icon={faCalendarDays} className={cx("icon")} />
