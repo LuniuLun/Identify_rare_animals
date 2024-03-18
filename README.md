@@ -4,34 +4,17 @@ This is a website that helps identify rare animals. In this application, we usin
 ## Set up enviroment 
 ### nodeJs
 1. install Node Version Manager
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
-```
 
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-```
-
-```bash
-source ~/.bashrc
-```
+- Visit the Node.js download home page at: nodejs.org.
+- On the homepage, you will see two versions: "LTS" and "Current". If you want to use a more stable version, select "LTS" (Long-Term Support). Click the "Download LTS" or "Download" button depending on the version you choose.
+- Once the download is complete, open the Node.js installation file (.msi) and follow the on-screen instructions.
 
 2. check nvm installation (check node version)
+open cmd
 ```bash
-nvm list-remote
+npm --version
 ```
-
-3. install node using nvm
-```bash
-nvm install v18
-```
-
-4. check node installation
-```bash
-node --version
-```
-
-If the terminal print out the version of node (v18), installation is success
+If the terminal print out the version of node (v20), installation is success
 
 ## Getting Started
 
@@ -48,13 +31,17 @@ To run the server locally, follow these steps:
     ```
 3. Navigate to server folder and install required packages for backend server.
     ```bash
-    (Chưa biết chạy server kiểu sao nên chưa viết)
+    cd backend/API
     ```
 4. Run the server
     ```bash
-    (Chưa biết chạy server kiểu sao nên chưa viết)
+    python app.py
     ```
-5. Open another terminal tab in root folder and run web page.
+5. Open another terminal tab in root folder and vavigate to server folder
+    ```bash
+   cd frontend/src
+    ```
+5. Run server folder
     ```bash
     npm start
     ```
