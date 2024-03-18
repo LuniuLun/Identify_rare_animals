@@ -23,23 +23,24 @@ To run the server locally, follow these steps:
 1. Clone and open the repository:
     ```bash
     git clone https://github.com/LuniuLun/Identify_rare_animals.git
-    cd Identify_rare_animals
+    cd Identify_rare_animals/frontend
     ```
 2. Install required packages for frontend.
     ```bash
     npm i
     ```
-3. Navigate to server folder and install required packages for backend server.
+3. Navigate to root folder and install required packages for backend server.
     ```bash
+    cd ../..
     cd backend/API
     ```
 4. Run the server
     ```bash
     python app.py
     ```
-5. Open another terminal tab in root folder and vavigate to server folder
+5. Open another terminal tab in root folder and navigate to server folder
     ```bash
-   cd frontend/src
+    cd frontend/src
     ```
 5. Run server folder
     ```bash
