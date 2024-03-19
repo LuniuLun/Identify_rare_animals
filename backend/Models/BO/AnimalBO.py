@@ -8,7 +8,7 @@ class AnimalBO:
     @staticmethod
     def predict_animal(image_path):
         # Load model
-        model = load_model("D:\VisualStudioCode\Project\Identify_rare_animals\\backend\Models\BO\\trained_animal_model.h5")
+        model = load_model("D:\VisualStudioCode\Project\Identify_rare_animals\\backend\Models\BO\\trained_animal_model.keras")
         train_image_files_path = "D:\VisualStudioCode\Project\Identify_rare_animals\\backend\Models\Data\dataset_image/"
         # Đọc danh sách các thư mục trong đường dẫn train_image_files_path
         label = [f for f in os.listdir(train_image_files_path) if os.path.isdir(os.path.join(train_image_files_path, f))]
