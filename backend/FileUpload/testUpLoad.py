@@ -26,3 +26,10 @@ my_image = "temp.jpg"
 storage.child(my_image).put(my_image)
 
 print("Image uploaded successfully!")
+
+auth = firebase.auth()
+email = "nguyenducvan260903@gmail.com"
+password = "123456"
+user = auth.sign_in_with_email_and_password(email, password)
+url = storage.child(my_image).get_url(user["idToken"])
+print(url)
