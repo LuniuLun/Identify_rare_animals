@@ -35,16 +35,16 @@ def login():
     print(name + password)
     return jsonify(user_controller.check_login(name, password))
 
-@app.route("/upload_image", methods=["POST"])
-def upload_image():
-    if 'file' not in request.files:
+@app.route("/predict_animal", methods=["POST"])
+def predict_animal():
+    if 'image' not in request.files:
         return jsonify({"error": "No file part"}), 400
 
     animal_controller = AnimalController()
-    file = request.files['file']
+    file = request.files['image']
     
 
-    image_path = "D:\VisualStudioCode\Project\Identify_rare_animals\\backend\FileUpload\\temp.jpg"  # Tạo đường dẫn tạm thời cho ảnh
+    image_path = "D:\VisualStudioCode\Project\Identify_rare_animals\\recognize_animal\FileUpload\\temp.jpg"  # Tạo đường dẫn tạm thời cho ảnh
     file.save(image_path)
     result = animal_controller.predict_animal_label(image_path)
     return jsonify(result)  # Sử dụng jsonify để trả về response JSON
