@@ -25,71 +25,38 @@ function Header() {
         }
     }, []);
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        accept: "image/*",
-        onDrop: async (acceptedFiles) => {
-            setImage(
-                acceptedFiles.map((upFile) =>
-                    Object.assign(upFile, {
-                        preview: URL.createObjectURL(upFile),
-                    })
-                )
-            );
-            if (acceptedFiles.length === 0) {
-                console.error("Không có tập tin nào được thả hoặc các tập tin không phải là hình ảnh hợp lệ.");
-                return;
-            }
+    
 
-            // const file = acceptedFiles[acceptedFiles.length - 1]; // Lấy tập tin đầu tiên
-            // const requestData = new FormData();
-            // requestData.append("file", file);
-            // axios
-            //     .post("http://127.0.0.1:5000/upload_image", requestData, {
-            //         headers: {
-            //             Accept: "application/json",
-            //             "Content-Type": "multipart/form-data",
-            //         },
-            //     })
-            //     .then((res) => {
-            //         console.log(res);
-            //         if (res.status === 200) {
-            //             console.log(res.data.predicted_label.predicted_label);
-            //             setSpeciesName(res.data.predicted_label.predicted_label);
-            //         }
-            //     })
-            //     .catch((e) => {
-            //         console.log(e);
-            //     });
-
-            setIsHavingImage(true);
-        },
-    });
-
-    const closeModal = () => {
-        setShowModal(false);
+    const handleRecognizeClick = async () => {
+        try {
+            // Mở trang mới chứa camera để chụp ảnh
+            window.open("http://172.20.10.3/", "_blank");
+        } catch (error) {
+            console.error(error);
+        }
     };
+
     const openModal = () => {
         setShowModal(true);
     };
 
-    // const connectCam = async () => {
-    //     try {
-    //         const response = await axios.get("http://172.20.10.3", {
-    //             responseType: "arraybuffer", // Để Axios biết cần nhận dữ liệu dưới dạng arraybuffer
-    //         });
+    const closeModal = () => {
+        setShowModal(false);
+    };
 
-    //         const imageBlob = new Blob([response.data], { type: "image/jpeg" });
-    //         const imageUrl = URL.createObjectURL(imageBlob);
-    //         //   setImageSrc(imageUrl)
-    //         console.log(imageUrl);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
+    // Xử lý khi nhận được ảnh từ trang khác (giả sử là từ trang http://172.20.10.3/)
+    window.addEventListener("message", (event) => {
+        if (event.origin === "http://172.20.10.3" && event.data.type === "image") {
+            setImage(event.data.imageSrc);
+            setShowModal(true); // Hiển thị modal khi nhận được ảnh
+            console.log(event.data.imageSrc);
+        }
+    });
 
     const setOpenOptions = () => {
-        setShowListOptionsUser((preivous) => !preivous);
+        setShowListOptionsUser((previous) => !previous);
     };
+
     return (
         <div className={cx("wrapper")}>
             <div className={cx("right-item")}>
@@ -123,14 +90,23 @@ function Header() {
             <div className={cx("left-item")}>
                 {isLogin === true ? (
                     <Fragment>
-                        <Link to="http://172.20.10.3" className={cx("btn_addAnimal")} >
+                        <Link to={"#"} className={cx("btn_addAnimal")} onClick={handleRecognizeClick}>
                             Recognize
                         </Link>
-                        <button className={cx("btn_addAnimal")} onClick={openModal}>
+                        <Link to={"/post_animal"} className={cx("btn_addAnimal")}>
                             Upload
-                        </button>
-                        <img src="/img/no-user-img.jpg" alt="" className={cx("ava-user")} onClick={setOpenOptions} />
-                        <FontAwesomeIcon className={cx("down-icon")} icon={faChevronDown} onFocus={setOpenOptions} />
+                        </Link>
+                        <img
+                            src="/img/no-user-img.jpg"
+                            alt=""
+                            className={cx("ava-user")}
+                            onClick={setOpenOptions}
+                        />
+                        <FontAwesomeIcon
+                            className={cx("down-icon")}
+                            icon={faChevronDown}
+                            onClick={setOpenOptions}
+                        />
                         {showListOptionsUser === true ? (
                             <div className={cx("list-options-user")}>
                                 <Link to={"/Profile"} className={cx("option-user")} onClick={setOpenOptions}>
@@ -139,9 +115,9 @@ function Header() {
                                 <Link to={"/"} className={cx("option-user")} onClick={setOpenOptions}>
                                     Your Observations
                                 </Link>
-                                <button onClick={openModal} className={cx("option-user")}>
+                                <Link to={"/post_animal"} className={cx("option-user")}>
                                     Uploads
-                                </button>
+                                </Link>
                                 <Link
                                     to={"/login"}
                                     className={cx("option-user")}
@@ -166,69 +142,15 @@ function Header() {
             </div>
 
             {showModal === true ? (
-                <div className={cx("add-animal-modal")}>
-                    <div className={cx("body")}>
-                        <FontAwesomeIcon icon={faXmark} className={cx("close-icon")} onClick={closeModal} />
-
-                        {isHavingImage ? <div className={cx("title")}>Editing observation:</div> : <></>}
-                        {isHavingImage ? (
-                            <div className={cx("wrapper-detail-animal")}>
-                                {yourImage.map((image, index) => {
-                                    return (
-                                        <div index={index} className={cx("form-detail")}>
-                                            <div className={cx("wrapper-image")}>
-                                                <img
-                                                    // src="/img/con_cong.jpg"
-                                                    src={image.preview}
-                                                    alt=""
-                                                    className={cx("animal-image")}
-                                                />
-                                            </div>
-                                            <div className={cx("information")}>
-                                                <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("icon")} />
-                                                <input
-                                                    value={speciesName}
-                                                    className={cx("species-name")}
-                                                    placeholder="Species name"
-                                                    readOnly
-                                                />
-                                            </div>
-                                            <div className={cx("information")}>
-                                                <FontAwesomeIcon icon={faCalendarDays} className={cx("icon")} />
-                                                <input className={cx("date")} placeholder="Date" />
-                                            </div>
-                                            <div className={cx("information")}>
-                                                <FontAwesomeIcon icon={faLocationDot} className={cx("icon")} />
-                                                <input className={cx("location")} placeholder="Location" />
-                                            </div>
-                                            <div className={cx("information")}>
-                                                <textarea className={cx("note")} placeholder="Note"></textarea>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                <div className={cx("modal")}>
+                    <div className={cx("modal-content")}>
+                        <span className={cx("close")} onClick={closeModal}>
+                            &times;
+                        </span>
+                        {yourImage ? (
+                            <img src={yourImage} alt="Captured" className={cx("captured-image")} />
                         ) : (
-                            <div className={cx("add-image")}>
-                                <div {...getRootProps()}>
-                                    <input {...getInputProps()} />
-                                    {isDragActive ? (
-                                        <p className={cx("introduction")}>Drop the image here...</p>
-                                    ) : (
-                                        <p className={cx("introduction")}>
-                                            Drag & drop image here or click to select image
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                        {isHavingImage ? (
-                            <div className={cx("wrapper-btn-submit")}>
-                                <button className={cx("combine")}>Combine</button>
-                                <button className={cx("submit")}>Submit</button>
-                            </div>
-                        ) : (
-                            <></>
+                            <p>No image captured.</p>
                         )}
                     </div>
                 </div>
