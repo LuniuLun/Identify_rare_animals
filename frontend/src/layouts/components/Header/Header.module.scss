@@ -21,6 +21,7 @@
     margin: 0 20px;
     display: flex;
 }
+
 .logo p {
     color: #7A4C3E;
 }
@@ -190,11 +191,12 @@
 }
 
 .body {
-    min-width: 50%;
-    height: 60%;
+    width: 86%;
+    height: 90%;
     display: flex;
-    background-color: #fff;
-    padding: 40px;
+    flex-direction: column;
+    background-color: var(--greyish-background-color);
+    padding: 30px;
     border-radius: 8px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.275);
     position: relative;
@@ -202,6 +204,9 @@
     transform: translateY(-20px);
     transition: opacity 0.5s ease;
     animation: fadeIn 0.5s ease forwards;
+    overflow-y: scroll;
+    margin: 0 40px;
+    box-shadow: inset 0 10px 30px -10px rgb(213, 213, 213);
 }
 
 
@@ -217,17 +222,28 @@
 
 .wrapper-detail-animal {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .form-detail {
-    padding-right: 30px;
-    border-right: 1px solid rgba(0, 0, 0, 0.275);
+    padding: 18px 14px;
+    border: 1px solid rgba(0, 0, 0, 0.01);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 17%;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.175);
+    margin: 10px 16px;
 }
 
 .title {
     font-size: 1.6rem;
     font-weight: 500;
-    margin-bottom: 20px;
+    position: absolute;
+    top: 8px;
+    left: 18px;
 }
 
 .information {
@@ -239,43 +255,58 @@
     justify-content: center;
     color: #555;
     background-color: #fff;
-    margin: 20px 0;
+    margin: 6px 0;
 }
 
 .information input {
-    height: 34px;
-    padding: 6px 12px;
+    padding: 6px 6px;
+    width: 150px;
     font-size: 14px;
     outline: 0;
     border: 0;
 }
 
 .icon {
-    padding: 9px 10px;
+    padding: 7px 10px;
     background-color: var(--greyish-background-color);
+    font-size: 1.2rem;
 }
 
 .date {}
 
 .note {
-    height: 150px;
+    height: 30px;
     outline: 0;
     border: 0;
+    padding: 10px;
+}
+
+.wrapper-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 30px;
+    height: 120px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 12px rgba(80, 80, 80, 0.275);
 }
 
 .animal-image {
-    width: 500px;
     border-radius: 6px;
+    width: 100%;
+    height: auto;
+    border: 4px solid #fff;
 }
 
-.add-image{
+.add-image {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.introduction{
+.introduction {
     align-items: center;
     padding: 30px;
     color: var(--white-text-color);
@@ -285,4 +316,21 @@
     cursor: pointer;
     background-color: var(--primary-color);
     border-radius: 8px;
+}
+
+.wrapper-btn-submit {
+    display: flex;
+    justify-content: end;
+}
+
+.wrapper-btn-submit button {
+    background-color: var(--primary-color);
+    padding: 12px 18px;
+    color: var(--white-text-color);
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 8px;
+    margin: 20px 20px 0 20px;
+
 }

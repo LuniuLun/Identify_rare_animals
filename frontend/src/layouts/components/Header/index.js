@@ -15,7 +15,7 @@ function Header() {
     const [showModal, setShowModal] = useState(false);
     const [isHavingImage, setIsHavingImage] = useState(false);
     const [yourImage, setImage] = useState([]);
-    const [speciesName, setSpeciesName] = useState("");
+    const [speciesName, setSpeciesName] = useState([]);
     const speciesNameRef = useRef();
     useEffect(() => {
         if (sessionStorage.getItem("userID") !== null) {
@@ -40,26 +40,26 @@ function Header() {
                 return;
             }
 
-            const file = acceptedFiles[acceptedFiles.length - 1]; // Lấy tập tin đầu tiên
-            const requestData = new FormData();
-            requestData.append("file", file);
-            axios
-                .post("http://127.0.0.1:5000/upload_image", requestData, {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "multipart/form-data",
-                    },
-                })
-                .then((res) => {
-                    console.log(res);
-                    if (res.status === 200) {
-                        console.log(res.data.predicted_label.predicted_label);
-                        setSpeciesName(res.data.predicted_label.predicted_label);
-                    }
-                })
-                .catch((e) => {
-                    console.log(e);
-                });
+            // const file = acceptedFiles[acceptedFiles.length - 1]; // Lấy tập tin đầu tiên
+            // const requestData = new FormData();
+            // requestData.append("file", file);
+            // axios
+            //     .post("http://127.0.0.1:5000/upload_image", requestData, {
+            //         headers: {
+            //             Accept: "application/json",
+            //             "Content-Type": "multipart/form-data",
+            //         },
+            //     })
+            //     .then((res) => {
+            //         console.log(res);
+            //         if (res.status === 200) {
+            //             console.log(res.data.predicted_label.predicted_label);
+            //             setSpeciesName(res.data.predicted_label.predicted_label);
+            //         }
+            //     })
+            //     .catch((e) => {
+            //         console.log(e);
+            //     });
 
             setIsHavingImage(true);
         },
@@ -71,6 +71,21 @@ function Header() {
     const openModal = () => {
         setShowModal(true);
     };
+
+    // const connectCam = async () => {
+    //     try {
+    //         const response = await axios.get("http://172.20.10.3", {
+    //             responseType: "arraybuffer", // Để Axios biết cần nhận dữ liệu dưới dạng arraybuffer
+    //         });
+
+    //         const imageBlob = new Blob([response.data], { type: "image/jpeg" });
+    //         const imageUrl = URL.createObjectURL(imageBlob);
+    //         //   setImageSrc(imageUrl)
+    //         console.log(imageUrl);
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // };
 
     const setOpenOptions = () => {
         setShowListOptionsUser((preivous) => !preivous);
@@ -108,6 +123,9 @@ function Header() {
             <div className={cx("left-item")}>
                 {isLogin === true ? (
                     <Fragment>
+                        <Link to="http://172.20.10.3" className={cx("btn_addAnimal")} >
+                            Recognize
+                        </Link>
                         <button className={cx("btn_addAnimal")} onClick={openModal}>
                             Upload
                         </button>
@@ -152,32 +170,43 @@ function Header() {
                     <div className={cx("body")}>
                         <FontAwesomeIcon icon={faXmark} className={cx("close-icon")} onClick={closeModal} />
 
+                        {isHavingImage ? <div className={cx("title")}>Editing observation:</div> : <></>}
                         {isHavingImage ? (
                             <div className={cx("wrapper-detail-animal")}>
-                                <div className={cx("form-detail")}>
-                                    <div className={cx("title")}>Editing observation:</div>
-                                    <div className={cx("information")}>
-                                        <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("icon")} />
-                                        <input
-                                            value={speciesName}
-                                            className={cx("species-name")}
-                                            placeholder="Species name"
-                                            readOnly
-                                        />
-                                    </div>
-                                    <div className={cx("information")}>
-                                        <FontAwesomeIcon icon={faCalendarDays} className={cx("icon")} />
-                                        <input className={cx("date")} placeholder="Date" />
-                                    </div>
-                                    <div className={cx("information")}>
-                                        <FontAwesomeIcon icon={faLocationDot} className={cx("icon")} />
-                                        <input className={cx("location")} placeholder="Location" />
-                                    </div>
-                                    <div className={cx("information")}>
-                                        <textarea className={cx("note")} placeholder="Note"></textarea>
-                                    </div>
-                                </div>
-                                <img src={yourImage[0].preview} alt="" className={cx("animal-image")} />
+                                {yourImage.map((image, index) => {
+                                    return (
+                                        <div index={index} className={cx("form-detail")}>
+                                            <div className={cx("wrapper-image")}>
+                                                <img
+                                                    // src="/img/con_cong.jpg"
+                                                    src={image.preview}
+                                                    alt=""
+                                                    className={cx("animal-image")}
+                                                />
+                                            </div>
+                                            <div className={cx("information")}>
+                                                <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("icon")} />
+                                                <input
+                                                    value={speciesName}
+                                                    className={cx("species-name")}
+                                                    placeholder="Species name"
+                                                    readOnly
+                                                />
+                                            </div>
+                                            <div className={cx("information")}>
+                                                <FontAwesomeIcon icon={faCalendarDays} className={cx("icon")} />
+                                                <input className={cx("date")} placeholder="Date" />
+                                            </div>
+                                            <div className={cx("information")}>
+                                                <FontAwesomeIcon icon={faLocationDot} className={cx("icon")} />
+                                                <input className={cx("location")} placeholder="Location" />
+                                            </div>
+                                            <div className={cx("information")}>
+                                                <textarea className={cx("note")} placeholder="Note"></textarea>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className={cx("add-image")}>
@@ -192,6 +221,14 @@ function Header() {
                                     )}
                                 </div>
                             </div>
+                        )}
+                        {isHavingImage ? (
+                            <div className={cx("wrapper-btn-submit")}>
+                                <button className={cx("combine")}>Combine</button>
+                                <button className={cx("submit")}>Submit</button>
+                            </div>
+                        ) : (
+                            <></>
                         )}
                     </div>
                 </div>
