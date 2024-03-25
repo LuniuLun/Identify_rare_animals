@@ -125,7 +125,7 @@
 
 .focused{
     border: 1px solid var(--primary-color);
-    box-shadow: 0px 0px 8px 5px var(--primary-color);
+    box-shadow: 0px 0px 3px 2px var(--primary-color);
 }
 
 .title {
@@ -174,17 +174,47 @@
 
 .wrapper-image {
     height: 100%;
-    margin-bottom: 30px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-direction: column;
+}
+
+.slide-images{
     display: flex;
     align-items: center;
     justify-content: center;
 }
+.icon-left, .icon-right{
+    font-weight: 600;
+    font-size: 1.6rem;
+}
+
+.current-image{
+    margin-top: 8px;
+}
 
 .animal-image {
-    width: 100%;
+    width: 93%;
     height: auto;
     box-shadow: 0 6px 12px rgba(80, 80, 80, 0.275);
     border: 6px solid #fff;
+    margin: 0 4px;
+}
+
+
+.icon-show{
+    position: absolute;
+    bottom: 8px;
+    right: 14px;
+    padding: 4px;
+    background-color: var(--grey-text-color);
+    color: var(--white-text-color);
+    font-size: 1.6rem;
+    font-weight: 600;
+    border-radius: 4px;
 }
 
 .add-image {
