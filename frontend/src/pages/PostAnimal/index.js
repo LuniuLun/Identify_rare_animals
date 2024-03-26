@@ -1,7 +1,7 @@
 import classNames from "classnames/bind";
 import styles from "./PostAnimal.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import {
     faCalendarDays,
     faLocationDot,
@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
+import WarningBox from "../../components/WarningBox";
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +24,9 @@ function PostAnimal() {
     const [focusedIndexes, setFocusedIndexes] = useState([]);
     const [showIcon, setShowIcon] = useState(false);
     // const [imageShowingRef, setImageShowingRef] = useRef();
+    const [showWarning, setShowWarning] = useState(false);
+    const [contentWarning, setContentWarning] = useState("");
+    const [AnimalIndexesWithEmptyAttributes, setAnimalIndexesWithEmptyAttributes] = useState([]);
 
     useEffect(() => {
         if (animalObjects.length === 0) setIsHavingAnimalPost(false);
@@ -48,6 +52,9 @@ function PostAnimal() {
                 focused: false,
                 speciesName: "Predicting species name...",
                 file: file,
+                location: "",
+                dateTime: "",
+                note: "",
             };
             setAnimalObjects((previous) => [newAnimalObject, ...previous]);
             setIsHavingAnimalPost(true);
@@ -80,6 +87,9 @@ function PostAnimal() {
                     focused: false,
                     speciesName: "Predicting species name...",
                     file: file,
+                    location: "",
+                    dateTime: "",
+                    note: "",
                 };
                 newAnimalObjects.push(newAnimalObject);
             }
@@ -126,7 +136,14 @@ function PostAnimal() {
         }
     }
 
-    const handleFormDetailClick = (index) => {
+    const handleFormDetailClick = (index, e) => {
+        if (AnimalIndexesWithEmptyAttributes.includes(index)) {
+            setAnimalIndexesWithEmptyAttributes(AnimalIndexesWithEmptyAttributes.filter((item) => item !== index));
+            return;
+        }
+        if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.classList.contains("icon")) {
+            return; // Do nothing if the click is on an input, textarea, or icon
+        }
         if (focusedIndexes.includes(index)) {
             // Nếu index đã tồn tại trong mảng, loại bỏ nó
             setFocusedIndexes(focusedIndexes.filter((item) => item !== index));
@@ -174,20 +191,24 @@ function PostAnimal() {
             });
             // Tìm index bé nhất
             const minIndex = Math.min(...tempAnimal.map((item) => item.index));
-
+            setFocusedIndexes(focusedIndexes.filter((item) => item === minIndex));
             // Lọc ra item có index bé nhất
             const minIndexItem = tempAnimal.find((item) => item.index === minIndex);
 
             // Tạo mảng các index đã lấy
-            const selectedIndexes = tempAnimal.map((animal) => animal.index);
+            // const selectedIndexes = tempAnimal.map((animal) => animal.index);
 
             // Tạo mảng các file và preview tương ứng với các index đã lấy
-            const selectedFiles = tempAnimal
-                .filter((animal) => selectedIndexes.includes(animal.index))
-                .map((animal) => animal.file);
-            const selectedPreviews = tempAnimal
-                .filter((animal) => selectedIndexes.includes(animal.index))
-                .map((animal) => animal.preview);
+            let selectedFiles = [];
+            let selectedPreviews = [];
+
+            tempAnimal.forEach((animal) => {
+                selectedFiles = [...selectedFiles, ...(Array.isArray(animal.file) ? animal.file : [animal.file])];
+                selectedPreviews = [
+                    ...selectedPreviews,
+                    ...(Array.isArray(animal.preview) ? animal.preview : [animal.preview]),
+                ];
+            });
 
             // Tạo đối tượng newAnimalBox
             const newAnimalBox = {
@@ -196,9 +217,14 @@ function PostAnimal() {
                 focused: false, // Giữ nguyên giá trị focused
                 speciesName: minIndexItem.speciesName, // Sử dụng speciesName của item có index bé nhất
                 file: selectedFiles, // Sử dụng mảng files đã lấy
+                location: "",
+                dateTime: "",
+                note: "",
             };
             setAnimalObjects((prevObject) => [...prevObject, newAnimalBox]);
         } else {
+            setShowWarning(true);
+            setContentWarning("Different animals cannot be grouped together!");
         }
     };
 
@@ -229,6 +255,29 @@ function PostAnimal() {
         console.log(currentImageIndex);
     };
 
+    //change status box
+    const changeStatusBox = () => {
+        setShowWarning(false);
+    };
+
+    const handleSubmitPost = () => {
+        // Lọc ra các đối tượng có tất cả các thuộc tính rỗng
+        const emptyAttributesObj = animalObjects.filter((animalObj) =>
+            Object.values(animalObj).some((value) => value === "")
+        );
+        // Lấy ra mảng animalIndex của các đối tượng có thuộc tính rỗng
+        const indexesEmptyAttributesObj = emptyAttributesObj.map((animalObj) => animalObj.index);
+
+        if (indexesEmptyAttributesObj === null) {
+            console.log("All fields are not empty");
+        } else {
+            setAnimalIndexesWithEmptyAttributes(indexesEmptyAttributesObj);
+            console.log(indexesEmptyAttributesObj);
+            setShowWarning(true);
+            setContentWarning("Please fill in all information!");
+        }
+    };
+
     return (
         <div className={cx("wrapper")}>
             <div className={cx("navigation")}>
@@ -252,7 +301,7 @@ function PostAnimal() {
                         <p>Select All</p>
                     </button>
                 </div>
-                <button className={cx("submit-post")}>
+                <button className={cx("submit-post")} onClick={handleSubmitPost}>
                     <p>Submit</p>
                 </button>
             </div>
@@ -262,9 +311,13 @@ function PostAnimal() {
                         {animalObjects.map((image, index) => {
                             return (
                                 <button
-                                    onClick={() => handleFormDetailClick(image.index)}
+                                    onClick={(e) => handleFormDetailClick(image.index, e)}
                                     index={image.index}
-                                    className={cx("form-detail", focusedIndexes.includes(image.index) ? "focused" : "")}
+                                    className={cx(
+                                        "form-detail",
+                                        focusedIndexes.includes(image.index) ? "focused" : "",
+                                        AnimalIndexesWithEmptyAttributes.includes(image.index) ? "lackInfo" : ""
+                                    )}
                                 >
                                     <div
                                         index={image.index}
@@ -318,7 +371,9 @@ function PostAnimal() {
                                             )}
                                         </div> */}
                                         {Array.isArray(image.preview) ? (
-                                            <span className={cx("current-image")}>{currentImageIndex + 1}/{image.preview.length}</span>
+                                            <span className={cx("current-image")}>
+                                                {currentImageIndex + 1}/{image.preview.length}
+                                            </span>
                                         ) : (
                                             <></>
                                         )}
@@ -335,14 +390,50 @@ function PostAnimal() {
                                         </div>
                                         <div className={cx("information")}>
                                             <FontAwesomeIcon icon={faCalendarDays} className={cx("icon")} />
-                                            <input className={cx("date")} placeholder="Date" />
+                                            <input
+                                                className={cx("date")}
+                                                onChange={(e) => {
+                                                    animalObjects.map((item) => {
+                                                        return item.index === image.index ? (
+                                                            (item.dateTime = e.target.value)
+                                                        ) : (
+                                                            <></>
+                                                        );
+                                                    });
+                                                }}
+                                                placeholder="Date"
+                                            />
                                         </div>
                                         <div className={cx("information")}>
                                             <FontAwesomeIcon icon={faLocationDot} className={cx("icon")} />
-                                            <input className={cx("location")} placeholder="Location" />
+                                            <input
+                                                className={cx("location")}
+                                                placeholder="Location"
+                                                onChange={(e) => {
+                                                    animalObjects.map((item) => {
+                                                        return item.index === image.index ? (
+                                                            (item.location = e.target.value)
+                                                        ) : (
+                                                            <></>
+                                                        );
+                                                    });
+                                                }}
+                                            />
                                         </div>
                                         <div className={cx("information")}>
-                                            <textarea className={cx("note")} placeholder="Note"></textarea>
+                                            <textarea
+                                                className={cx("note")}
+                                                placeholder="Note"
+                                                onChange={(e) => {
+                                                    animalObjects.map((item) => {
+                                                        return item.index === image.index ? (
+                                                            (item.note = e.target.value)
+                                                        ) : (
+                                                            <></>
+                                                        );
+                                                    });
+                                                }}
+                                            ></textarea>
                                         </div>
                                     </div>
                                 </button>
@@ -362,6 +453,17 @@ function PostAnimal() {
                     </div>
                 )}
             </div>
+            {showWarning === true ? (
+                <div className={cx("wrapper-warningBox")}>
+                    <WarningBox
+                        content={contentWarning}
+                        handleSubmitButton={changeStatusBox}
+                        handleCancelButton={changeStatusBox}
+                    />
+                </div>
+            ) : (
+                <></>
+            )}
         </div>
     );
 }
