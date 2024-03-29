@@ -36,7 +36,7 @@ public class ResponseObject {
 
     private Object data;
     public ResponseObject() {
-        
+
     }
 
     @Override
