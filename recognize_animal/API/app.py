@@ -10,10 +10,7 @@ import numpy as np
 import tkinter as tk
 from tkinter import Canvas, messagebox
 from PIL import Image, ImageTk
-import webbrowser
-import requests
-import tempfile
-import os
+
 
 
 app = Flask(__name__)
@@ -64,7 +61,7 @@ def predict_animal():
 
 
 
-url = 'http://192.168.100.235/cam-lo.jpg'
+url = 'http://192.168.43.8/cam-lo.jpg'
 temp_file_path = ""
 server_url = ""
 photo = None
