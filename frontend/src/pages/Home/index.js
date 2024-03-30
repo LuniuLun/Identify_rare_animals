@@ -3,7 +3,6 @@ import styles from "./Home.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faCircleRight } from "@fortawesome/free-solid-svg-icons";
 import AnimalCard from "../../components/AnimalCard";
-import UploadFileComponent from "../../components/FileUpload";
 const cx = classNames.bind(styles);
 
 function Home() {

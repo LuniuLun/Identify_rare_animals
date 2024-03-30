@@ -5,19 +5,21 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 import com.tutorial.apidemo.models.User;
+import com.tutorial.apidemo.repositories.AnimalRepository;
+import com.tutorial.apidemo.repositories.ResultsRepository;
 import com.tutorial.apidemo.repositories.UserRepository;
+import com.tutorial.apidemo.models.Animal;
 import com.tutorial.apidemo.models.ResponseObject;
+import com.tutorial.apidemo.models.Results;
 
 @RestController
 @RequestMapping(path = "api/v1/users")
@@ -25,16 +27,20 @@ import com.tutorial.apidemo.models.ResponseObject;
 @CrossOrigin(origins = "http://localhost:3000/")
 public class UserController {
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
 
+    @Autowired
+    private ResultsRepository resultsRepository;
+    @Autowired
+    private AnimalRepository animalRepository;
     @GetMapping("")
     List<User> getAllUsers() {
-        return repository.findAll();
+        return userRepository.findAll();
     }
 
     @GetMapping("/{id}")
     ResponseEntity<ResponseObject> findById(@PathVariable Integer id) {
-        Optional<User> foundUser = repository.findById(id);
+        Optional<User> foundUser = userRepository.findById(id);
         return foundUser.isPresent() ? ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("ok", "Query user successfully", foundUser))
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -46,10 +52,10 @@ public class UserController {
         List<User> foundUser;
         System.out.println(newUser.getUserName() + newUser.getUserPassword());
         if(newUser.getUserName() == null) {
-            foundUser = repository.findByUserEmailAndUserPassword(newUser.getUserEmail().trim(),
+            foundUser = userRepository.findByUserEmailAndUserPassword(newUser.getUserEmail().trim(),
                     newUser.getUserPassword().trim());
         }else {
-            foundUser = repository.findByUserNameAndUserPassword(newUser.getUserName().trim(),
+            foundUser = userRepository.findByUserNameAndUserPassword(newUser.getUserName().trim(),
                     newUser.getUserPassword().trim());
         }
 ;
@@ -65,22 +71,22 @@ public class UserController {
 
     @PostMapping("/insert")
     ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
-        List<User> foundUser = repository.findByUserName(newUser.getUserName().trim());
+        List<User> foundUser = userRepository.findByUserName(newUser.getUserName().trim());
         if (!foundUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
                     new ResponseObject("failed", "Username already taken", ""));
         }
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("ok", "Insert user successfully", repository.save(newUser)));
+                new ResponseObject("ok", "Insert user successfully", userRepository.save(newUser)));
     }
 
     @PutMapping("/{id}")
     ResponseEntity<ResponseObject> updateUser(@RequestBody User newUser,
             @PathVariable Integer id) {
-        Optional<Object> updateUser = repository.findById(id)
+        Optional<Object> updateUser = userRepository.findById(id)
                 .map(user -> {
                     user.setDisplayName(newUser.getDisplayName());
-                    return repository.save(user);
+                    return userRepository.save(user);
                 });
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("ok", "Udpate user successfully", updateUser));
@@ -88,13 +94,56 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<ResponseObject> deleteUser(@PathVariable Integer id) {
-        boolean exist = repository.existsById(id);
+        boolean exist = userRepository.existsById(id);
         if (exist) {
-            repository.deleteById(id);
+            userRepository.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("OK", "Delete user successfully", ""));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseObject("failed", "Cannot find user to delete", ""));
+    }
+
+
+    @GetMapping("/user/{username}")
+    public ResponseEntity<ResponseObject> getUserByUsername(@RequestBody String username) {
+        User foundUser = userRepository.findByusername(username);
+        return foundUser != null ? ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("ok", "Query user successfully", foundUser))
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ResponseObject("failed", "Cannot find username", username));
+    }
+    @GetMapping("/result")
+    public List<Results> getAllResults() {
+        List<Results> listR = resultsRepository.findAll();
+        for(Results r : listR) {
+            r.setAnimalScientificName(animalRepository.findByIDAnimal(r.getPredictedAnimal()).getAnimalScientificName());
+        }
+        return listR;
+    }
+
+    @PostMapping("/newresult")
+    public ResponseEntity<ResponseObject> insertResult(@RequestBody Results newResult) {
+        Animal foundAnimal = animalRepository.findByAnimalScientificName(newResult.getAnimalScientificName());
+        if(foundAnimal != null) {
+            newResult.setPredictedAnimal(foundAnimal.getiDAnimal());
+            Date currentDate = new Date();
+            Timestamp timestamp = new Timestamp(currentDate.getTime());
+            newResult.setDate(timestamp);
+            resultsRepository.save(newResult);
+            return ResponseEntity.ok(new ResponseObject("Success", "Result inserted successfully", newResult));
+        } else {
+            return ResponseEntity.ok(new ResponseObject("Fail", "Cannot find this animal", newResult.getAnimalScientificName()));
+        }
+    }
+    @DeleteMapping("/deleteresult/{iDResult}")
+    public ResponseEntity<ResponseObject> deleteResultByIDResult(@PathVariable Integer iDResult) {
+        boolean exist = resultsRepository.existsById(Long.valueOf(iDResult));
+        if(exist) {
+            resultsRepository.deleteById(Long.valueOf(iDResult));
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("oke", "Delete successfully", iDResult)
+            );
+        }
     }
 }
