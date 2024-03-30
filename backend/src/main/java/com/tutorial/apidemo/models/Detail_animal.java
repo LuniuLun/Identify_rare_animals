@@ -1,6 +1,7 @@
 package com.tutorial.apidemo.models;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -9,6 +10,7 @@ import jakarta.persistence.Table;
 @Table(name ="detail_animal")
 public class Detail_animal {
     @Id
+    @Column(name = "IDDetail")
     private Integer iDDetail;
     private String appearance;
     private String habits;

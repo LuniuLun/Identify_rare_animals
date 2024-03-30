@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "animals")
 public class Animal {
     @Id
+    @Column(name = "IDAnimal")
     private Integer iDAnimal;
     private String animalName;
     private String animalScientificName;
