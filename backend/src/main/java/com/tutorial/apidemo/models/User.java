@@ -5,91 +5,45 @@ import java.util.Objects;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tblUser")
+@Table(name = "user")
 public class User {
     @Id
-    // @GeneratedValue(strategy = GenerationType.AUTO)
-    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1// increament by
-                                                                                                 // 1
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
-    private Long id;
-    // validate = constraint
-    @Column(nullable = false, unique = true, length = 300)
+    @Column(name = "IDUser")
+    private Integer iDUser;
+    @Column(name = "Username")
     private String userName;
+    @Column(name = "Password")
     private String userPassword;
+    @Column(name = "Email")
     private String userEmail;
-    private String name;
-    private String country;
-    private int totalRound;
-    private int totalWin;
-    private int totalLoss;
-    private int totalTie;
-    private String joiningDate;
-    private String story;
-    public String getJoiningDate() {
-        return joiningDate;
-    }
-
-    public void setJoiningDate(String joiningDate) {
-        this.joiningDate = joiningDate;
-    }
-
-    public String getStory() {
-        return story;
-    }
-
-    public void setStory(String story) {
-        this.story = story;
-    }
-
-    @Transient
-    private int percentWin;
-
-    public int getPercentWin() {
-        // return 0;
-        try {
-            if (totalRound != 0) {
-                return (totalWin * 100) / totalRound;
-            } else {
-                return 0;
-            }
-        } catch (Exception e) {
-            return 0; 
-        }
-    }
-
-    @Transient
-    private int countRank;
-
-    public int getCountRank() {
-        return 1000 + totalWin * 10 - totalLoss * 8 + totalTie * 2;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, userName, userPassword, userEmail, country, totalRound, totalWin, totalLoss, totalTie,
-                percentWin, countRank);
-    }
+    @Column(name = "DisplayName")
+    private String displayName;
+    @Column(name = "Bio")
+    private String bioUser;
+    @Column(name = "Avatar")
+    private String avatarUser;
+    @Column(name = "Role")
+    private int roleAcc;
 
     public User() {
-
+    }
+    public User(Integer iDUser, String userName, String userPassword, String userEmail, String displayName, String bioUser, String avatarUser, int roleAcc) {
+        this.iDUser = iDUser;
+        this.userName = userName;
+        this.userPassword = userPassword;
+        this.userEmail = userEmail;
+        this.displayName = displayName;
+        this.bioUser = bioUser;
+        this.avatarUser = avatarUser;
+        this.roleAcc = roleAcc;
     }
 
-    public String getName() {
-        return name;
+    public Integer getiDUser() {
+        return iDUser;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setiDUser(Integer iDUser) {
+        this.iDUser = iDUser;
     }
 
     public String getUserName() {
@@ -116,97 +70,62 @@ public class User {
         this.userEmail = userEmail;
     }
 
-    public String getCountry() {
-        return country;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    public int getTotalRound() {
-        return totalRound;
+    public String getBioUser() {
+        return bioUser;
     }
 
-    public void setTotalRound(int totalRound) {
-        this.totalRound = totalRound;
+    public void setBioUser(String bioUser) {
+        this.bioUser = bioUser;
     }
 
-    public int getTotalWin() {
-        return totalWin;
+    public String getAvatarUser() {
+        return avatarUser;
     }
 
-    public void setTotalWin(int totalWin) {
-        this.totalWin = totalWin;
+    public void setAvatarUser(String avatarUser) {
+        this.avatarUser = avatarUser;
     }
 
-    public int getTotalLoss() {
-        return totalLoss;
+    public int getRoleAcc() {
+        return roleAcc;
     }
 
-    public void setTotalLoss(int totalLoss) {
-        this.totalLoss = totalLoss;
+    public void setRoleAcc(int roleAcc) {
+        this.roleAcc = roleAcc;
     }
 
-    public int getTotalTie() {
-        return totalTie;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return roleAcc == user.roleAcc && Objects.equals(iDUser, user.iDUser) && Objects.equals(userName, user.userName) && Objects.equals(userPassword, user.userPassword) && Objects.equals(userEmail, user.userEmail) && Objects.equals(displayName, user.displayName) && Objects.equals(bioUser, user.bioUser) && Objects.equals(avatarUser, user.avatarUser);
     }
 
-    public void setTotalTie(int totalTie) {
-        this.totalTie = totalTie;
+    @Override
+    public int hashCode() {
+        return Objects.hash(iDUser, userName, userPassword, userEmail, displayName, bioUser, avatarUser, roleAcc);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "iDUser=" + iDUser +
                 ", userName='" + userName + '\'' +
                 ", userPassword='" + userPassword + '\'' +
-                ", name='" + name + '\'' +
                 ", userEmail='" + userEmail + '\'' +
-                ", country='" + country + '\'' +
-                ", totalRound=" + totalRound +
-                ", totalWin=" + totalWin +
-                ", totalLoss=" + totalLoss +
-                ", totalTie=" + totalTie +
-                ", joiningDate='" + joiningDate + '\'' +
-                ", story='" + story + '\'' +
-                ", percentWin=" + percentWin +
-                ", countRank=" + countRank +
+                ", displayName='" + displayName + '\'' +
+                ", bioUser='" + bioUser + '\'' +
+                ", avatarUser='" + avatarUser + '\'' +
+                ", roleAcc=" + roleAcc +
                 '}';
     }
-
-    public User(String userName, String userPassword, String name, String userEmail, String country, int totalRound, int totalWin,
-            int totalLoss, int totalTie, int percentWin, int countRank, String joiningDate, String story) {
-        this.userName = userName;
-        this.userPassword = userPassword;
-        this.name = name;
-        this.userEmail = userEmail;
-        this.country = country;
-        this.totalRound = totalRound;
-        this.totalWin = totalWin;
-        this.totalLoss = totalLoss;
-        this.totalTie = totalTie;
-        this.percentWin = percentWin;
-        this.countRank = countRank;
-        this.joiningDate = joiningDate;
-        this.story = story;
-    }
-
-    public User(String userName, String userPassword, String name, String userEmail, String country, int totalRound, int totalWin, int totalLoss, int totalTie, String joiningDate, String story) {
-        this.userName = userName;
-        this.userPassword = userPassword;
-        this.name = name;
-        this.userEmail = userEmail;
-        this.country = country;
-        this.totalRound = totalRound;
-        this.totalWin = totalWin;
-        this.totalLoss = totalLoss;
-        this.totalTie = totalTie;
-        this.joiningDate = joiningDate;
-        this.story = story;
-    }
-
-
-
 }

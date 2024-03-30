@@ -18,12 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tutorial.apidemo.models.User;
 import com.tutorial.apidemo.repositories.UserRepository;
 import com.tutorial.apidemo.models.ResponseObject;
-import com.tutorial.apidemo.models.TemporaryUser;
 
 @RestController
 @RequestMapping(path = "api/v1/users")
 //@CrossOrigin(origins = "http://127.0.0.1:5500")
-@CrossOrigin(origins = "http://127.0.0.1:5173")
+@CrossOrigin(origins = "http://localhost:3000/")
 public class UserController {
     @Autowired
     private UserRepository repository;
@@ -34,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<ResponseObject> findById(@PathVariable Long id) {
+    ResponseEntity<ResponseObject> findById(@PathVariable Integer id) {
         Optional<User> foundUser = repository.findById(id);
         return foundUser.isPresent() ? ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("ok", "Query user successfully", foundUser))
@@ -43,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping("/checkLogin")
-    ResponseEntity<ResponseObject> checkLogin(@RequestBody TemporaryUser newUser) {
+    ResponseEntity<ResponseObject> checkLogin(@RequestBody User newUser) {
         List<User> foundUser;
         System.out.println(newUser.getUserName() + newUser.getUserPassword());
         if(newUser.getUserName() == null) {
@@ -76,13 +75,11 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<ResponseObject> updateUser(@RequestBody TemporaryUser newUser,
-            @PathVariable Long id) {
+    ResponseEntity<ResponseObject> updateUser(@RequestBody User newUser,
+            @PathVariable Integer id) {
         Optional<Object> updateUser = repository.findById(id)
                 .map(user -> {
-                    user.setName(newUser.getName());
-                    user.setCountry(newUser.getCountry());
-                    user.setStory(newUser.getStory());
+                    user.setDisplayName(newUser.getDisplayName());
                     return repository.save(user);
                 });
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -90,7 +87,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<ResponseObject> deleteUser(@PathVariable Long id) {
+    ResponseEntity<ResponseObject> deleteUser(@PathVariable Integer id) {
         boolean exist = repository.existsById(id);
         if (exist) {
             repository.deleteById(id);

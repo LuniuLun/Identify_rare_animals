@@ -2,7 +2,11 @@ import classNames from "classnames/bind";
 import styles from "./Profile.module.scss";
 import UploadFileComponent from "../../components/FileUpload";
 const cx = classNames.bind(styles);
-
+const userInfo = sessionStorage.getItem("userInfo");
+const username = sessionStorage.getItem("userName");
+const displayname = sessionStorage.getItem("displayName");
+const email = sessionStorage.getItem("userEmail");
+const bio = sessionStorage.getItem("userBio");
 function Profile() {
     return (
         <div className={cx("wrapper")}>
@@ -32,14 +36,14 @@ function Profile() {
                             This is the username you will use to log in, and other users can use to identify you on
                             iNaturalist
                         </div>
-                        <input value="ducvan" />
+                        <input value={username} />
                     </div>
                     <div className={cx("item")}>
                         <label>Email</label>
                         <div className={cx("discription")}>
                             Your email is not shared with other users on iNaturalist
                         </div>
-                        <input value="nguyenducvan260903@gmail.com" />
+                        <input value={email} />
                     </div>
                     {/* <div className={('item')}>
                         <label>Change password</label>
@@ -53,12 +57,12 @@ function Profile() {
                         <div className={cx("discription")}>
                             This is the name that will be displayed on your profile as well as for copyright attribution
                         </div>
-                        <input value="Đức Vấn" />
+                        <input value={displayname} />
                     </div>
                     <div className={cx("item")}>
                         <label>Bio</label>
                         <div className={cx("discription")}>Tell other users on iNaturalist about yourself!</div>
-                        <textarea></textarea>
+                        <textarea value={bio}> </textarea>
                     </div>
                 </div>
                 <button className={cx("btn_saveSetting")}>SAVE SETTING</button>

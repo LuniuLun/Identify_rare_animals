@@ -34,11 +34,11 @@ function Login({ setLoginStatus }) {
                 warningFillInforRef.current.style.display = "none";
             }
             const requestData = {
-                username: username,
-                password: password,
+                userName: username,
+                userPassword: password,
             };
             axios
-                .post("http://127.0.0.1:5000/login", requestData, {
+                .post("http://127.0.0.1:8080/api/v1/users/checkLogin", requestData, {
                     headers: {
                         Accept: "application/json",
                         "Content-Type": "application/json",
@@ -46,10 +46,17 @@ function Login({ setLoginStatus }) {
                 })
                 .then((res) => {
                     if (res.status === 200) {
-                        console.log(res);
+                        // console.log(res.data);
+                        // console.log(res.data.data[0].iDUser);
                         if (res.data !== null) {
-                            sessionStorage.setItem("userID", res.data.id);
-                            if (res.data.id === 1) {
+                            sessionStorage.setItem("userInfor", res.data.data[0]);
+                            sessionStorage.setItem("userName", res.data.data[0].userName);
+                            sessionStorage.setItem("userEmail", res.data.data[0].userEmail);
+                            sessionStorage.setItem("displayName", res.data.data[0].displayName);
+                            sessionStorage.setItem("bioUser", res.data.data[0].bioUser);
+                            sessionStorage.setItem("userID", res.data.data[0].iDUser);
+                            sessionStorage.setItem("roleAcc", res.data.data[0].roleAcc);
+                            if (res.data.data[0].roleAcc === 0) {
                                 window.location.href = "http://localhost:3000/admin";
                             } else {
                                 window.location.href = "http://localhost:3000";
