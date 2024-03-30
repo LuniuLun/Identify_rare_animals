@@ -1,8 +1,6 @@
 package com.tutorial.apidemo.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
@@ -10,18 +8,28 @@ import java.util.Date;
 @Table(name ="results")
 public class Results {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer iDResult;
     private Integer iDUser;
     private String imageLink;
-    private String predictedAnimal;
+    private Integer predictedAnimal;
     private Float predictedAccuracy;
     private Date date;
+    @Transient
+    private String animalScientificName;
 
+    public String getAnimalScientificName() {
+        return animalScientificName;
+    }
+
+    public void setAnimalScientificName(String animalScientificName) {
+        this.animalScientificName = animalScientificName;
+    }
 
     public Results() {
     }
 
-    public Results(Integer iDResult, Integer iDUser, String imageLink, String predictedAnimal, Float predictedAccuracy, Date date) {
+    public Results(Integer iDResult, Integer iDUser, String imageLink, Integer predictedAnimal, Float predictedAccuracy, Date date) {
         this.iDResult = iDResult;
         this.iDUser = iDUser;
         this.imageLink = imageLink;
@@ -54,11 +62,11 @@ public class Results {
         this.imageLink = imageLink;
     }
 
-    public String getPredictedAnimal() {
+    public Integer getPredictedAnimal() {
         return predictedAnimal;
     }
 
-    public void setPredictedAnimal(String predictedAnimal) {
+    public void setPredictedAnimal(Integer predictedAnimal) {
         this.predictedAnimal = predictedAnimal;
     }
 
