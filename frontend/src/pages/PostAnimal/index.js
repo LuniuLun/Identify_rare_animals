@@ -74,6 +74,7 @@ function PostAnimal() {
                     focused: false,
                     idUser: idUser,
                     speciesName: "Predicting species name...",
+                    scientificName: "",
                     files: file,
                     location: "",
                     dateTime: "",
@@ -87,8 +88,9 @@ function PostAnimal() {
             // Xử lý nhận diện loài cho từng ảnh
             for (const item of newAnimalObjects) {
                 try {
-                    const speciesName = await recognize(item.files);
+                    const [speciesName, scientificName] = await recognize(item.files);
                     item.speciesName = speciesName;
+                    item.scientificName = scientificName;
                 } catch (error) {
                     console.error("Error recognizing image:", error);
                 }
@@ -112,15 +114,21 @@ function PostAnimal() {
                     "Content-Type": "multipart/form-data",
                 },
             });
-
+    
             if (response.status === 200) {
-                return response.data.predicted_label.predicted_label;
+                try {
+                    const res = await axios.get("http://localhost:8080/api/v1/animals/" + response.data.predicted_label.predicted_label);
+                    return [res.data.data.animalName, response.data.predicted_label.predicted_label];
+                } catch (error) {
+                    console.error(error);
+                    return ["Error fetching animal data", ""];
+                }
             } else {
                 throw new Error("Failed to recognize image");
             }
         } catch (error) {
             console.error("Error recognizing image:", error);
-            return "Not recognized";
+            return ["Not recognized", ""];
         }
     }
 

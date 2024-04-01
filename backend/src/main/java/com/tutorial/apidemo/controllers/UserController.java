@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(path = "api/v1/users")
-// @CrossOrigin(origins = "http://127.0.0.1:5500")
 @CrossOrigin(origins = "http://localhost:3000/")
 public class UserController {
     @Autowired
@@ -62,7 +61,7 @@ public class UserController {
             foundUser = userRepository.findByUserNameAndUserPassword(newUser.getUserName().trim(),
                     newUser.getUserPassword().trim());
         }
-        ;
+
         if (foundUser != null) {
             System.out.println(foundUser);
             return ResponseEntity.status(HttpStatus.OK).body(
@@ -158,12 +157,13 @@ public class UserController {
     public ResponseEntity<ResponseObject> postAnimal(@RequestBody AnimalPost[] requestBody) {
         for (AnimalPost obj : requestBody) {
             System.out.println(obj.getFiles());
-            Animal animal = animalRepository.findByAnimalScientificName(obj.getSpeciesName());
+            Animal animal = animalRepository.findByAnimalScientificName(obj.getScientificName());
             // Lưu đối tượng User_animal vào cơ sở dữ liệu
-            Integer iDUserAnimal = user_animalRepository.saveUserAnimalAndReturnID(obj.getIdUser(),
+            user_animalRepository.saveUserAnimal(obj.getIdUser(),
                     animal.getiDAnimal(), obj.getDateTime(), obj.getLocation(), obj.getNote());
-            System.out.println(iDUserAnimal);
-            if(iDUserAnimal != null) {
+            Integer iDUserAnimal = user_animalRepository.getLastInsertedId();
+                    System.out.println(iDUserAnimal);
+            if (iDUserAnimal != null) {
                 for (String file : obj.getFiles()) {
                     // Tạo đối tượng User_album với iDUserAnimal và imageLink
                     User_album userAlbum = new User_album();
@@ -174,6 +174,7 @@ public class UserController {
             }
         }
         return ResponseEntity
-                .ok(new ResponseObject("Success", "Received, processed, saved, and linked animal objects", requestBody));
+                .ok(new ResponseObject("Success", "Received, processed, saved, and linked animal objects",
+                        requestBody));
     }
 }
