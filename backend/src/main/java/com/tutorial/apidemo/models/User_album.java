@@ -1,15 +1,19 @@
 package com.tutorial.apidemo.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name ="user")
+@Table(name ="user_album")
 public class User_album {
     @Id
+    @Column(name = "IDUserAlbum ")
     private Integer iDUserAlbum;
+    @Column(name = "IDUserAnimal ")
     private Integer iDUserAnimal;
+    @Column(name = "ImageLink")
     private String imageLink;
 
     public User_album() {

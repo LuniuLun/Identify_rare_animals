@@ -3,6 +3,7 @@ package com.tutorial.apidemo.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import java.util.Date;
 
@@ -14,9 +15,10 @@ public class User_animal {
     private Integer iDUser;
     private Integer iDAnimal;
     private Date date;
-    private String 	location;
+    private String location;
     private String note;
-
+    @Transient
+    private Animal animal;
 
     public User_animal() {
     }
@@ -76,5 +78,13 @@ public class User_animal {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public Animal getAnimal() {
+        return animal;
+    }
+
+    public void setAnimal(Animal animal) {
+        this.animal = animal;
     }
 }

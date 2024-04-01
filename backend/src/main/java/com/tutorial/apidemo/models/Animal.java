@@ -11,6 +11,8 @@ public class Animal {
     private String animalName;
     private String animalScientificName;
     private Integer iDDetail;
+    @Transient
+    private String animalAva;
 
     public Animal() {
     }
@@ -52,5 +54,13 @@ public class Animal {
 
     public void setiDDetail(Integer iDDetail) {
         this.iDDetail = iDDetail;
-    }    
+    }
+
+    public String getAnimalAva() {
+        return animalAva;
+    }
+
+    public void setAnimalAva(String animalAva) {
+        this.animalAva = animalAva;
+    }
 }
