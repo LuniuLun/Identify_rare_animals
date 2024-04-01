@@ -19,12 +19,9 @@ public class Detail_animal {
     private String wwfBiomes;
     private String levelOfDanger;
     private String theRemainAmount;
+    private String status;
 
-    public Detail_animal() {
-    }
-
-    public Detail_animal(Integer iDDetail, String appearance, String habits, String continents, String countries, String wwfBiomes, String levelOfDanger, String theRemainAmount) {
-        this.iDDetail = iDDetail;
+    public Detail_animal(String appearance, String habits, String continents, String countries, String wwfBiomes, String levelOfDanger, String theRemainAmount, String status) {
         this.appearance = appearance;
         this.habits = habits;
         this.continents = continents;
@@ -32,6 +29,10 @@ public class Detail_animal {
         this.wwfBiomes = wwfBiomes;
         this.levelOfDanger = levelOfDanger;
         this.theRemainAmount = theRemainAmount;
+        this.status = status;
+    }
+
+    public Detail_animal() {
     }
 
     public Integer getiDDetail() {
@@ -96,5 +97,13 @@ public class Detail_animal {
 
     public void setTheRemainAmount(String theRemainAmount) {
         this.theRemainAmount = theRemainAmount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

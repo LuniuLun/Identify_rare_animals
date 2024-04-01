@@ -9,6 +9,7 @@ public class Animal {
     @Column(name = "IDAnimal")
     private Integer iDAnimal;
     private String animalName;
+    @Column(name = "AnimalScientificName")
     private String animalScientificName;
     private Integer iDDetail;
     @Transient

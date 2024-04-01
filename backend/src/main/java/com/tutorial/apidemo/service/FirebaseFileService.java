@@ -13,9 +13,10 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Service
-public class FirebaseFileService {
+public class FirebaseFileService implements IStorageService {
 
     private Storage storage;
 
@@ -31,7 +32,8 @@ public class FirebaseFileService {
         }
     }
 
-    public String saveTest(MultipartFile file) {
+    @Override
+    public String storeFile(MultipartFile file) {
         try {
             // Kiểm tra loại file trước khi tải lên
             if (!isValidFileType(file)) {
@@ -68,11 +70,26 @@ public class FirebaseFileService {
         }
     }
 
+    @Override
+    public byte[] readFileContent(String fileName) {
+        // Không xử lý việc đọc nội dung file trong ví dụ này
+        // Nếu cần implement, thì cần thay đổi
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
+    public void deleteAllFiles() {
+        // Không xử lý việc xóa tất cả các file trong ví dụ này
+        // Nếu cần implement, thì cần thay đổi
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
     private boolean isValidFileType(MultipartFile file) {
         // Thực hiện kiểm tra loại file ở đây (ví dụ: kiểm tra đuôi mở rộng)
         // Trong ví dụ này, mọi loại file được chấp nhận
         return true;
     }
+
     private String generateFileName(String originalFileName) {
         return UUID.randomUUID().toString() + "." + getExtension(originalFileName);
     }

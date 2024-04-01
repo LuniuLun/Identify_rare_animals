@@ -73,16 +73,16 @@ public class ImageStorageService implements IStorageService{
         }
     }
 
-    @Override
-    public Stream<Path> loadAll() {
-        try{
-            return Files.walk(this.storageFolder, 1)
-                    .filter(path -> !path.equals(this.storageFolder))
-                    .map(this.storageFolder::relativize);
-        }catch(IOException exception) {
-            throw new RuntimeException("Failed to load stored files ", exception);
-        }
-    }
+//    @Override
+//    public Stream<Path> loadAll() {
+//        try{
+//            return Files.walk(this.storageFolder, 1)
+//                    .filter(path -> !path.equals(this.storageFolder))
+//                    .map(this.storageFolder::relativize);
+//        }catch(IOException exception) {
+//            throw new RuntimeException("Failed to load stored files ", exception);
+//        }
+//    }
 
     @Override
     public byte[] readFileContent(String fileName) {

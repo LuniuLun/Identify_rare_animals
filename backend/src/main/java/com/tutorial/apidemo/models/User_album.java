@@ -1,5 +1,6 @@
 package com.tutorial.apidemo.models;
 
+import jakarta.persistence.*;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,10 +10,13 @@ import jakarta.persistence.Table;
 @Table(name ="user_album")
 public class User_album {
     @Id
-    @Column(name = "IDUserAlbum ")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "IDUserAlbum")
     private Integer iDUserAlbum;
-    @Column(name = "IDUserAnimal ")
+
+    @Column(name = "IDUserAnimal")
     private Integer iDUserAnimal;
+
     @Column(name = "ImageLink")
     private String imageLink;
 
