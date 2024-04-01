@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 import java.util.Date;
 public interface User_animalRepository extends JpaRepository<User_animal, Long> {
     @Transactional
@@ -13,4 +14,7 @@ public interface User_animalRepository extends JpaRepository<User_animal, Long> 
     void saveUserAnimal(@Param("idUser") Integer idUser, @Param("iDAnimal") Integer iDAnimal, @Param("date") Date date, @Param("location") String location, @Param("note") String note);
     @Query(value = "SELECT LAST_INSERT_ID() AS IDUserAnimal", nativeQuery = true)
     Integer getLastInsertedId();
+
+
+    List<User_animal> findByiDUser(Integer iDUser);
 }

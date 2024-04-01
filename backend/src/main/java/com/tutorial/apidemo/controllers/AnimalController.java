@@ -22,20 +22,28 @@ public class AnimalController {
     @Autowired
     private Detail_animalRepository detail_animalRepository;
     @Autowired
-    private Animal_albumRepository animal_albumRepositoryRepository;
+    private Animal_albumRepository animal_albumRepository;
 
     @GetMapping("")
     public List<Animal> getAllAnimals() {
+        List<Animal> foundedAnimal = repository.findAll();
+        for(Animal animal: foundedAnimal) {
+            List<Animal_album> animalAlbum = animal_albumRepository.findByiDAnimal(animal.getiDAnimal());
+            if(!animalAlbum.isEmpty()) {
+                animal.setAnimalAva(animalAlbum.get(0).getImageLink());
+            }
+        }
         return repository.findAll();
     }
 
     @GetMapping("/{animalScientificName}")
     public ResponseEntity<ResponseObject> findById(@PathVariable String animalScientificName) {
         Animal foundedAnimal = repository.findByAnimalScientificName(animalScientificName);
-        return foundedAnimal != null ? ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("ok", "Query user successfully", foundedAnimal))
+        return foundedAnimal != null
+                ? ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("ok", "Query user successfully", foundedAnimal))
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ResponseObject("failed", "Cannot find user with AnimalScientificName = " + animalScientificName, ""));
+                    new ResponseObject("failed", "Cannot find user with AnimalScientificName = " + animalScientificName, ""));
     }
     @GetMapping("/details")
     public List<Detail_animal> getAllDetailAnimals() { return detail_animalRepository.findAll(); }
@@ -44,7 +52,7 @@ public class AnimalController {
         Detail_animal foundDetail = detail_animalRepository.findByIDDetail(iDDetail);
         return foundDetail;
     }
-    @GetMapping("detailbyidanimal/{IDAnimal}")
+    @GetMapping("/detailbyidanimal/{IDAnimal}")
     public Detail_animal getDetailAnimalByIDAnimal(@PathVariable Integer IDAnimal) {
         Animal foundAnimal = repository.findByIDAnimal(IDAnimal);
         Detail_animal foundDetail = null;
@@ -53,14 +61,14 @@ public class AnimalController {
         }
         return foundDetail;
     }
-    @GetMapping("detailbyanimalscientificname/{animalScientificName}")
+    @GetMapping("/detailbyanimalscientificname/{animalScientificName}")
     public Detail_animal getDetailAnimalByAnimalScientificName(@PathVariable String animalScientificName) {
         Animal foundAnimal = repository.findByAnimalScientificName(animalScientificName);
         Detail_animal foundDetail = null;
         foundDetail = detail_animalRepository.findByIDDetail(foundAnimal.getiDDetail());
         return foundDetail;
     }
-    @PutMapping("editdetail/{IDAnimal}")
+    @PutMapping("/editdetail/{IDAnimal}")
     public ResponseEntity<ResponseObject> editDetailAnimal(@RequestBody Detail_animal newDetail, @PathVariable Integer IDAnimal) {
         Detail_animal updateDetail = getDetailAnimalByIDAnimal(IDAnimal);
         if(updateDetail != null) {
@@ -82,10 +90,20 @@ public class AnimalController {
             );
         }
     }
-    @GetMapping("album/{iDAnimal}")
+    @GetMapping("/album/{iDAnimal}")
     public List<Animal_album> getAlbumByIDAnimal(@PathVariable Integer iDAnimal) {
-        List<Animal_album> foundAlbum = animal_albumRepositoryRepository.findByiDAnimal(iDAnimal);
+        List<Animal_album> foundAlbum = animal_albumRepository.findByiDAnimal(iDAnimal);
         return foundAlbum;
     }
-
+    @GetMapping("/search")
+    public List<Animal> searchAnimal(@RequestBody String search) {
+        List<Animal> foundAnimal = repository.findByKeywordIgnoreCase(search.toLowerCase());
+        for(Animal animal: foundAnimal) {
+            List<Animal_album> animalAlbum = animal_albumRepository.findByiDAnimal(animal.getiDAnimal());
+            if(!animalAlbum.isEmpty()) {
+                animal.setAnimalAva(animalAlbum.get(0).getImageLink());
+            }
+        }
+        return foundAnimal;
+    }
 }

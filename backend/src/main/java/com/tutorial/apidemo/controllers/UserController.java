@@ -1,23 +1,27 @@
 package com.tutorial.apidemo.controllers;
 
-import java.io.IOException;
-import java.security.PrivateKey;
-import java.util.*;
-
-import aj.org.objectweb.asm.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutorial.apidemo.models.*;
-import com.tutorial.apidemo.repositories.*;
-import com.tutorial.apidemo.service.FirebaseFileService;
-import com.tutorial.apidemo.service.IStorageService;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.tutorial.apidemo.models.User;
+import com.tutorial.apidemo.models.User_album;
+import com.tutorial.apidemo.models.User_animal;
+import com.tutorial.apidemo.repositories.AnimalRepository;
+import com.tutorial.apidemo.repositories.ResultsRepository;
+import com.tutorial.apidemo.repositories.UserRepository;
+import com.tutorial.apidemo.repositories.User_albumRepository;
+import com.tutorial.apidemo.repositories.User_animalRepository;
+import com.tutorial.apidemo.models.Animal;
+import com.tutorial.apidemo.models.AnimalPost;
+import com.tutorial.apidemo.models.ResponseObject;
+import com.tutorial.apidemo.models.Results;
 
 @RestController
 @RequestMapping(path = "api/v1/users")
@@ -33,8 +37,6 @@ public class UserController {
     private User_animalRepository user_animalRepository;
     @Autowired
     private User_albumRepository user_albumRepository;
-
-    private FirebaseFileService storageService;
 
     @GetMapping("")
     List<User> getAllUsers() {
@@ -61,7 +63,7 @@ public class UserController {
             foundUser = userRepository.findByUserNameAndUserPassword(newUser.getUserName().trim(),
                     newUser.getUserPassword().trim());
         }
-
+;
         if (foundUser != null) {
             System.out.println(foundUser);
             return ResponseEntity.status(HttpStatus.OK).body(
@@ -107,7 +109,7 @@ public class UserController {
                 new ResponseObject("failed", "Cannot find user to delete", ""));
     }
 
-    @GetMapping("/user/{username}")
+    @GetMapping("/{username}")
     public ResponseEntity<ResponseObject> getUserByUsername(@RequestBody String username) {
         User foundUser = userRepository.findByUserName(username);
         return foundUser != null ? ResponseEntity.status(HttpStatus.OK).body(
@@ -148,11 +150,53 @@ public class UserController {
         if (exist) {
             resultsRepository.deleteById(Long.valueOf(iDResult));
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("oke", "Delete successfully", iDResult));
+                    new ResponseObject("oke", "Delete successfully", iDResult)
+            );
         }
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("fail", "This id does not exist", iDResult)
+        );
     }
-
+    @GetMapping("/animal")
+    public List<User_animal> getAllUser_animal() {
+        List<User_animal> found = user_animalRepository.findAll();
+        for (User_animal userAnimal : found) {
+            Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
+            if(animal != null) {
+                userAnimal.setAnimal(animal);
+                List<User_album> foundAlbum = user_albumRepository.findByiDUserAnimal(userAnimal.getiDUserAnimal());
+                if (!foundAlbum.isEmpty()) {
+                    userAnimal.getAnimal().setAnimalAva(foundAlbum.get(0).getImageLink());
+                }
+            }
+        }
+        return found;
+    }
+    @GetMapping("/album")
+    public ResponseEntity<ResponseObject> getAllUserAlbum() {
+        List<User_album> found = user_albumRepository.findAll();
+        return found != null
+                ? ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("ok", "Query user successfully", found))
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ResponseObject("failed", "Cannot find", ""));
+    }
+    @GetMapping("/animal/{iDUser}")
+    public List<User_animal> getAllUser_animalByiDUser(@PathVariable Integer iDUser) {
+        List<User_animal> found = user_animalRepository.findByiDUser(iDUser);
+        for (User_animal userAnimal : found) {
+            Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
+            if(animal != null) {
+                userAnimal.setAnimal(animal);
+                List<User_album> foundAlbum = user_albumRepository.findByiDUserAnimal(userAnimal.getiDUserAnimal());
+                if (!foundAlbum.isEmpty()) {
+                    userAnimal.getAnimal().setAnimalAva(foundAlbum.get(0).getImageLink());
+                }
+            }
+        }
+        return found;
+    }
+    
     @PostMapping("/postAnimal")
     public ResponseEntity<ResponseObject> postAnimal(@RequestBody AnimalPost[] requestBody) {
         for (AnimalPost obj : requestBody) {
