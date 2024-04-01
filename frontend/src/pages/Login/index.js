@@ -94,11 +94,11 @@ function Login({ setLoginStatus }) {
                             </div>
 
                             <p ref={warningFillInforRef} className={cx("danger-infor")}>
-                                Hãy điền đầy đủ thông tin.
+                                Please fill all information.
                             </p>
 
                             <p ref={warningFailedLoginRef} className={cx("danger-infor-login")}>
-                                Rất tiếc, mật khẩu của bạn không đúng. Vui lòng kiểm tra lại mật khẩu.
+                                Your password is incorrect. Please check your password again.
                             </p>
                             <Link className={cx("link-forgetPassword")}>Forget your password?</Link>
                             <button className={cx("btn_login")} onClick={checkLogin}>

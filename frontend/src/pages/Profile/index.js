@@ -32,7 +32,7 @@ function Profile() {
                             This is the username you will use to log in, and other users can use to identify you on
                             iNaturalist
                         </div>
-                        <input value="ducvan" />
+                        <input value="" />
                     </div>
                     <div className={cx("item")}>
                         <label>Email</label>
