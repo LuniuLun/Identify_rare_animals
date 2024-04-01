@@ -13,9 +13,12 @@ function Header() {
     const [isLogin, setIsLogin] = useState(false);
     const [showListOptionsUser, setShowListOptionsUser] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [speciesName, setSpeciesName] = useState("");
+    const [animalName, setAnimalName] = useState("");
+    const [scientificName, setScientificName] = useState("");
     const [accurary, setAccurary] = useState("");
     const [completedRecognization, setCompletedRecognization] = useState(false);
+    const [detailAnimal, setDetailAnimal] = useState(null);
+
     useEffect(() => {
         if (sessionStorage.getItem("userID") !== null) {
             setIsLogin(true);
@@ -40,8 +43,31 @@ function Header() {
                 console.log(res);
                 if (res.status === 200) {
                     setCompletedRecognization(true);
-                    setSpeciesName(res.data.predicted_label.predicted_label);
+                    setScientificName(res.data.predicted_label.predicted_label);
                     setAccurary(res.data.predicted_label.confidence);
+
+                    axios
+                        .get("http://localhost:8080/api/v1/animals/" + res.data.predicted_label.predicted_label)
+                        .then((res) => {
+                            setAnimalName(res.data.data[0].animalName);
+                            console.log(res.data);
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                        });
+
+                    axios
+                        .get(
+                            "http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" +
+                                res.data.predicted_label.predicted_labe
+                        )
+                        .then((res) => {
+                            console.log(res.data);
+                            setDetailAnimal(res.data);
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                        });
                 } else {
                     throw new Error("Failed to recognization animal.");
                 }
@@ -92,11 +118,11 @@ function Header() {
                 </div>
             </div>
             <div className={cx("left-item")}>
+                <Link to={"#"} className={cx("btn_addAnimal")} onClick={openModal}>
+                    Recognize
+                </Link>
                 {isLogin === true ? (
                     <Fragment>
-                        <Link to={"#"} className={cx("btn_addAnimal")} onClick={openModal}>
-                            Recognization
-                        </Link>
                         <Link to={"/post_animal"} className={cx("btn_addAnimal")}>
                             Upload
                         </Link>
@@ -153,17 +179,21 @@ function Header() {
                                             <input className={cx("accurary")} value={accurary} />
                                         </div>
                                         <div className={cx("list-names")}>
-                                            <div className={cx("name")}>
+                                            {/* <div className={cx("name")}>
                                                 <label>Species Name: </label>
                                                 <input className={cx("species-name")} value={speciesName} readOnly />
-                                            </div>
+                                            </div> */}
                                             <div className={cx("name")}>
                                                 <label>Scientific Name: </label>
-                                                <input className={cx("scientific-name")} value={speciesName} readOnly />
+                                                <input
+                                                    className={cx("scientific-name")}
+                                                    value={scientificName}
+                                                    readOnly
+                                                />
                                             </div>
                                             <div className={cx("name")}>
                                                 <label>Animal: </label>
-                                                <input className={cx("animal")} value={speciesName} readOnly />
+                                                <input className={cx("animal")} value={animalName} readOnly />
                                             </div>
                                         </div>
                                         <div className={cx("regular-images")}>
@@ -199,39 +229,29 @@ function Header() {
                                         <span>Description </span>
                                         <div className={cx("detail-information")}>
                                             <label>Appearance: </label>
-                                            <span className={cx("apearance")}>
-                                                The sexes of Green peafowl are quite similar in appearance, especially
-                                                in the wild. Both males and females have long upper-tail coverts (which
-                                                cover the tail itself, underneath). In the male, this extends up to 2 m
-                                                (6.6 ft) and is decorated with eyespots; in the female, the coverts are
-                                                green and much shorter, just covering the tail....
-                                            </span>
+                                            <span className={cx("apearance")}>{detailAnimal.appearance}</span>
                                         </div>
                                         <div className={cx("detail-information")}>
                                             <label>Habits and Lifestyle: </label>
-                                            <span className={cx("habits")}>
-                                                Green peafowl are forest birds that usually spend time on or near the
-                                                ground in tall grasses and sedges. At night family units roost in trees
-                                                at a height of 10-15 m (33-49 ft)....
-                                            </span>
+                                            <span className={cx("habits")}>{detailAnimal.habits}</span>
                                         </div>
                                     </div>
                                     <div className={cx("information")}>
                                         <span>Distribution </span>
                                         <div className={cx("short-detail-information")}>
                                             <label>Continents: </label>
-                                            <span className={cx("continents")}>ASIA</span>
+                                            <span className={cx("continents")}>{detailAnimal.continents}</span>
                                         </div>
                                         <div className={cx("short-detail-information")}>
                                             <label>Coutries: </label>
                                             <span className={cx("coutries")}>
-                                                Cambodia, China, Indonesia, Laos, Myanmar, Thailand, Viet Nam
+                                                {detailAnimal.countries}
                                             </span>
                                         </div>
                                         <div className={cx("short-detail-information")}>
                                             <label>WWF Biomes: </label>
                                             <span className={cx("wwf-biomes")}>
-                                                Tropical dry forest, Tropical moist forests, Tropical savanna
+                                                {detailAnimal.wwfBiomes}
                                             </span>
                                         </div>
                                     </div>
@@ -269,18 +289,18 @@ function Header() {
                                                     </li>
                                                 </ul>
                                                 <ul className={cx("list-status")}>
-                                                    <li>EX</li>
-                                                    <li>EW</li>
-                                                    <li>CR</li>
-                                                    <li>EN</li>
-                                                    <li>VU</li>
-                                                    <li>NT</li>
-                                                    <li>LC</li>
+                                                    <li className={cx(detailAnimal.levelOfDanger === "Extinct" ? "level-danger" : "")}>EX</li>
+                                                    <li className={cx(detailAnimal.levelOfDanger === "Extinct in the Wild" ? "level-danger" : "")}>EW</li>
+                                                    <li className={cx(detailAnimal.levelOfDanger === "Critically Endangered" ? "level-danger" : "")}>CR</li>
+                                                    <li className={cx(detailAnimal.levelOfDanger === "Endangered" ? "level-danger" : "")}>EN</li>
+                                                    <li className={cx(detailAnimal.levelOfDanger === "Vulnerable" ? "level-danger" : "")}>VU</li>
+                                                    <li className={cx(detailAnimal.levelOfDanger === "Near Threatened" ? "level-danger" : "")}>NT</li>
+                                                    <li className={cx(detailAnimal.levelOfDanger === "Least Concern" ? "level-danger" : "")}>LC</li>
                                                 </ul>
                                             </div>
                                             <div className={cx("left-quantity")}>
                                                 <label>The remaining amount: </label>
-                                                <input readOnly value={"123123"} />
+                                                <input readOnly value={detailAnimal.theRemainAmount} />
                                             </div>
                                         </div>
                                     </div>

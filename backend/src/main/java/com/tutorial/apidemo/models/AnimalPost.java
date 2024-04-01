@@ -7,6 +7,7 @@ import java.util.List;
 public class AnimalPost {
     private Integer idUser;
     private String speciesName;
+    private String scientificName;
     private List<String> files;
     private String location;
     private Date dateTime;
@@ -17,13 +18,22 @@ public class AnimalPost {
         // Khởi tạo không tham số
     }
 
-    public AnimalPost(Integer idUser, String speciesName, List<String> files, String location, Date dateTime, String note) {
+    public AnimalPost(Integer idUser, String speciesName, String scientificName, List<String> files, String location, Date dateTime, String note) {
         this.idUser = idUser;
         this.speciesName = speciesName;
         this.files = files;
         this.location = location;
         this.dateTime = dateTime;
         this.note = note;
+        this.scientificName = scientificName;
+    }
+
+    public String getScientificName() {
+        return scientificName;
+    }
+
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
     }
 
     // Getters and Setters
