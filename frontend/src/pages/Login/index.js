@@ -24,7 +24,6 @@ function Login({ setLoginStatus }) {
         if (showLoginForm === true) {
             wrapperRef.current.style.backgroundImage = "url(/img/background_login.png)";
         } else {
-            // Reset background image when showLoginForm is false
             wrapperRef.current.style.backgroundImage = "url(/img/background_register.png)";
         }
     }, [showLoginForm]);
@@ -46,29 +45,24 @@ function Login({ setLoginStatus }) {
                 })
                 .then((res) => {
                     if (res.status === 200) {
-                        // console.log(res.data);
-                        // console.log(res.data.data[0].iDUser);
+                        console.log(res.data);
+                        console.log(res.data.data.iDUser);
                         if (res.data !== null) {
-                            sessionStorage.setItem("userInfor", res.data.data[0]);
-                            sessionStorage.setItem("userName", res.data.data[0].userName);
-                            sessionStorage.setItem("userEmail", res.data.data[0].userEmail);
-                            sessionStorage.setItem("displayName", res.data.data[0].displayName);
-                            sessionStorage.setItem("bioUser", res.data.data[0].bioUser);
-                            sessionStorage.setItem("userID", res.data.data[0].iDUser);
-                            sessionStorage.setItem("roleAcc", res.data.data[0].roleAcc);
-                            if (res.data.data[0].roleAcc === 0) {
+                            sessionStorage.setItem("userID", res.data.data.iDUser);
+                            if (res.data.data.roleAcc === 0) {
                                 window.location.href = "http://localhost:3000/admin";
                             } else {
                                 window.location.href = "http://localhost:3000";
                             }
-                        } else {
-                            if (warningFailedLoginRef.current !== null) {
-                                warningFailedLoginRef.current.style.display = "block";
-                            }
                         }
+                    } else {
                     }
                 })
-                .catch(() => {});
+                .catch(() => {
+                    if (warningFailedLoginRef.current !== null) {
+                        warningFailedLoginRef.current.style.display = "block";
+                    }
+                });
         } else if (warningFillInforRef.current !== null && warningFailedLoginRef.current !== null) {
             console.log(username, password);
             warningFillInforRef.current.style.display = "block";
@@ -105,7 +99,7 @@ function Login({ setLoginStatus }) {
                             </p>
 
                             <p ref={warningFailedLoginRef} className={cx("danger-infor-login")}>
-                                Rất tiếc, mật khẩu của bạn không đúng. Vui lòng kiểm tra lại mật khẩu.
+                                Rất tiếc, tài khoản của bạn không đúng. Vui lòng kiểm tra lại tài khoản.
                             </p>
                             <Link className={cx("link-forgetPassword")}>Forget your password?</Link>
                             <button className={cx("btn_login")} onClick={checkLogin}>

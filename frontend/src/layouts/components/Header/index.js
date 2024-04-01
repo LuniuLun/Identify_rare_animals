@@ -75,7 +75,7 @@ function Header() {
                         <span>Explore</span>
                     </Link>
                     {isLogin === true ? (
-                        <Link className={cx("link")} to={"/"}>
+                        <Link className={cx("link")} to={"/your_observation"}>
                             <span>Your Observations</span>
                         </Link>
                     ) : (
