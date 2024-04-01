@@ -102,13 +102,16 @@ function DetailAnimal() {
                                 <p></p>
                                 <li>Threatened</li>
                                 <p></p>
-                                <li><p>Least</p><p>Concern</p></li>
+                                <li>
+                                    <p>Least</p>
+                                    <p>Concern</p>
+                                </li>
                             </ul>
                             <ul className={cx("list-status")}>
                                 <li>EX</li>
                                 <li>EW</li>
                                 <li>CR</li>
-                                <li>EN</li>
+                                <li className={cx("level-danger")}>EN</li>
                                 <li>VU</li>
                                 <li>NT</li>
                                 <li>LC</li>

@@ -27,7 +27,7 @@ function PostAnimal() {
     const [showWarning, setShowWarning] = useState(false);
     const [contentWarning, setContentWarning] = useState("");
     const [AnimalIndexesWithEmptyAttributes, setAnimalIndexesWithEmptyAttributes] = useState([]);
-
+    const idUser = sessionStorage.getItem("userID");
     useEffect(() => {
         if (animalObjects.length === 0) setIsHavingAnimalPost(false);
     }, [animalObjects]);
@@ -38,20 +38,14 @@ function PostAnimal() {
 
     const handleFileChange = async (event) => {
         if (event.target.files.length > 0) {
-            // setFocusedIndexes((previous) => {
-            //     if (Array.isArray(previous)) {
-            //         return previous.map((value) => value + 1);
-            //     } else {
-            //         return [];
-            //     }
-            // });
             const file = event.target.files[0];
             const newAnimalObject = {
                 index: animalObjects.length,
                 preview: URL.createObjectURL(file),
                 focused: false,
+                idUser: idUser,
                 speciesName: "Predicting species name...",
-                file: file,
+                files: file,
                 location: "",
                 dateTime: "",
                 note: "",
@@ -72,21 +66,16 @@ function PostAnimal() {
     } = useDropzone({
         accept: "image/*",
         onDrop: async (acceptedFiles) => {
-            // setFocusedIndexes((previous) => {
-            //     if (Array.isArray(previous)) {
-            //         return previous.map((value) => value + acceptedFiles.length);
-            //     } else {
-            //         return [];
-            //     }
-            // });
             const newAnimalObjects = [];
             for (const file of acceptedFiles) {
                 const newAnimalObject = {
                     index: animalObjects.length + newAnimalObjects.length,
                     preview: URL.createObjectURL(file),
                     focused: false,
+                    idUser: idUser,
                     speciesName: "Predicting species name...",
-                    file: file,
+                    scientificName: "",
+                    files: file,
                     location: "",
                     dateTime: "",
                     note: "",
@@ -99,8 +88,9 @@ function PostAnimal() {
             // Xử lý nhận diện loài cho từng ảnh
             for (const item of newAnimalObjects) {
                 try {
-                    const speciesName = await recognize(item.file);
+                    const [speciesName, scientificName] = await recognize(item.files);
                     item.speciesName = speciesName;
+                    item.scientificName = scientificName;
                 } catch (error) {
                     console.error("Error recognizing image:", error);
                 }
@@ -124,15 +114,21 @@ function PostAnimal() {
                     "Content-Type": "multipart/form-data",
                 },
             });
-
+    
             if (response.status === 200) {
-                return response.data.predicted_label.predicted_label;
+                try {
+                    const res = await axios.get("http://localhost:8080/api/v1/animals/" + response.data.predicted_label.predicted_label);
+                    return [res.data.data.animalName, response.data.predicted_label.predicted_label];
+                } catch (error) {
+                    console.error(error);
+                    return ["Error fetching animal data", ""];
+                }
             } else {
                 throw new Error("Failed to recognize image");
             }
         } catch (error) {
             console.error("Error recognizing image:", error);
-            return "Not recognized";
+            return ["Not recognized", ""];
         }
     }
 
@@ -203,7 +199,7 @@ function PostAnimal() {
             let selectedPreviews = [];
 
             tempAnimal.forEach((animal) => {
-                selectedFiles = [...selectedFiles, ...(Array.isArray(animal.file) ? animal.file : [animal.file])];
+                selectedFiles = [...selectedFiles, ...(Array.isArray(animal.files) ? animal.files : [animal.files])];
                 selectedPreviews = [
                     ...selectedPreviews,
                     ...(Array.isArray(animal.preview) ? animal.preview : [animal.preview]),
@@ -215,11 +211,12 @@ function PostAnimal() {
                 index: minIndexItem.index, // Sử dụng index bé nhất
                 preview: selectedPreviews, // Sử dụng mảng previews đã lấy
                 focused: false, // Giữ nguyên giá trị focused
+                idUser: minIndexItem.idUser,
                 speciesName: minIndexItem.speciesName, // Sử dụng speciesName của item có index bé nhất
-                file: selectedFiles, // Sử dụng mảng files đã lấy
-                location: "",
-                dateTime: "",
-                note: "",
+                files: selectedFiles, // Sử dụng mảng files đã lấy
+                location: minIndexItem.location,
+                dateTime: minIndexItem.dateTime,
+                note: minIndexItem.note,
             };
             setAnimalObjects((prevObject) => [...prevObject, newAnimalBox]);
         } else {
@@ -260,21 +257,93 @@ function PostAnimal() {
         setShowWarning(false);
     };
 
-    const handleSubmitPost = () => {
-        // Lọc ra các đối tượng có tất cả các thuộc tính rỗng
+    const uploadFile = async (file) => {
+        // Tạo một đối tượng FormData
+        let formData = new FormData();
+        formData.append("file", file);
+
+        // Gửi yêu cầu POST với FormData
+        return axios
+            .post("http://127.0.0.1:8080/api/images/upload", formData, {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    if (res.data !== null) {
+                        return res.data;
+                    } else {
+                        console.log("Response data is null");
+                        return null;
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                return null;
+            });
+    };
+
+    const handleSubmitPost = async () => {
+        // Lọc ra các đối tượng có tất cả các thuộc tính rỗng trừ note
         const emptyAttributesObj = animalObjects.filter((animalObj) =>
-            Object.values(animalObj).some((value) => value === "")
+            Object.entries(animalObj).some(([key, value]) => key !== "note" && value === "")
         );
         // Lấy ra mảng animalIndex của các đối tượng có thuộc tính rỗng
         const indexesEmptyAttributesObj = emptyAttributesObj.map((animalObj) => animalObj.index);
 
-        if (indexesEmptyAttributesObj === null) {
+        if (indexesEmptyAttributesObj.length === 0) {
             console.log("All fields are not empty");
+            const filteredAnimalObjects = animalObjects.map((animalObj) => {
+                const { index, preview, focused, ...rest } = animalObj;
+                return rest;
+            });
+            for (let item of filteredAnimalObjects) {
+                if (Array.isArray(item.files)) {
+                    for (let file of item.files) {
+                        const response = await uploadFile(file);
+                        if (response) {
+                            item.files = response;
+                            console.log(response);
+                        }
+                    }
+                } else {
+                    const response = await uploadFile(item.files);
+                    if (response) {
+                        item.files = [response];
+                    }
+                }
+            }
+
+            axios
+                .post("http://127.0.0.1:8080/api/v1/users/postAnimal", [...filteredAnimalObjects], {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then((res) => {
+                    if (res.status === 200) {
+                        window.location.href = "http://localhost:3000/your_observation";
+                        if (res.data !== null) {
+                            console.log(res.data);
+                        } else {
+                            console.log("Response data is null");
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+
+            console.log(filteredAnimalObjects);
         } else {
             setAnimalIndexesWithEmptyAttributes(indexesEmptyAttributesObj);
-            console.log(indexesEmptyAttributesObj);
             setShowWarning(true);
             setContentWarning("Please fill in all information!");
+            console.log(indexesEmptyAttributesObj);
         }
     };
 
@@ -313,6 +382,7 @@ function PostAnimal() {
                                 <button
                                     onClick={(e) => handleFormDetailClick(image.index, e)}
                                     index={image.index}
+                                    key={image.index}
                                     className={cx(
                                         "form-detail",
                                         focusedIndexes.includes(image.index) ? "focused" : "",
@@ -391,6 +461,7 @@ function PostAnimal() {
                                         <div className={cx("information")}>
                                             <FontAwesomeIcon icon={faCalendarDays} className={cx("icon")} />
                                             <input
+                                                type="date"
                                                 className={cx("date")}
                                                 onChange={(e) => {
                                                     animalObjects.map((item) => {

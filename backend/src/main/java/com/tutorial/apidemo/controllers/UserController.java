@@ -1,38 +1,41 @@
 package com.tutorial.apidemo.controllers;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.security.PrivateKey;
+import java.util.*;
+
+import aj.org.objectweb.asm.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tutorial.apidemo.models.*;
+import com.tutorial.apidemo.repositories.*;
+import com.tutorial.apidemo.service.FirebaseFileService;
+import com.tutorial.apidemo.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 
-import com.tutorial.apidemo.models.User;
-import com.tutorial.apidemo.repositories.AnimalRepository;
-import com.tutorial.apidemo.repositories.ResultsRepository;
-import com.tutorial.apidemo.repositories.UserRepository;
-import com.tutorial.apidemo.models.Animal;
-import com.tutorial.apidemo.models.ResponseObject;
-import com.tutorial.apidemo.models.Results;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(path = "api/v1/users")
-//@CrossOrigin(origins = "http://127.0.0.1:5500")
 @CrossOrigin(origins = "http://localhost:3000/")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private ResultsRepository resultsRepository;
     @Autowired
     private AnimalRepository animalRepository;
+    @Autowired
+    private User_animalRepository user_animalRepository;
+    @Autowired
+    private User_albumRepository user_albumRepository;
+
+    private FirebaseFileService storageService;
+
     @GetMapping("")
     List<User> getAllUsers() {
         return userRepository.findAll();
@@ -49,17 +52,17 @@ public class UserController {
 
     @PostMapping("/checkLogin")
     ResponseEntity<ResponseObject> checkLogin(@RequestBody User newUser) {
-        List<User> foundUser;
+        User foundUser;
         System.out.println(newUser.getUserName() + newUser.getUserPassword());
-        if(newUser.getUserName() == null) {
+        if (newUser.getUserName() == null) {
             foundUser = userRepository.findByUserEmailAndUserPassword(newUser.getUserEmail().trim(),
                     newUser.getUserPassword().trim());
-        }else {
+        } else {
             foundUser = userRepository.findByUserNameAndUserPassword(newUser.getUserName().trim(),
                     newUser.getUserPassword().trim());
         }
-;
-        if (!foundUser.isEmpty()) {
+
+        if (foundUser != null) {
             System.out.println(foundUser);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("ok", "Login successfully", foundUser));
@@ -71,8 +74,8 @@ public class UserController {
 
     @PostMapping("/insert")
     ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
-        List<User> foundUser = userRepository.findByUserName(newUser.getUserName().trim());
-        if (!foundUser.isEmpty()) {
+        User foundUser = userRepository.findByUserName(newUser.getUserName().trim());
+        if (foundUser != null) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
                     new ResponseObject("failed", "Username already taken", ""));
         }
@@ -104,20 +107,21 @@ public class UserController {
                 new ResponseObject("failed", "Cannot find user to delete", ""));
     }
 
-
     @GetMapping("/user/{username}")
     public ResponseEntity<ResponseObject> getUserByUsername(@RequestBody String username) {
-        User foundUser = userRepository.findByusername(username);
+        User foundUser = userRepository.findByUserName(username);
         return foundUser != null ? ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("ok", "Query user successfully", foundUser))
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ResponseObject("failed", "Cannot find username", username));
+                        new ResponseObject("failed", "Cannot find username", username));
     }
+
     @GetMapping("/result")
     public List<Results> getAllResults() {
         List<Results> listR = resultsRepository.findAll();
-        for(Results r : listR) {
-            r.setAnimalScientificName(animalRepository.findByIDAnimal(r.getPredictedAnimal()).getAnimalScientificName());
+        for (Results r : listR) {
+            r.setAnimalScientificName(
+                    animalRepository.findByIDAnimal(r.getPredictedAnimal()).getAnimalScientificName());
         }
         return listR;
     }
@@ -125,7 +129,7 @@ public class UserController {
     @PostMapping("/newresult")
     public ResponseEntity<ResponseObject> insertResult(@RequestBody Results newResult) {
         Animal foundAnimal = animalRepository.findByAnimalScientificName(newResult.getAnimalScientificName());
-        if(foundAnimal != null) {
+        if (foundAnimal != null) {
             newResult.setPredictedAnimal(foundAnimal.getiDAnimal());
             Date currentDate = new Date();
             Timestamp timestamp = new Timestamp(currentDate.getTime());
@@ -133,17 +137,44 @@ public class UserController {
             resultsRepository.save(newResult);
             return ResponseEntity.ok(new ResponseObject("Success", "Result inserted successfully", newResult));
         } else {
-            return ResponseEntity.ok(new ResponseObject("Fail", "Cannot find this animal", newResult.getAnimalScientificName()));
+            return ResponseEntity
+                    .ok(new ResponseObject("Fail", "Cannot find this animal", newResult.getAnimalScientificName()));
         }
     }
+
     @DeleteMapping("/deleteresult/{iDResult}")
     public ResponseEntity<ResponseObject> deleteResultByIDResult(@PathVariable Integer iDResult) {
         boolean exist = resultsRepository.existsById(Long.valueOf(iDResult));
-        if(exist) {
+        if (exist) {
             resultsRepository.deleteById(Long.valueOf(iDResult));
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("oke", "Delete successfully", iDResult)
-            );
+                    new ResponseObject("oke", "Delete successfully", iDResult));
         }
+        return null;
+    }
+
+    @PostMapping("/postAnimal")
+    public ResponseEntity<ResponseObject> postAnimal(@RequestBody AnimalPost[] requestBody) {
+        for (AnimalPost obj : requestBody) {
+            System.out.println(obj.getFiles());
+            Animal animal = animalRepository.findByAnimalScientificName(obj.getScientificName());
+            // Lưu đối tượng User_animal vào cơ sở dữ liệu
+            user_animalRepository.saveUserAnimal(obj.getIdUser(),
+                    animal.getiDAnimal(), obj.getDateTime(), obj.getLocation(), obj.getNote());
+            Integer iDUserAnimal = user_animalRepository.getLastInsertedId();
+                    System.out.println(iDUserAnimal);
+            if (iDUserAnimal != null) {
+                for (String file : obj.getFiles()) {
+                    // Tạo đối tượng User_album với iDUserAnimal và imageLink
+                    User_album userAlbum = new User_album();
+                    userAlbum.setiDUserAnimal(iDUserAnimal);
+                    userAlbum.setImageLink(file);
+                    user_albumRepository.save(userAlbum);
+                }
+            }
+        }
+        return ResponseEntity
+                .ok(new ResponseObject("Success", "Received, processed, saved, and linked animal objects",
+                        requestBody));
     }
 }

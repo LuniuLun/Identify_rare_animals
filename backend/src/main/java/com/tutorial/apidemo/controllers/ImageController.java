@@ -5,10 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/api/images")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ImageController {
 
     private final FirebaseFileService storageService;
@@ -20,7 +19,7 @@ public class ImageController {
 
     @PostMapping("/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file) {
-        String imageUrl = storageService.saveTest(file);
-        return "Uploaded Successfully. Image URL: " + imageUrl;
+        String imageUrl = storageService.storeFile(file);
+        return imageUrl;
     }
 }

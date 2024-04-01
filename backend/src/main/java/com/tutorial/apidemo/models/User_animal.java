@@ -21,6 +21,14 @@ public class User_animal {
     public User_animal() {
     }
 
+    public User_animal(Integer iDUser, Integer iDAnimal, Date date, String location, String note) {
+        this.iDUser = iDUser;
+        this.iDAnimal = iDAnimal;
+        this.date = date;
+        this.location = location;
+        this.note = note;
+    }
+
     public User_animal(Integer iDUserAnimal, Integer iDUser, Integer iDAnimal, Date date, String location, String note) {
         this.iDUserAnimal = iDUserAnimal;
         this.iDUser = iDUser;
