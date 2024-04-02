@@ -18,16 +18,24 @@ function Header() {
     const [accurary, setAccurary] = useState("");
     const [completedRecognization, setCompletedRecognization] = useState(false);
     const [detailAnimal, setDetailAnimal] = useState(null);
+    const [userAva, setUserAva] = useState("");
 
     useEffect(() => {
-        if (sessionStorage.getItem("userID") !== null) {
+        const idUser = sessionStorage.getItem("userID");
+        if (idUser !== null) {
             setIsLogin(true);
+            axios
+                .get("http://localhost:8080/api/v1/users/" + idUser)
+                .then((res) => {
+                    setUserAva(res.data.data.avatarUser);
+                })
+                .catch(() => {});
         } else {
             setIsLogin(false);
         }
     }, []);
 
-    const openModal = async() => {
+    const openModal = async () => {
         setShowModal(true);
         const requestData = {
             recognize: "true",
@@ -83,16 +91,21 @@ function Header() {
                     "Content-Type": "application/json",
                 },
             });
-        
+
             if (resRecognize.status === 200) {
                 setCompletedRecognization(true);
                 setScientificName(resRecognize.data.predicted_label.predicted_label);
-        
+                setAccurary(resRecognize.data.predicted_label.confidence);
                 const [resAnimal, resDetail] = await Promise.all([
-                    axios.get("http://localhost:8080/api/v1/animals/" + resRecognize.data.predicted_label.predicted_label),
-                    axios.get("http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" + resRecognize.data.predicted_label.predicted_label),
+                    axios.get(
+                        "http://localhost:8080/api/v1/animals/" + resRecognize.data.predicted_label.predicted_label
+                    ),
+                    axios.get(
+                        "http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" +
+                            resRecognize.data.predicted_label.predicted_label
+                    ),
                 ]);
-        
+
                 setAnimalName(resAnimal.data.data[0].animalName);
                 setDetailAnimal(resDetail.data);
             } else {
@@ -152,7 +165,12 @@ function Header() {
                         <Link to={"/post_animal"} className={cx("btn_addAnimal")}>
                             Upload
                         </Link>
-                        <img src="/img/no-user-img.jpg" alt="" className={cx("ava-user")} onClick={setOpenOptions} />
+                        <img
+                            src={userAva !== "" ? userAva : "/img/no-user-img.jpg"}
+                            alt=""
+                            className={cx("ava-user")}
+                            onClick={setOpenOptions}
+                        />
                         <FontAwesomeIcon className={cx("down-icon")} icon={faChevronDown} onClick={setOpenOptions} />
                         {showListOptionsUser === true ? (
                             <div className={cx("list-options-user")}>

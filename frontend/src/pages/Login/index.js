@@ -19,7 +19,9 @@ function Login({ setLoginStatus }) {
     const changeForm = () => {
         setShowLoginForm(!showLoginForm);
     };
-
+    useEffect(() => {
+        sessionStorage.removeItem("userID");
+    }, [])
     useEffect(() => {
         if (showLoginForm === true) {
             wrapperRef.current.style.backgroundImage = "url(/img/background_login.png)";
