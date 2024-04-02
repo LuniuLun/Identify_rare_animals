@@ -326,7 +326,7 @@ function PostAnimal() {
                 })
                 .then((res) => {
                     if (res.status === 200) {
-                        window.location.href = "http://localhost:3000/your_observation";
+                        window.location.href = "http://localhost:3000/your_observation" + sessionStorage.getItem("userID");
                         if (res.data !== null) {
                             console.log(res.data);
                         } else {

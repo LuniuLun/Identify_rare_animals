@@ -217,7 +217,7 @@ public class UserController {
     }
     
     @PostMapping("/postAnimal")
-    public ResponseEntity<ResponseObject> postAnimal(@RequestBody AnimalPost[] requestBody) {
+    public ResponseEntity<ResponseObject> postAnimal(@RequestBody List<AnimalPost> requestBody) {
         for (AnimalPost obj : requestBody) {
             System.out.println(obj.getFiles());
             Animal animal = animalRepository.findByAnimalScientificName(obj.getScientificName());
