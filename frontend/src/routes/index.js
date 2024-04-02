@@ -10,8 +10,8 @@ import YourObservation from "../pages/YourObservation/index.js";
 
 const publicRoutes = [
     { path: "/", component: Home },
-    { path: "/detailAnimal", component: DetailAnimal },
-    { path: "/your_observation", component: YourObservation },
+    { path: "/detailAnimal/:id", component: DetailAnimal },
+    { path: "/your_observation/:id", component: YourObservation },
     { path: "/login", component: Login, layout: HeaderOnly },
     { path: "/profile", component: Profile },
     { path: "/post_animal", component: PostAnimal },

@@ -3,9 +3,24 @@ import styles from "./Home.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faCircleRight } from "@fortawesome/free-solid-svg-icons";
 import AnimalCard from "../../components/AnimalCard";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 const cx = classNames.bind(styles);
 
 function Home() {
+    const [animalPost, setAnimalPost] = useState([]);
+    useEffect(() => {
+        axios
+            .get("http://localhost:8080/api/v1/users/animal")
+            .then((res) => {
+                if(res.data !== null) {
+                    setAnimalPost(res.data)
+                }
+            })
+            .catch((err) => console.error(err));
+    }, []);
+
     return (
         <div className={cx("wrapper")}>
             <div className={cx("search")}>
@@ -51,8 +66,8 @@ function Home() {
                 </div>
             </div>
             <div className={cx("content")}>
-                {[1, 2, 3, 4, 5, 6].map((item, index) => {
-                    return <AnimalCard key={index}/>;
+                {animalPost.map((item, index) => {
+                    return <AnimalCard key={index} animalPost={item} />;
                 })}
             </div>
         </div>
