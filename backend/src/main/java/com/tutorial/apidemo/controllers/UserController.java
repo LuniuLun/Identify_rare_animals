@@ -43,14 +43,19 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @GetMapping("/{id}")
-    ResponseEntity<ResponseObject> findById(@PathVariable Integer id) {
-        Optional<User> foundUser = userRepository.findById(id);
-        return foundUser.isPresent() ? ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("ok", "Query user successfully", foundUser))
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        new ResponseObject("failed", "Cannot find user with id = " + id, ""));
+    @GetMapping("/{iDUser}")
+    ResponseEntity<ResponseObject> findById(@PathVariable Integer iDUser) {
+        User foundUser = userRepository.findByiDUser(iDUser);
+        if (foundUser != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ok", "Query user successfully", foundUser));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("failed", "Cannot find user with id = " + iDUser, ""));
+        }
     }
+
+
 
     @PostMapping("/checkLogin")
     ResponseEntity<ResponseObject> checkLogin(@RequestBody User newUser) {
@@ -109,14 +114,14 @@ public class UserController {
                 new ResponseObject("failed", "Cannot find user to delete", ""));
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<ResponseObject> getUserByUsername(@RequestBody String username) {
-        User foundUser = userRepository.findByUserName(username);
-        return foundUser != null ? ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("ok", "Query user successfully", foundUser))
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        new ResponseObject("failed", "Cannot find username", username));
-    }
+//    @GetMapping("/{username}")
+//    public ResponseEntity<ResponseObject> getUserByUsername(@RequestBody String username) {
+//        User foundUser = userRepository.findByUserName(username);
+//        return foundUser != null ? ResponseEntity.status(HttpStatus.OK).body(
+//                new ResponseObject("ok", "Query user successfully", foundUser))
+//                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+//                        new ResponseObject("failed", "Cannot find username", username));
+//    }
 
     @GetMapping("/result")
     public List<Results> getAllResults() {
@@ -195,6 +200,20 @@ public class UserController {
             }
         }
         return found;
+    }
+
+    @GetMapping("/detailPost/{iDUserAnimal}")
+    public User_animal getAllUser_animalByiDUserAnimal(@PathVariable Integer iDUserAnimal) {
+        User_animal userAnimal = user_animalRepository.findByiDUserAnimal(iDUserAnimal);
+            Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
+            if(animal != null) {
+                userAnimal.setAnimal(animal);
+                List<User_album> foundAlbum = user_albumRepository.findByiDUserAnimal(userAnimal.getiDUserAnimal());
+                if (!foundAlbum.isEmpty()) {
+                    userAnimal.getAnimal().setAnimalAva(foundAlbum.get(0).getImageLink());
+                }
+            }
+        return userAnimal;
     }
     
     @PostMapping("/postAnimal")

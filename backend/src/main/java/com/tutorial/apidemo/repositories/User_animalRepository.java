@@ -17,4 +17,5 @@ public interface User_animalRepository extends JpaRepository<User_animal, Long> 
 
 
     List<User_animal> findByiDUser(Integer iDUser);
+    User_animal findByiDUserAnimal(Integer iDUserAnimal);
 }

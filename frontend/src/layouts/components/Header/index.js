@@ -27,55 +27,81 @@ function Header() {
         }
     }, []);
 
-    const openModal = () => {
+    const openModal = async() => {
         setShowModal(true);
         const requestData = {
             recognize: "true",
         };
-        axios
-            .post("http://127.0.0.1:5000/recognize_animal", requestData, {
+        // axios
+        //     .post("http://127.0.0.1:5000/recognize_animal", requestData, {
+        //         headers: {
+        //             Accept: "application/json",
+        //             "Content-Type": "application/json",
+        //         },
+        //     })
+        //     .then((res) => {
+        //         console.log(res);
+        //         if (res.status === 200) {
+        //             setCompletedRecognization(true);
+        //             setScientificName(res.data.predicted_label.predicted_label);
+        //             setAccurary(res.data.predicted_label.confidence);
+
+        //             axios
+        //                 .get("http://localhost:8080/api/v1/animals/" + res.data.predicted_label.predicted_label)
+        //                 .then((res) => {
+        //                     setAnimalName(res.data.data[0].animalName);
+        //                     console.log(res.data);
+        //                 })
+        //                 .catch((error) => {
+        //                     console.error(error);
+        //                 });
+
+        //             axios
+        //                 .get(
+        //                     "http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" +
+        //                         res.data.predicted_label.predicted_labe
+        //                 )
+        //                 .then((res) => {
+        //                     console.log(res.data);
+        //                     setDetailAnimal(res.data);
+        //                 })
+        //                 .catch((error) => {
+        //                     console.error(error);
+        //                 });
+        //         } else {
+        //             throw new Error("Failed to recognization animal.");
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.error("Error recognizing animal:", error);
+        //         // Handle the error here, you can set an error message state
+        //     });
+        try {
+            const resRecognize = await axios.post("http://127.0.0.1:5000/recognize_animal", requestData, {
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
-            })
-            .then((res) => {
-                console.log(res);
-                if (res.status === 200) {
-                    setCompletedRecognization(true);
-                    setScientificName(res.data.predicted_label.predicted_label);
-                    setAccurary(res.data.predicted_label.confidence);
-
-                    axios
-                        .get("http://localhost:8080/api/v1/animals/" + res.data.predicted_label.predicted_label)
-                        .then((res) => {
-                            setAnimalName(res.data.data[0].animalName);
-                            console.log(res.data);
-                        })
-                        .catch((error) => {
-                            console.error(error);
-                        });
-
-                    axios
-                        .get(
-                            "http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" +
-                                res.data.predicted_label.predicted_labe
-                        )
-                        .then((res) => {
-                            console.log(res.data);
-                            setDetailAnimal(res.data);
-                        })
-                        .catch((error) => {
-                            console.error(error);
-                        });
-                } else {
-                    throw new Error("Failed to recognization animal.");
-                }
-            })
-            .catch((error) => {
-                console.error("Error recognizing animal:", error);
-                // Handle the error here, you can set an error message state
             });
+        
+            if (resRecognize.status === 200) {
+                setCompletedRecognization(true);
+                setScientificName(resRecognize.data.predicted_label.predicted_label);
+        
+                const [resAnimal, resDetail] = await Promise.all([
+                    axios.get("http://localhost:8080/api/v1/animals/" + resRecognize.data.predicted_label.predicted_label),
+                    axios.get("http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" + resRecognize.data.predicted_label.predicted_label),
+                ]);
+        
+                setAnimalName(resAnimal.data.data[0].animalName);
+                setDetailAnimal(resDetail.data);
+            } else {
+                throw new Error("Failed to recognize animal.");
+            }
+        } catch (error) {
+            console.error("Error recognizing animal:", error);
+            // Xử lý lỗi ở đây, bạn có thể set state cho thông báo lỗi
+        }
     };
 
     const closeModal = () => {
@@ -101,7 +127,7 @@ function Header() {
                         <span>Explore</span>
                     </Link>
                     {isLogin === true ? (
-                        <Link className={cx("link")} to={"/your_observation"}>
+                        <Link className={cx("link")} to={"/your_observation/" + sessionStorage.getItem("userID")}>
                             <span>Your Observations</span>
                         </Link>
                     ) : (
@@ -244,35 +270,18 @@ function Header() {
                                         </div>
                                         <div className={cx("short-detail-information")}>
                                             <label>Coutries: </label>
-                                            <span className={cx("coutries")}>
-                                                {detailAnimal.countries}
-                                            </span>
+                                            <span className={cx("coutries")}>{detailAnimal.countries}</span>
                                         </div>
                                         <div className={cx("short-detail-information")}>
                                             <label>WWF Biomes: </label>
-                                            <span className={cx("wwf-biomes")}>
-                                                {detailAnimal.wwfBiomes}
-                                            </span>
+                                            <span className={cx("wwf-biomes")}>{detailAnimal.wwfBiomes}</span>
                                         </div>
                                     </div>
                                     <div className={cx("wrapper-two-infomation")}>
                                         <div className={cx("information", "information-status")}>
                                             <span>Status </span>
                                             <div className={cx("detail-information")}>
-                                                <span className={cx("Status")}>
-                                                    Due to hunting; especially poaching, and a reduction in extent and
-                                                    quality of habitat, the green peafowl is evaluated as endangered on
-                                                    the IUCN Red List of Threatened Species. It is listed on Appendix II
-                                                    of CITES. The world population has declined rapidly and the species
-                                                    no longer occurs in many areas of its past distribution. The last
-                                                    strongholds for the species are in protected areas such as Huai Kha
-                                                    Khaeng Wildlife Sanctuary in Thailand, Cat Tien National Park in
-                                                    Vietnam and Baluran National Park, Ujung Kulon National Park in
-                                                    Java, Indonesia. The population in the wild was estimated to be
-                                                    about 5,000 to 10,000 individuals around 1995.[3] In Cambodia, Keo
-                                                    Seima Wildlife Sanctuary was shown to hold a significant and
-                                                    increasing population of around 745 individuals in 2020.
-                                                </span>
+                                                <span className={cx("Status")}>{detailAnimal.status}</span>
                                             </div>
                                         </div>
                                         <div className={cx("conservation")}>
@@ -289,13 +298,69 @@ function Header() {
                                                     </li>
                                                 </ul>
                                                 <ul className={cx("list-status")}>
-                                                    <li className={cx(detailAnimal.levelOfDanger === "Extinct" ? "level-danger" : "")}>EX</li>
-                                                    <li className={cx(detailAnimal.levelOfDanger === "Extinct in the Wild" ? "level-danger" : "")}>EW</li>
-                                                    <li className={cx(detailAnimal.levelOfDanger === "Critically Endangered" ? "level-danger" : "")}>CR</li>
-                                                    <li className={cx(detailAnimal.levelOfDanger === "Endangered" ? "level-danger" : "")}>EN</li>
-                                                    <li className={cx(detailAnimal.levelOfDanger === "Vulnerable" ? "level-danger" : "")}>VU</li>
-                                                    <li className={cx(detailAnimal.levelOfDanger === "Near Threatened" ? "level-danger" : "")}>NT</li>
-                                                    <li className={cx(detailAnimal.levelOfDanger === "Least Concern" ? "level-danger" : "")}>LC</li>
+                                                    <li
+                                                        className={cx(
+                                                            detailAnimal.levelOfDanger.trim() === "Extinct"
+                                                                ? "level-danger"
+                                                                : ""
+                                                        )}
+                                                    >
+                                                        EX
+                                                    </li>
+                                                    <li
+                                                        className={cx(
+                                                            detailAnimal.levelOfDanger.trim() === "Extinct in the Wild"
+                                                                ? "level-danger"
+                                                                : ""
+                                                        )}
+                                                    >
+                                                        EW
+                                                    </li>
+                                                    <li
+                                                        className={cx(
+                                                            detailAnimal.levelOfDanger.trim() === "Highly threatend"
+                                                                ? "level-danger"
+                                                                : ""
+                                                        )}
+                                                    >
+                                                        CR
+                                                    </li>
+                                                    <li
+                                                        className={cx(
+                                                            detailAnimal.levelOfDanger.trim() === "Endangered"
+                                                                ? "level-danger"
+                                                                : ""
+                                                        )}
+                                                    >
+                                                        EN
+                                                    </li>
+                                                    <li
+                                                        className={cx(
+                                                            detailAnimal.levelOfDanger.trim() === "Vulnerable"
+                                                                ? "level-danger"
+                                                                : ""
+                                                        )}
+                                                    >
+                                                        VU
+                                                    </li>
+                                                    <li
+                                                        className={cx(
+                                                            detailAnimal.levelOfDanger.trim() === "Near Threatened"
+                                                                ? "level-danger"
+                                                                : ""
+                                                        )}
+                                                    >
+                                                        NT
+                                                    </li>
+                                                    <li
+                                                        className={cx(
+                                                            detailAnimal.levelOfDanger.trim() === "Least Concern"
+                                                                ? "level-danger"
+                                                                : ""
+                                                        )}
+                                                    >
+                                                        LC
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <div className={cx("left-quantity")}>
