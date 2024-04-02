@@ -213,6 +213,7 @@ function PostAnimal() {
                 focused: false, // Giữ nguyên giá trị focused
                 idUser: minIndexItem.idUser,
                 speciesName: minIndexItem.speciesName, // Sử dụng speciesName của item có index bé nhất
+                scientificName: minIndexItem.scientificName, // Sử dụng speciesName của item có index bé nhất
                 files: selectedFiles, // Sử dụng mảng files đã lấy
                 location: minIndexItem.location,
                 dateTime: minIndexItem.dateTime,
@@ -302,10 +303,12 @@ function PostAnimal() {
             });
             for (let item of filteredAnimalObjects) {
                 if (Array.isArray(item.files)) {
+                    var i = 0;
                     for (let file of item.files) {
                         const response = await uploadFile(file);
                         if (response) {
-                            item.files = response;
+                            item.files[i] = response;
+                            i++;
                             console.log(response);
                         }
                     }
@@ -326,7 +329,7 @@ function PostAnimal() {
                 })
                 .then((res) => {
                     if (res.status === 200) {
-                        window.location.href = "http://localhost:3000/your_observation" + sessionStorage.getItem("userID");
+                        window.location.href = "http://localhost:3000/your_observation/" + sessionStorage.getItem("userID");
                         if (res.data !== null) {
                             console.log(res.data);
                         } else {
