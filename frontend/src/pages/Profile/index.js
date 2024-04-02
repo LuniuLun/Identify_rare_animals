@@ -16,7 +16,7 @@ function Profile() {
     });
     const idUser = sessionStorage.getItem("userID");
     useEffect(() => {
-        axios
+        axios 
             .get("http://localhost:8080/api/v1/users/" + idUser)
             .then((res) => {
                 console.log(res.data.data);
@@ -24,6 +24,25 @@ function Profile() {
             })
             .catch(() => {});
     }, [idUser]);
+    const saveSettings = () => {
+        axios
+            .put("http://localhost:8080/api/v1/users/" + idUser, user, idUser)
+            .then((res) => {
+                // Update successful, reload the page to reflect changes
+                console.log(res.data.data);
+                setUser(res.data.data);
+                window.location.reload();
+            })
+            .catch((error) => {
+                console.error("Error updating user information:", error);
+            });
+    };
+    const handleInputChange = (field, value) => {
+        setUser((prevUser) => ({
+            ...prevUser,
+            [field]: value,
+        }));
+    };
     return (
         <div className={cx("wrapper")}>
             <div className={cx("navigation")}>
@@ -77,15 +96,15 @@ function Profile() {
                         <div className={cx("discription")}>
                             This is the name that will be displayed on your profile as well as for copyright attribution
                         </div>
-                        <input type="text" value={user.displayName} />
+                        <input type="text" value={user.displayName} onChange={(e) => handleInputChange("displayName", e.target.value)} />
                     </div>
                     <div className={cx("item")}>
                         <label>Bio</label>
                         <div className={cx("discription")}>Tell other users on iNaturalist about yourself!</div>
-                        <textarea>{user.bioUser}</textarea>
+                        <textarea value={user.bioUser} onChange={(e) => handleInputChange("bioUser", e.target.value)}></textarea>
                     </div>
                 </div>
-                <button className={cx("btn_saveSetting")}>SAVE SETTING</button>
+                <button className={cx("btn_saveSetting")} onClick={saveSettings}>SAVE SETTING</button>
             </div>
         </div>
     );
