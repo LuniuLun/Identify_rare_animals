@@ -1,7 +1,17 @@
 package com.tutorial.apidemo.controllers;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.security.PrivateKey;
+import java.util.*;
+
+import aj.org.objectweb.asm.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tutorial.apidemo.models.*;
+import com.tutorial.apidemo.repositories.*;
+import com.tutorial.apidemo.service.FirebaseFileService;
+import com.tutorial.apidemo.service.IStorageService;
+
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,43 +69,64 @@ public class UserController {
 
     @PostMapping("/checkLogin")
     ResponseEntity<ResponseObject> checkLogin(@RequestBody User newUser) {
-        User foundUser;
-        System.out.println(newUser.getUserName() + newUser.getUserPassword());
-        if (newUser.getUserName() == null) {
-            foundUser = userRepository.findByUserEmailAndUserPassword(newUser.getUserEmail().trim(),
-                    newUser.getUserPassword().trim());
-        } else {
-            foundUser = userRepository.findByUserNameAndUserPassword(newUser.getUserName().trim(),
-                    newUser.getUserPassword().trim());
+        User foundByUserName, foundByEmail;
+        foundByUserName = userRepository.findByUserName(newUser.getUserName().trim());
+        foundByEmail = userRepository.findByEmail(newUser.getUserEmail().trim());
+        System.out.println(foundByUserName);
+        System.out.println(foundByEmail);
+        if(foundByUserName != null) {
+            if(BCrypt.checkpw(newUser.getUserPassword(), foundByUserName.getUserPassword())) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new ResponseObject("ok", "Login successfully", foundByUserName));
+            }
         }
-;
-        if (foundUser != null) {
-            System.out.println(foundUser);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("ok", "Login successfully", foundUser));
+        else if(foundByEmail != null){
+            if(BCrypt.checkpw(newUser.getUserPassword(), foundByEmail.getUserPassword())) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new ResponseObject("ok", "Login successfully", foundByEmail));
+            }
+        }
 
-        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseObject("failed", "User is not exist", ""));
     }
 
-    @PostMapping("/insert")
-    ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
-        User foundUser = userRepository.findByUserName(newUser.getUserName().trim());
-        if (foundUser != null) {
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                    new ResponseObject("failed", "Username already taken", ""));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("ok", "Insert user successfully", userRepository.save(newUser)));
+//    @PostMapping("/insert")
+//    ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
+//        User foundUser = userRepository.findByUserName(newUser.getUserName().trim());
+//        if (foundUser != null) {
+//            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
+//                    new ResponseObject("failed", "Username already taken", ""));
+//        }
+//        return ResponseEntity.status(HttpStatus.OK).body(
+//                new ResponseObject("ok", "Insert user successfully", userRepository.save(newUser)));
+//    }
+
+@PostMapping("/insert")
+ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
+    User foundUser = userRepository.findByUserName(newUser.getUserName().trim());
+    if (foundUser != null) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                new ResponseObject("failed", "Username already taken", ""));
     }
+    System.out.println(newUser.getUserName() + " " + newUser.getUserEmail() + " " + newUser.getUserPassword());
+    User savedUser = userRepository.save(newUser);
+    if (savedUser != null) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("ok", "Insert user successfully", savedUser));
+    } else {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                new ResponseObject("failed", "Failed to insert user", ""));
+    }
+}
+
 
     @PutMapping("/{id}")
-    ResponseEntity<ResponseObject> updateUser(@RequestBody User newUser,
-            @PathVariable Integer id) {
-        Optional<Object> updateUser = userRepository.findById(id)
+    ResponseEntity<ResponseObject> updateUser(@RequestBody User newUser, @PathVariable Integer id) {
+        Optional<User> updateUser = userRepository.findById(id)
                 .map(user -> {
                     user.setDisplayName(newUser.getDisplayName());
+                    user.setBioUser(newUser.getBioUser());
                     return userRepository.save(user);
                 });
         return ResponseEntity.status(HttpStatus.OK).body(

@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
 import classNames from "classnames/bind";
@@ -8,11 +9,20 @@ import axios from "axios";
 const cx = classNames.bind(styles);
 
 function Login({ setLoginStatus }) {
+    const [user, setUser] = useState({
+        userName: "",
+        userEmail: "",
+        userPassword: "",
+        roleAcc: 1, // 0 for admin and 1 for user
+    });
     const [showLoginForm, setShowLoginForm] = useState(true);
-    const [username, setUsername] = useState("");
+    const [usernameoremail, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const warningFillInforRef = useRef(null);
+    const warningFillInforRefSignup = useRef(null);
+    const warningUnvalidPassword = useRef(null);
     const warningFailedLoginRef = useRef(null);
+    const warningFailedSignupRef = useRef(null);
     const wrapperRef = useRef(null);
     const loginModal = useRef(null);
     const registerModal = useRef(null);
@@ -30,12 +40,13 @@ function Login({ setLoginStatus }) {
         }
     }, [showLoginForm]);
     const checkLogin = () => {
-        if (username?.trim() !== "" && password?.trim() !== "") {
+        if (usernameoremail?.trim() !== "" && password?.trim() !== "") {
             if (warningFillInforRef.current !== null) {
                 warningFillInforRef.current.style.display = "none";
             }
             const requestData = {
-                userName: username,
+                userName: usernameoremail,
+                userEmail: usernameoremail,
                 userPassword: password,
             };
             axios
@@ -66,11 +77,67 @@ function Login({ setLoginStatus }) {
                     }
                 });
         } else if (warningFillInforRef.current !== null && warningFailedLoginRef.current !== null) {
-            console.log(username, password);
+            console.log(usernameoremail, password);
             warningFillInforRef.current.style.display = "block";
             warningFailedLoginRef.current.style.display = "none";
         }
     };
+    const handleSignUp = () => {
+        const email = document.querySelector('.inputEmail').value;
+        const username = document.querySelector('.inputUsername').value;
+        const password = document.querySelector('.inputPassword').value;
+        const confirmPassword = document.querySelector('.inputConfirmationPassword').value;
+        if (password !== confirmPassword) {
+            warningUnvalidPassword.current.style.display = "block";
+        } else {
+            warningUnvalidPassword.current.style.display = "none";
+            bcrypt.genSalt(10, function(err, salt) {
+                bcrypt.hash(password, salt, function(err, hash) {
+                    const encryptedPassword = hash;
+                    const newUser = {
+                        userName: username,
+                        userEmail: email,
+                        userPassword: encryptedPassword,
+                        roleAcc: 1,
+                    };
+                    setUser(newUser);
+                });
+            });
+            console.log(user);
+        }
+    };
+    const signUp = () => {
+        const email = document.querySelector('.inputEmail').value;
+        const username = document.querySelector('.inputUsername').value;
+        const password = document.querySelector('.inputPassword').value;
+        const confirmPassword = document.querySelector('.inputConfirmationPassword').value;
+        if (email?.trim() !== "" && username?.trim() !== "" && password?.trim() !== "" && confirmPassword?.trim() !== "") {
+            if (warningFillInforRefSignup.current !== null) {
+                warningFillInforRefSignup.current.style.display = "none";
+            }
+            axios
+                .post("http://localhost:8080/api/v1/users/insert", user)
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log(res.data);
+                        if (res.data !== null) {
+                            changeForm();
+                        }
+                    } else {
+                    }
+                })
+                .catch(() => {
+                    if (warningFailedSignupRef.current !== null) {
+                        warningFailedSignupRef.current.style.display = "block";
+                    }
+                });
+        } else if (warningFillInforRefSignup.current !== null && warningUnvalidPassword.current !== null) {
+            // console.log(username, password);
+            warningFillInforRefSignup.current.style.display = "block";
+            warningUnvalidPassword.current.style.display = "none";
+        }
+    };
+    
     return (
         <div ref={wrapperRef} className={cx("wrapper")}>
             {showLoginForm === true ? (
@@ -139,9 +206,19 @@ function Login({ setLoginStatus }) {
                                     className={cx("inputConfirmationPassword")}
                                     placeholder="Password confirmation"
                                     type="password"
+                                    onChange={handleSignUp}
                                 />
                             </div>
-                            <button className={cx("btn_signup")}>Sign up</button>
+                            <p ref={warningFillInforRefSignup} className={cx("danger-infor")}>
+                                Hãy điền đầy đủ thông tin.
+                            </p>
+                            <p ref={warningUnvalidPassword} className={cx("danger-infor")}>
+                                Mật khẩu chưa khớp.
+                            </p>
+                            <p ref={warningFailedSignupRef} className={cx("danger-infor-login")}>
+                                Đăng kí không thành công.
+                            </p>
+                            <button className={cx("btn_signup")} onClick={signUp}>Sign up</button>
                         </div>
                         <span className={cx("footer")}>
                             Already have an account?{" "}
