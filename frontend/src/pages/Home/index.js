@@ -14,8 +14,8 @@ function Home() {
         axios
             .get("http://localhost:8080/api/v1/users/animal")
             .then((res) => {
-                if(res.data !== null) {
-                    setAnimalPost(res.data)
+                if (res.data !== null) {
+                    setAnimalPost(res.data);
                 }
             })
             .catch((err) => console.error(err));
@@ -26,9 +26,10 @@ function Home() {
             <div className={cx("search")}>
                 <span>Observations</span>
                 <div className={cx("right-items")}>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
-                    <input className={cx("species")} placeholder="Species" />
-                    <input className={cx("name-animal")} placeholder="Animal" />
+                    <div className={cx("wrapper-find-animal")}>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
+                        <input className={cx("name-animal")} placeholder="Animal" />
+                    </div>
                     <button className={cx("btn_find")}>Go</button>
                 </div>
             </div>

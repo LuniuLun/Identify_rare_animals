@@ -206,11 +206,11 @@ function Header() {
                 )}
             </div>
 
-            {showModal === true ? (
+            {showModal === false ? (
                 <div className={cx("modal")}>
                     <div className={cx("modal-content")}>
                         <FontAwesomeIcon icon={faXmark} className={cx("close-icon")} onClick={closeModal} />
-                        {completedRecognization === true ? (
+                        {completedRecognization === false ? (
                             <>
                                 <div className={cx("title")}>Identification Result</div>
                                 <div className={cx("top-items")}>
