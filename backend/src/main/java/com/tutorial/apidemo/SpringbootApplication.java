@@ -19,8 +19,8 @@ public class SpringbootApplication {
 		try {
 			// Đọc credentials từ file JSON
 			GoogleCredentials credentials = GoogleCredentials.fromStream(
-			//new FileInputStream("D:\\VisualStudioCode\\Project\\Identify_rare_animals\\backend\\src\\main\\resources\\serviceAccountKey.json"));
-			new FileInputStream("D:\\IT-er\\GITHUB\\PBL5_second\\Identify_rare_animals\\backend\\src\\main\\resources\\serviceAccountKey.json"));
+			new FileInputStream("D:\\VisualStudioCode\\Project\\Identify_rare_animals\\backend\\src\\main\\resources\\serviceAccountKey.json"));
+			//new FileInputStream("D:\\IT-er\\GITHUB\\PBL5_second\\Identify_rare_animals\\backend\\src\\main\\resources\\serviceAccountKey.json"));
 
 			// Tạo một Storage object với credentials và project ID
 			Storage storage = StorageOptions.newBuilder()
