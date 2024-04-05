@@ -1,0 +1,343 @@
+.header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0px 18px;
+    background-color: #eeeeee;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.075);
+    position: relative;
+}
+
+.right-item {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    color: var(--primary-color);
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin: 0 10px 0 20px;
+    display: flex;
+}
+.logo p {
+    color: #7A4C3E;
+}
+
+.wrapper-find-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.find-icon {
+    font-size: 1.4rem;
+    padding: 8px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: #fff;
+    margin-right: 10px;
+}
+
+.left-item {
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.link {
+    color: var(--black-text-color);
+    padding: 10px 20px;
+}
+
+.link span {
+    font-size: 1.6rem;
+    font-weight: 500;
+}
+
+.left-item {
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.body {
+    width: 100%;
+    height: 92vh;
+    display: flex;
+    flex-direction: row;
+    padding: 0 38px;
+    position: absolute;
+}
+
+.left-body {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 60px;
+    border-right: 1px solid rgba(0, 0, 0, 0.625);
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.edit-profile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.items, .animal-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 7px 0;
+}
+
+.items h2 {
+    line-height: 20px;
+    font-weight: 500;
+    color: var(--black-text-color);
+}
+
+.items label {
+    font-size: 1.5rem;
+    line-height: 34px;
+    font-weight: 500;
+    color: #555555;
+}
+
+.items input, .items textarea {
+    padding: 6px 12px;
+    font-size: 1.4rem;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.items input:focus, .items textarea:focus {
+    border-color: #66afe9;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.name {
+    width: 400px;
+    height: 34px;
+}
+
+.content, .habits, .location {
+    width: 450px; 
+    height: 100px; 
+    resize: none; 
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.habits {
+    width: 400px !important;
+}
+
+.btn_save {
+    width: 90px;
+    height: 34px;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    background-color: var(--primary-color);
+    color: var(--white-text-color);
+}
+
+.btn_save:hover {
+    background-color: #B7715B;
+}
+
+.add-space {
+    margin-top: 10px;
+    height: 25px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.add-space p {
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.ava-animal {
+    border: 2px solid black;
+    width: 140px;
+    height: 140px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-right: 48%;
+}
+
+.btn_upload {
+    width: 140px;
+    background-color: var(--blue-color);    
+    color: white;
+}
+
+.btn_remove {
+    width: 117px;
+    background-color: white;
+    color: #555555;
+    border: 1px solid #A5A5A5;
+    margin-top: 5px;
+}
+
+.btn_upload, .btn_remove {
+    height: 26px;
+    font-size: 1.5rem;
+    border: 1px solid #A5A5A5;
+}
+
+.btn_upload:hover, .btn_remove:hover {
+    background-color: #A5A5A5;
+    color: white;
+}
+
+.status {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 300px;
+}
+
+.list-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-between;
+    font-size: 1.2rem;
+}
+
+.list-status li {
+    list-style: none;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    font-weight: 600;
+    height: 34px;
+    width: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-status li:hover {
+    background-color: rgba(212, 88, 54, 0.941);
+    color: var(--white-text-color);
+}
+
+.more {
+    width: 100%;
+    height: 150px;
+    resize: none; 
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+
+
+//
+.right-body {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 60px 20px;
+}
+
+.search {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 7px 0;
+}
+
+.search input {
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: var(--grey-text-color);
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    margin-right: 10px;
+    outline: 0;
+}
+
+.search input:focus {
+    border-color: #66afe9;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.btn_find {
+    padding: 8px;
+    background-color: var(--primary-color);
+    color: var(--white-text-color);
+    border-radius: 4px;
+}
+
+.btn_find:hover {
+    background-color: #B7715B;
+}
+
+.animal-list {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.animal-list::-webkit-scrollbar {
+    display: none;
+  }
+
+.animal {
+    width: 270px;
+    height: 90px;
+    background-color: #D9D9D9;
+    margin: 7px 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.img-animal {
+    height: 90px;
+    width: 90px;
+    z-index: 9999;
+}
+
+.show-name {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.show-name p {
+    font-size: 1.4rem;
+    color: #555555;
+    margin-left: 10px;
+}
