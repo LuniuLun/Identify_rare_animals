@@ -25,6 +25,7 @@
     margin: 10px;
     font-size: 1.6rem;
     font-weight: 400;
+    cursor: pointer;
 }
 
 .content {
@@ -97,6 +98,7 @@
     width: 100px;
     border-radius: 50%;
     margin-right: 40px;
+    object-fit: cover;
 }
 
 .right-item {}
@@ -119,6 +121,6 @@
 
 }
 
-.active{
+.active {
     color: var(--primary-color);
 }

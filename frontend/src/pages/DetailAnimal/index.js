@@ -2,22 +2,106 @@ import classNames from "classnames/bind";
 import styles from "./DetailAnimal.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBinoculars } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const cx = classNames.bind(styles);
 
 function DetailAnimal() {
+    const [date, setDate] = useState("");
+    const [location, setLocation] = useState("");
+    const [note, setNote] = useState("");
+    const [animalName, setAnimalName] = useState("");
+    const [animalScientificName, setAnimalScientificName] = useState("");
+    const [animalAva, setAnimalAva] = useState();
+
+    const [userEmail, setUserEmail] = useState("");
+    const [displayName, setDisplayName] = useState("");
+    const [bioUser, setBioUser] = useState("");
+    const [avatarUser, setAvatarUser] = useState();
+
+    const [appearance, setAppearance] = useState();
+    const [habits, setHabits] = useState();
+    const [continents, setContinents] = useState("");
+    const [countries, setCountries] = useState("");
+    const [wwfBiomes, setWWFBiomes] = useState();
+    const [levelOfDanger, setLevelOfDanger] = useState("");
+    const [theRemainAmount, setTheRemainAmount] = useState("");
+    const [status, setStatus] = useState(null);
+
+    const { id } = useParams();
+    useEffect(() => {
+        axios
+            .get("http://localhost:8080/api/v1/users/detailPost/" + id)
+            .then((response) => {
+                if (response.data !== null) {
+                    const infoPost = response.data;
+                    setDate((String(infoPost.date).split("T", String(infoPost.date).length))[0]);
+                    setLocation(infoPost.location);
+                    setNote(infoPost.note);
+                    setAnimalName(infoPost.animal.animalName);
+                    setAnimalScientificName(infoPost.animal.animalScientificName);
+                    setAnimalAva(infoPost.animal.animalAva);
+                }
+                axios
+                    .get("http://localhost:8080/api/v1/users/" + response.data.iDUser)
+                    .then((response) => {
+                        if (response.data != null) {
+                            const infoUser = response.data.data;
+                            setUserEmail(infoUser.userEmail);
+                            setDisplayName(infoUser.displayName);
+                            setBioUser(infoUser.bioUser);
+                            setAvatarUser(infoUser.avatarUser);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching animal data:", error);
+                    });
+                axios
+                    .get("http://localhost:8080/api/v1/animals/details/" + response.data.animal.iDDetail)
+                    .then((response) => {
+                        if (response.data != null) {
+                            const infoDetailAnimal = response.data;
+                            setAppearance(infoDetailAnimal.appearance);
+                            setHabits(infoDetailAnimal.habits);
+                            setContinents(infoDetailAnimal.continents);
+                            setCountries(infoDetailAnimal.countries);
+                            setWWFBiomes(infoDetailAnimal.wwfBiomes);
+                            setLevelOfDanger(infoDetailAnimal.levelOfDanger);
+                            setTheRemainAmount(infoDetailAnimal.theRemainAmount);
+                            console.log(infoDetailAnimal.levelOfDanger);
+                            setStatus(infoDetailAnimal.status);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching animal data:", error);
+                    });
+            })
+            .catch((error) => {
+                console.log("Error fetching animal data:", error);
+            });
+    }, [id]);
+
     return (
         <div className={cx("wrapper")}>
-            <div className={cx("title")}>Pavo cristatus</div>
+            <div className={cx("title")}>
+                {animalName}
+                <span className={cx("scientific-name")}>({animalScientificName})</span>
+            </div>
             <div className={cx("top-items")}>
                 <div className={cx("wrapper-image-animal")}>
-                    <img className={cx("image-animal")} alt="" src="/img/con_cong.jpg" />
+                    <img className={cx("image-animal")} alt="" src={animalAva} />
                 </div>
                 <div className={cx("bio")}>
                     <div className={cx("user")}>
-                        <img src="/img/no-user-img.jpg" alt="" className={cx("ava-user")} />
+                        <img
+                            src={avatarUser !== "" ? avatarUser : "/img/no-user-img.jpg"}
+                            alt=""
+                            className={cx("ava-user")}
+                        />
                         <div>
-                            <p className={cx("username")}>ariellopezpics</p>
+                            <p className={cx("username")}>{displayName}</p>
                             <p className={cx("quantity-observation")}>
                                 <FontAwesomeIcon icon={faBinoculars} className={cx("scope-icon")} />
                                 3.191 observations
@@ -27,11 +111,11 @@ function DetailAnimal() {
                     <div className={cx("location")}>
                         <div className={cx("time-observation")}>
                             <label>Observed:</label>
-                            <input readOnly value={"Thg 02 26, 2024 · 06:56 IST"} />
+                            <input readOnly value={date} />
                         </div>
                         <div className={cx("time-submit")}>
                             <label>Submitted:</label>
-                            <input value={"Thg 03 6, 2024 · 10:04 +07:00"} readOnly />
+                            <input value={date} readOnly />
                         </div>
                     </div>
                 </div>
@@ -39,59 +123,36 @@ function DetailAnimal() {
             <div className={cx("title")}>Detail</div>
             <div className={cx("buttom-items")}>
                 <div className={cx("information")}>
-                    <span>Description </span>
+                    <span>Description</span>
                     <div className={cx("detail-information")}>
                         <label>Appearance: </label>
-                        <span className={cx("apearance")}>
-                            The sexes of Green peafowl are quite similar in appearance, especially in the wild. Both
-                            males and females have long upper-tail coverts (which cover the tail itself, underneath). In
-                            the male, this extends up to 2 m (6.6 ft) and is decorated with eyespots; in the female, the
-                            coverts are green and much shorter, just covering the tail....
-                        </span>
+                        <span className={cx("apearance")}>{appearance}</span>
                     </div>
                     <div className={cx("detail-information")}>
                         <label>Habits and Lifestyle: </label>
-                        <span className={cx("habits")}>
-                            Green peafowl are forest birds that usually spend time on or near the ground in tall grasses
-                            and sedges. At night family units roost in trees at a height of 10-15 m (33-49 ft)....
-                        </span>
+                        <span className={cx("habits")}>{habits}</span>
                     </div>
                 </div>
                 <div className={cx("information")}>
                     <span>Distribution </span>
                     <div className={cx("short-detail-information")}>
                         <label>Continents: </label>
-                        <span className={cx("continents")}>ASIA</span>
+                        <span className={cx("continents")}>{continents}</span>
                     </div>
                     <div className={cx("short-detail-information")}>
                         <label>Coutries: </label>
-                        <span className={cx("coutries")}>
-                            Cambodia, China, Indonesia, Laos, Myanmar, Thailand, Viet Nam
-                        </span>
+                        <span className={cx("coutries")}>{countries}</span>
                     </div>
                     <div className={cx("short-detail-information")}>
                         <label>WWF Biomes: </label>
-                        <span className={cx("wwf-biomes")}>
-                            Tropical dry forest, Tropical moist forests, Tropical savanna
-                        </span>
+                        <span className={cx("wwf-biomes")}>{wwfBiomes}</span>
                     </div>
                 </div>
                 <div className={cx("wrapper-two-infomation")}>
                     <div className={cx("information", "information-status")}>
                         <span>Status </span>
                         <div className={cx("detail-information")}>
-                            <span className={cx("Status")}>
-                                Due to hunting; especially poaching, and a reduction in extent and quality of habitat,
-                                the green peafowl is evaluated as endangered on the IUCN Red List of Threatened Species.
-                                It is listed on Appendix II of CITES. The world population has declined rapidly and the
-                                species no longer occurs in many areas of its past distribution. The last strongholds
-                                for the species are in protected areas such as Huai Kha Khaeng Wildlife Sanctuary in
-                                Thailand, Cat Tien National Park in Vietnam and Baluran National Park, Ujung Kulon
-                                National Park in Java, Indonesia. The population in the wild was estimated to be about
-                                5,000 to 10,000 individuals around 1995.[3] In Cambodia, Keo Seima Wildlife Sanctuary
-                                was shown to hold a significant and increasing population of around 745 individuals in
-                                2020.
-                            </span>
+                            <span className={cx("Status")}>{status}</span>
                         </div>
                     </div>
                     <div className={cx("conservation")}>
@@ -102,21 +163,34 @@ function DetailAnimal() {
                                 <p></p>
                                 <li>Threatened</li>
                                 <p></p>
-                                <li><p>Least</p><p>Concern</p></li>
+                                <li>
+                                    <p>Least</p>
+                                    <p>Concern</p>
+                                </li>
                             </ul>
                             <ul className={cx("list-status")}>
-                                <li>EX</li>
-                                <li>EW</li>
-                                <li>CR</li>
-                                <li>EN</li>
-                                <li>VU</li>
-                                <li>NT</li>
-                                <li>LC</li>
+                                <li className={cx(levelOfDanger.trim() === "Extinct" ? "level-danger" : "")}>EX</li>
+                                <li
+                                    className={cx(levelOfDanger.trim() === "Extinct in the Wild" ? "level-danger" : "")}
+                                >
+                                    EW
+                                </li>
+                                <li className={cx(levelOfDanger.trim() === "Highly threatend" ? "level-danger" : "")}>
+                                    CR
+                                </li>
+                                <li className={cx(levelOfDanger.trim() === "Endangered" ? "level-danger" : "")}>EN</li>
+                                <li className={cx(levelOfDanger.trim() === "Vulnerable" ? "level-danger" : "")}>VU</li>
+                                <li className={cx(levelOfDanger.trim() === "Near Threatened" ? "level-danger" : "")}>
+                                    NT
+                                </li>
+                                <li className={cx(levelOfDanger.trim() === "Least Concern" ? "level-danger" : "")}>
+                                    LC
+                                </li>
                             </ul>
                         </div>
                         <div className={cx("left-quantity")}>
                             <label>The remaining amount: </label>
-                            <input readOnly value={"123123"} />
+                            <span>{theRemainAmount}</span>
                         </div>
                     </div>
                 </div>
