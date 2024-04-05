@@ -163,6 +163,15 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
         }
         return listR;
     }
+    @GetMapping("/result/{iDUser}")
+    public List<Results> getAllResultsByiDUser(@PathVariable Integer iDUser) {
+        List<Results> listR = resultsRepository.getByiDUser(iDUser);
+        for (Results r : listR) {
+            r.setAnimalScientificName(
+                    animalRepository.findByIDAnimal(r.getPredictedAnimal()).getAnimalScientificName());
+        }
+        return listR;
+    }
 
     @PostMapping("/newresult")
     public ResponseEntity<ResponseObject> insertResult(@RequestBody Results newResult) {
