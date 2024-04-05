@@ -1,6 +1,5 @@
 import classNames from "classnames/bind";
 import styles from "./Profile.module.scss";
-import UploadFileComponent from "../../components/FileUpload";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -14,9 +13,11 @@ function Profile() {
         displayName: "Chưa cập nhật tên người dùng",
         bioUser: "",
     });
+    const [avaUser, setAvaUser] = useState();
+
     const idUser = sessionStorage.getItem("userID");
     useEffect(() => {
-        axios 
+        axios
             .get("http://localhost:8080/api/v1/users/" + idUser)
             .then((res) => {
                 console.log(res.data.data);
@@ -43,6 +44,16 @@ function Profile() {
             [field]: value,
         }));
     };
+
+    const handleButtonClick = () => {
+        document.getElementById("fileInput").click();
+    };
+    const handleFileChange = async (event) => {
+        if (event.target.files.length > 0) {
+            const file = event.target.files[0];
+        }
+    };
+
     return (
         <div className={cx("wrapper")}>
             <div className={cx("navigation")}>
@@ -66,7 +77,17 @@ function Profile() {
                                 alt=""
                                 className={cx("ava-user")}
                             />
-                            <UploadFileComponent />
+                            <div className={cx("change-avatar")}>
+                                <input
+                                    type="file"
+                                    id="fileInput"
+                                    style={{ display: "none" }}
+                                    onChange={handleFileChange}
+                                />
+                                <button className={cx("more-image")} onClick={handleButtonClick}>
+                                    <p>CHANGE</p>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div className={cx("item")}>
@@ -74,8 +95,8 @@ function Profile() {
                         <div className={cx("discription")}>
                             This is the username you will use to log in, and other users can use to identify you on
                             iNaturalist
-                        </div
-                        <input type="text" value={user.userName}/>
+                        </div>
+                        <input type="text" value={user.userName} />
                     </div>
                     <div className={cx("item")}>
                         <label>Email</label>
@@ -96,15 +117,24 @@ function Profile() {
                         <div className={cx("discription")}>
                             This is the name that will be displayed on your profile as well as for copyright attribution
                         </div>
-                        <input type="text" value={user.displayName} onChange={(e) => handleInputChange("displayName", e.target.value)} />
+                        <input
+                            type="text"
+                            value={user.displayName}
+                            onChange={(e) => handleInputChange("displayName", e.target.value)}
+                        />
                     </div>
                     <div className={cx("item")}>
                         <label>Bio</label>
                         <div className={cx("discription")}>Tell other users on iNaturalist about yourself!</div>
-                        <textarea value={user.bioUser} onChange={(e) => handleInputChange("bioUser", e.target.value)}></textarea>
+                        <textarea
+                            value={user.bioUser}
+                            onChange={(e) => handleInputChange("bioUser", e.target.value)}
+                        ></textarea>
                     </div>
                 </div>
-                <button className={cx("btn_saveSetting")} onClick={saveSettings}>SAVE SETTING</button>
+                <button className={cx("btn_saveSetting")} onClick={saveSettings}>
+                    SAVE SETTING
+                </button>
             </div>
         </div>
     );
