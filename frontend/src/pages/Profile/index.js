@@ -13,26 +13,63 @@ function Profile() {
         displayName: "Chưa cập nhật tên người dùng",
         bioUser: "",
     });
-    const [avaUser, setAvaUser] = useState();
+    const [avaUser, setAvaUser] = useState("");
+    const [fileAvaUser, setFileAvaUser] = useState("");
 
     const idUser = sessionStorage.getItem("userID");
     useEffect(() => {
         axios
             .get("http://localhost:8080/api/v1/users/" + idUser)
             .then((res) => {
-                console.log(res.data.data);
                 setUser(res.data.data);
             })
             .catch(() => {});
     }, [idUser]);
-    const saveSettings = () => {
+
+    const uploadFile = async (file) => {
+        // Tạo một đối tượng FormData
+        let formData = new FormData();
+        formData.append("file", file);
+
+        // Gửi yêu cầu POST với FormData
+        return axios
+            .post("http://127.0.0.1:8080/api/images/upload", formData, {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    if (res.data !== null) {
+                        return res.data;
+                    } else {
+                        console.log("Response data is null");
+                        return null;
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                return null;
+            });
+    };
+
+    const saveSettings = async () => {
+        let tempUser;
+        if (fileAvaUser !== "") {
+            const urlImage = await uploadFile(fileAvaUser);
+            console.log(urlImage);
+            tempUser = { ...user, avatarUser: urlImage };
+        }
+        console.log(tempUser);
         axios
-            .put("http://localhost:8080/api/v1/users/" + idUser, user, idUser)
+            .put("http://localhost:8080/api/v1/users/" + idUser, tempUser, idUser)
             .then((res) => {
                 // Update successful, reload the page to reflect changes
                 console.log(res.data.data);
                 setUser(res.data.data);
-                window.location.reload();
+                // window.location.reload();
             })
             .catch((error) => {
                 console.error("Error updating user information:", error);
@@ -51,6 +88,9 @@ function Profile() {
     const handleFileChange = async (event) => {
         if (event.target.files.length > 0) {
             const file = event.target.files[0];
+            const fileUrl = URL.createObjectURL(file);
+            setAvaUser(fileUrl);
+            setFileAvaUser(file);
         }
     };
 
@@ -73,7 +113,13 @@ function Profile() {
                         <label>Profile Picture</label>
                         <div className={cx("wrapper-ava")}>
                             <img
-                                src={user.avatarUser !== "" ? user.avatarUser : "/img/no-user-img.jpg"}
+                                src={
+                                    avaUser !== ""
+                                        ? avaUser
+                                        : user.avatarUser !== ""
+                                        ? user.avatarUser
+                                        : "/img/no-user-img.jpg"
+                                }
                                 alt=""
                                 className={cx("ava-user")}
                             />
@@ -96,14 +142,14 @@ function Profile() {
                             This is the username you will use to log in, and other users can use to identify you on
                             iNaturalist
                         </div>
-                        <input type="text" value={user.userName} />
+                        <input type="text" value={user.userName} readOnly />
                     </div>
                     <div className={cx("item")}>
                         <label>Email</label>
                         <div className={cx("discription")}>
                             Your email is not shared with other users on iNaturalist
                         </div>
-                        <input type="email" value={user.userEmail} />
+                        <input type="email" value={user.userEmail} readOnly />
                     </div>
                     {/* <div className={('item')}>
                         <label>Change password</label>
