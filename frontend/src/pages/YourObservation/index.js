@@ -26,9 +26,10 @@ function YourObservation() {
             <div className={cx("search")}>
                 <span>Observations</span>
                 <div className={cx("right-items")}>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
-                    <input className={cx("species")} placeholder="Species" />
-                    <input className={cx("name-animal")} placeholder="Animal" />
+                    <div className={cx("wrapper-find-animal")}>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
+                        <input className={cx("name-animal")} placeholder="Animal" />
+                    </div>
                     <button className={cx("btn_find")}>Go</button>
                 </div>
             </div>
@@ -49,13 +50,13 @@ function YourObservation() {
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                         </div>
                     </button>
-                    <button className={cx("nav")}>
+                    {/* <button className={cx("nav")}>
                         <span className={cx("number")}>347.101</span>
                         <div className={cx("description")}>
                             <span>IDENTIFIERS </span>
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                         </div>
-                    </button>
+                    </button> */}
                     <button className={cx("nav")}>
                         <span className={cx("number")}>2.958.760</span>
                         <div className={cx("description")}>

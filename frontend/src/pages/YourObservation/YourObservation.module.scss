@@ -26,15 +26,24 @@
     justify-content: center;
 }
 
+.wrapper-find-animal{
+    position: relative;
+}
+
 .find-icon {
-    font-size: 2rem;
-    font-weight: 500;
+    font-size: 1.6rem;
+    font-weight: 400;
     margin-right: 10px;
+    position: absolute;
+    z-index: 1;
+    color: var(--grey-text-color);
+    left: 0;
+    padding: 9px;
 }
 
 .right-items input {
     height: 34px;
-    padding: 6px 12px;
+    padding: 6px 12px 6px 36px;
     font-size: 14px;
     color: var(--grey-text-color);
     background-color: #fff;
@@ -56,7 +65,7 @@
 .name-animal {}
 
 .btn_find {
-    padding: 8px;
+    padding: 8px 16px;
     background-color: #F16F3A;
     color: var(--white-text-color);
     border-radius: 4px;
