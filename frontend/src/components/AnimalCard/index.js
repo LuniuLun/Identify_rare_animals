@@ -6,11 +6,14 @@ const cx = classNames.bind(styles);
 
 function AnimalCard({animalPost}) {
     const [tempTime, setTempTime] = useState(animalPost.date);
+    const [avaUser, setAvaUser] = useState("");
     useEffect(() => {
         let temp = animalPost.date;
         temp = String(temp).split("T", String(temp).length);
         console.log(temp);
         setTempTime(temp[0]);
+
+        
     }, [])
     return (
         <Link to={"/detailAnimal/" + animalPost.iDUserAnimal} className={cx("card")}>
@@ -18,7 +21,7 @@ function AnimalCard({animalPost}) {
             <span className={cx("name-animal")}>{animalPost.animal.animalName}</span>
             <span className={cx("scientific-name")}>{animalPost.animal.animalScientificName}</span>
             <span className={cx("time-upload")}>{tempTime}</span>
-            {/* <img src="/img/no-user-img.jpg" alt="" className={cx("img-user")} /> */}
+            <img src="/img/no-user-img.jpg" alt="" className={cx("img-user")} />
         </Link>
     );
 }

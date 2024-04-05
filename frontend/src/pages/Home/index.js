@@ -50,13 +50,13 @@ function Home() {
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                         </div>
                     </button>
-                    <button className={cx("nav")}>
+                    {/* <button className={cx("nav")}>
                         <span className={cx("number")}>347.101</span>
                         <div className={cx("description")}>
                             <span>IDENTIFIERS </span>
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                         </div>
-                    </button>
+                    </button> */}
                     <button className={cx("nav")}>
                         <span className={cx("number")}>2.958.760</span>
                         <div className={cx("description")}>

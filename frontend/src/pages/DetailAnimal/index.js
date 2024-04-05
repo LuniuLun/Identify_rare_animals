@@ -37,7 +37,7 @@ function DetailAnimal() {
             .then((response) => {
                 if (response.data !== null) {
                     const infoPost = response.data;
-                    setDate(infoPost.date);
+                    setDate((String(infoPost.date).split("T", String(infoPost.date).length))[0]);
                     setLocation(infoPost.location);
                     setNote(infoPost.note);
                     setAnimalName(infoPost.animal.animalName);
@@ -85,7 +85,10 @@ function DetailAnimal() {
 
     return (
         <div className={cx("wrapper")}>
-            <div className={cx("title")}>{animalName}</div>
+            <div className={cx("title")}>
+                {animalName}
+                <span className={cx("scientific-name")}>({animalScientificName})</span>
+            </div>
             <div className={cx("top-items")}>
                 <div className={cx("wrapper-image-animal")}>
                     <img className={cx("image-animal")} alt="" src={animalAva} />
@@ -167,7 +170,9 @@ function DetailAnimal() {
                             </ul>
                             <ul className={cx("list-status")}>
                                 <li className={cx(levelOfDanger.trim() === "Extinct" ? "level-danger" : "")}>EX</li>
-                                <li className={cx(levelOfDanger.trim() === "Extinct in the Wild" ? "level-danger" : "")}>
+                                <li
+                                    className={cx(levelOfDanger.trim() === "Extinct in the Wild" ? "level-danger" : "")}
+                                >
                                     EW
                                 </li>
                                 <li className={cx(levelOfDanger.trim() === "Highly threatend" ? "level-danger" : "")}>
@@ -175,13 +180,17 @@ function DetailAnimal() {
                                 </li>
                                 <li className={cx(levelOfDanger.trim() === "Endangered" ? "level-danger" : "")}>EN</li>
                                 <li className={cx(levelOfDanger.trim() === "Vulnerable" ? "level-danger" : "")}>VU</li>
-                                <li className={cx(levelOfDanger.trim() === "Near Threatened" ? "level-danger" : "")}>NT</li>
-                                <li className={cx(levelOfDanger.trim() === "Least Concern" ? "level-danger" : "")}>LC</li>
+                                <li className={cx(levelOfDanger.trim() === "Near Threatened" ? "level-danger" : "")}>
+                                    NT
+                                </li>
+                                <li className={cx(levelOfDanger.trim() === "Least Concern" ? "level-danger" : "")}>
+                                    LC
+                                </li>
                             </ul>
                         </div>
                         <div className={cx("left-quantity")}>
                             <label>The remaining amount: </label>
-                            <span >{theRemainAmount}</span>
+                            <span>{theRemainAmount}</span>
                         </div>
                     </div>
                 </div>
