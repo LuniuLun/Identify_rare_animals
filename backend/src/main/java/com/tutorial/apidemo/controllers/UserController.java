@@ -164,6 +164,15 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
         }
         return listR;
     }
+    @GetMapping("/result/{iDUser}")
+    public List<Results> getAllResultsByiDUser(@PathVariable Integer iDUser) {
+        List<Results> listR = resultsRepository.getByiDUser(iDUser);
+        for (Results r : listR) {
+            r.setAnimalScientificName(
+                    animalRepository.findByIDAnimal(r.getPredictedAnimal()).getAnimalScientificName());
+        }
+        return listR;
+    }
 
     @PostMapping("/newresult")
     public ResponseEntity<ResponseObject> insertResult(@RequestBody Results newResult) {
@@ -272,4 +281,40 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
                 .ok(new ResponseObject("Success", "Received, processed, saved, and linked animal objects",
                         requestBody));
     }
+    @DeleteMapping("/deletepost/{IDUserAnimal}")
+    public ResponseEntity<ResponseObject> deletePost(@PathVariable Integer IDUserAnimal) {
+        boolean exist = user_animalRepository.existsById(Long.valueOf(IDUserAnimal));
+        if (exist) {
+            List<User_album> founds = user_albumRepository.findByiDUserAnimal(IDUserAnimal);
+            for (User_album found : founds) {
+                user_albumRepository.deleteById(Long.valueOf(found.getiDUserAlbum()));
+            }
+            user_animalRepository.deleteById(Long.valueOf(IDUserAnimal));
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("oke", "Delete successfully", IDUserAnimal)
+            );
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ResponseObject("fail", "This id does not exist", IDUserAnimal)
+        );
+    }
+    @PutMapping("/editpost/{IDUserAnimal}")
+    public ResponseEntity<ResponseObject> editPost(@RequestBody User_animal newPost, @PathVariable Integer IDUserAnimal) {
+        User_animal updatePost = user_animalRepository.findByiDUserAnimal(IDUserAnimal);
+        if(updatePost != null) {
+            updatePost.setDate(newPost.getDate());
+            updatePost.setLocation(newPost.getLocation());
+            updatePost.setNote(newPost.getNote());
+            user_animalRepository.save(updatePost);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("ok", "Update ok", updatePost)
+            );
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ResponseObject("fail", "Cannot edit this", newPost)
+            );
+        }
+    }
+
 }
