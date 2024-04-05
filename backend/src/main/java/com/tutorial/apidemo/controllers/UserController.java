@@ -125,6 +125,7 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
     ResponseEntity<ResponseObject> updateUser(@RequestBody User newUser, @PathVariable Integer id) {
         Optional<User> updateUser = userRepository.findById(id)
                 .map(user -> {
+                    user.setAvatarUser(newUser.getAvatarUser());
                     user.setDisplayName(newUser.getDisplayName());
                     user.setBioUser(newUser.getBioUser());
                     return userRepository.save(user);
