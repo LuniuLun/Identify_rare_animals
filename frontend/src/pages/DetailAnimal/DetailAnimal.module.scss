@@ -15,6 +15,13 @@
     background-color: var(--greyish-background-color);
 }
 
+.scientific-name {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #848484;
+    margin-left: 20px;
+}
+
 .top-items {
     display: flex;
     border: 1px solid rgba(0, 0, 0, 0.17);
@@ -80,8 +87,8 @@
 .time-observation,
 .time-submit {
     display: flex;
-    flex-direction: column;
     width: 50%;
+    align-items: center;
 }
 
 .time-submit label,
@@ -99,6 +106,7 @@
     font-size: 1.4rem;
     font-weight: 400;
     color: var(--grey-text-color);
+    width: 50%;
 }
 
 .buttom-items {

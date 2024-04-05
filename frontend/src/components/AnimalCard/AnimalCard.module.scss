@@ -11,6 +11,7 @@
 .img-animal {
     height: 250px;
     width: 250px;
+    object-fit: cover;
 }
 
 .name-animal {
@@ -28,6 +29,7 @@
     position: absolute;
     right: 16px;
     bottom: 48px;
+    object-fit: cover;
 }
 
 .scientific-name{
