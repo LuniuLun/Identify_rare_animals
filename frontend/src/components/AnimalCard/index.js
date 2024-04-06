@@ -10,10 +10,7 @@ function AnimalCard({animalPost}) {
     useEffect(() => {
         let temp = animalPost.date;
         temp = String(temp).split("T", String(temp).length);
-        console.log(temp);
-        setTempTime(temp[0]);
-
-        
+        setTempTime(temp[0]);        
     }, [])
     return (
         <Link to={"/detailAnimal/" + animalPost.iDUserAnimal} className={cx("card")}>

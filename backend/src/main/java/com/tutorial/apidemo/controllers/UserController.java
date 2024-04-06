@@ -211,8 +211,10 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
             if(animal != null) {
                 userAnimal.setAnimal(animal);
                 List<User_album> foundAlbum = user_albumRepository.findByiDUserAnimal(userAnimal.getiDUserAnimal());
+                System.out.println(userAnimal.getiDUserAnimal());
                 if (!foundAlbum.isEmpty()) {
                     userAnimal.getAnimal().setAnimalAva(foundAlbum.get(0).getImageLink());
+                    System.out.println(foundAlbum.get(0).getImageLink());
                 }
             }
         }
