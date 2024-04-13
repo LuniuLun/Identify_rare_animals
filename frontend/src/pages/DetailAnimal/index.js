@@ -16,6 +16,7 @@ function DetailAnimal() {
     const [animalScientificName, setAnimalScientificName] = useState("");
     const [animalAva, setAnimalAva] = useState();
 
+    const [isYourObservation, setIdYourObservation] = useState(false);
     const [userEmail, setUserEmail] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [bioUser, setBioUser] = useState("");
@@ -31,18 +32,21 @@ function DetailAnimal() {
     const [status, setStatus] = useState(null);
 
     const { id } = useParams();
+
     useEffect(() => {
         axios
             .get("http://localhost:8080/api/v1/users/detailPost/" + id)
             .then((response) => {
                 if (response.data !== null) {
                     const infoPost = response.data;
-                    setDate((String(infoPost.date).split("T", String(infoPost.date).length))[0]);
+                    setDate(String(infoPost.date).split("T", String(infoPost.date).length)[0]);
                     setLocation(infoPost.location);
                     setNote(infoPost.note);
                     setAnimalName(infoPost.animal.animalName);
                     setAnimalScientificName(infoPost.animal.animalScientificName);
                     setAnimalAva(infoPost.animal.animalAva);
+                    setIdYourObservation(parseInt(sessionStorage.getItem("userID")) === infoPost.iDUser);
+                    console.log(isYourObservation);
                 }
                 axios
                     .get("http://localhost:8080/api/v1/users/" + response.data.iDUser)
@@ -81,8 +85,22 @@ function DetailAnimal() {
             .catch((error) => {
                 console.log("Error fetching animal data:", error);
             });
-    }, [id]);
-
+    }, [id, isYourObservation]);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    });
+    const deletePost = () => {
+        axios
+            .delete("http://localhost:8080/api/v1/users/deletepost/" + id)
+            .then((response) => {
+                if (response.data) {
+                    window.location.href = "http://localhost:3000/your_observation/" + sessionStorage.getItem("userID");
+                }
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
     return (
         <div className={cx("wrapper")}>
             <div className={cx("title")}>
@@ -121,7 +139,7 @@ function DetailAnimal() {
                 </div>
             </div>
             <div className={cx("title")}>Detail</div>
-            <div className={cx("buttom-items")}>
+            <div className={cx("bottom-items")}>
                 <div className={cx("information")}>
                     <span>Description</span>
                     <div className={cx("detail-information")}>
@@ -195,6 +213,15 @@ function DetailAnimal() {
                     </div>
                 </div>
             </div>
+            {isYourObservation === true ? (
+                <div className={cx("delete-post")}>
+                    <button className={cx("delete_btn")} onClick={deletePost}>
+                        Delete
+                    </button>
+                </div>
+            ) : (
+                <></>
+            )}
         </div>
     );
 }

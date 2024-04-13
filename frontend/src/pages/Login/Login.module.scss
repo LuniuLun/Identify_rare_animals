@@ -210,7 +210,11 @@
     margin: 0 0;
 }
 
-button:hover{
+.submit-otp,
+.btn_sendOTP,
+.btn_back,
+.btn_login,
+.btn_signup:hover{
     background-color: rgba(87, 135, 9, 0.805);
 }
 
