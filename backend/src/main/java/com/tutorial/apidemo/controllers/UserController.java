@@ -240,11 +240,9 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
         for (User_animal userAnimal : found) {
             Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
             if(animal != null) {
-                userAnimal.setAnimal(animal);
-                List<User_album> foundAlbum = user_albumRepository.findByiDUserAnimal(userAnimal.getiDUserAnimal());
-                if (!foundAlbum.isEmpty()) {
-                    userAnimal.getAnimal().setAnimalAva(foundAlbum.get(0).getImageLink());
-                }
+                Animal clonedAnimal = animal.clone(); // Sao chép đối tượng Animal
+                userAnimal.setAnimal(clonedAnimal);
+                userAnimal.getAnimal().setAnimalAva(getUser_AlbumByiDUserA(userAnimal.getiDUserAnimal()).getImageLink());
             }
         }
         return found;
@@ -255,11 +253,9 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
         User_animal userAnimal = user_animalRepository.findByiDUserAnimal(iDUserAnimal);
             Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
             if(animal != null) {
-                userAnimal.setAnimal(animal);
-                List<User_album> foundAlbum = user_albumRepository.findByiDUserAnimal(userAnimal.getiDUserAnimal());
-                if (!foundAlbum.isEmpty()) {
-                    userAnimal.getAnimal().setAnimalAva(foundAlbum.get(0).getImageLink());
-                }
+                Animal clonedAnimal = animal.clone(); // Sao chép đối tượng Animal
+                userAnimal.setAnimal(clonedAnimal);
+                userAnimal.getAnimal().setAnimalAva(getUser_AlbumByiDUserA(userAnimal.getiDUserAnimal()).getImageLink());
             }
         return userAnimal;
     }
