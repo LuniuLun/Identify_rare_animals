@@ -208,17 +208,22 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
         List<User_animal> found = user_animalRepository.findAll();
         for (User_animal userAnimal : found) {
             Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
-            if(animal != null) {
-                userAnimal.setAnimal(animal);
-                List<User_album> foundAlbum = user_albumRepository.findByiDUserAnimal(userAnimal.getiDUserAnimal());
-                System.out.println(userAnimal.getiDUserAnimal());
-                if (!foundAlbum.isEmpty()) {
-                    userAnimal.getAnimal().setAnimalAva(foundAlbum.get(0).getImageLink());
-                    System.out.println(foundAlbum.get(0).getImageLink());
-                }
+            if (animal != null) {
+                Animal clonedAnimal = animal.clone(); // Sao chép đối tượng Animal
+                userAnimal.setAnimal(clonedAnimal);
+                userAnimal.getAnimal().setAnimalAva(getUser_AlbumByiDUserA(userAnimal.getiDUserAnimal()).getImageLink());
             }
         }
         return found;
+    }
+
+    @GetMapping("/animal_album/{iDUserAnimal}")
+    public List<User_album> getUser_AlbumByiDUserAnimal(@PathVariable Integer iDUserAnimal) {
+        return user_albumRepository.findByiDUserAnimal(iDUserAnimal);
+    }
+    @GetMapping("/animal_album1/{iDUserAnimal}")
+    public User_album getUser_AlbumByiDUserA(@PathVariable Integer iDUserAnimal) {
+        return user_albumRepository.findByiDUserAnimal(iDUserAnimal).getFirst();
     }
     @GetMapping("/album")
     public ResponseEntity<ResponseObject> getAllUserAlbum() {

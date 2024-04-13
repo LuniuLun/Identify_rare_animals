@@ -133,6 +133,45 @@
     font-weight: 500;
 }
 
+.check-otp {
+    width: 100%;
+}
+
+.check-otp p {
+    font-size: 1.2rem;
+    color: var(--brown-text-color);
+    font-weight: 500;
+}
+
+.input-otp {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0 16px;
+}
+
+.input-otp input {
+    max-width: 13%;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--grey-text-color);
+    background-color: var(--greyish-background-color);
+    border: 0;
+    outline: 0;
+    border-radius: 10px;
+}
+
+.btn_icon {
+    position: absolute;
+    top:-120px;
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--grey-text-color);
+    cursor: pointer;
+}
+
+
 .danger-infor,
 .danger-infor-login {
     color: var(--brown-text-color);
@@ -152,7 +191,7 @@
 .danger-infor {
     display: none;
 }
-
+.submit-otp,
 .btn_sendOTP,
 .btn_back,
 .btn_login,
@@ -164,17 +203,24 @@
     color: var(--white-text-color);
     font-size: 1.8rem;
     font-weight: 600;
+    width: 100%;
 }
+
 .btn_back{
     margin: 0 0;
 }
 
+button:hover{
+    background-color: rgba(87, 135, 9, 0.805);
+}
+
+.send-otp-again,
 .footer .change-modal {
     cursor: pointer;
     margin-left: 4px;
     text-decoration: underline;
 }
-
+.send-otp-again,
 .footer {
     display: flex;
     color: var(--primary-color);

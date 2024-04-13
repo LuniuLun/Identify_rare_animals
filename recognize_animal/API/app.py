@@ -76,7 +76,7 @@ def predict_animal():
 
 
 
-url = 'http://192.168.100.235/cam-lo.jpg'
+url = 'http://192.168.43.8/cam-lo.jpg'
 temp_file_path = ""
 server_url = ""
 photo = None
