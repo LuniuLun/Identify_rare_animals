@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faLock, faUnlock, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faLock, faUnlock, faUser, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { Fragment, useEffect, useRef, useState } from "react";
 import axios from "axios";
 const cx = classNames.bind(styles);
@@ -18,6 +18,7 @@ function Login({ setLoginStatus }) {
     const [showLoginForm, setShowLoginForm] = useState(true);
     const [usernameoremail, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showInputOTP, setShowInputOTP] = useState(false);
     const [showForgetPassword, setShowForgetPassword] = useState(false);
     const warningFillInforRef = useRef(null);
     const warningFillInforRefSignup = useRef(null);
@@ -27,6 +28,8 @@ function Login({ setLoginStatus }) {
     const wrapperRef = useRef(null);
     const loginModal = useRef(null);
     const registerModal = useRef(null);
+    const [otpValues, setOtpValues] = useState(new Array(6).fill(""));
+
     const changeForm = () => {
         setShowLoginForm(!showLoginForm);
     };
@@ -145,9 +148,26 @@ function Login({ setLoginStatus }) {
     };
 
     const handleSendOTP = () => {
-        
-    }
+        setShowInputOTP(true);
+    };
+    const verifyOTP = () => {
+        console.log("OTP: " + otpValues);
+    };
 
+
+    const handleOTPInputChange = (index, value) => {
+        const updatedOTP = [...otpValues];
+        if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].includes(parseInt(value)) || value === "" || value === null) {
+            updatedOTP[index] = value;
+            setOtpValues(updatedOTP);
+            if (value !== "") {
+                const nextInput = document.getElementById(`otp-input-${index + 1}`);
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        }
+    };
     return (
         <div ref={wrapperRef} className={cx("wrapper")}>
             {showLoginForm === true ? (
@@ -161,12 +181,45 @@ function Login({ setLoginStatus }) {
                                         <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
                                         <input className={cx("inputEmailForgotPassword")} placeholder="Email" />
                                     </div>
-                                    <button className={cx("btn_sendOTP")} onClick={handleSendOTP}>
-                                        Send OTP
-                                    </button>
-                                    <button className={cx("btn_back")} onClick={() => setShowForgetPassword(false)}>
-                                        Back
-                                    </button>
+
+                                    {showInputOTP === true ? (
+                                        <div className={cx("check-otp")}>
+                                            <p>The OTP has been sent to your email, please check it.</p>
+                                            <div className={cx("input-otp")}>
+                                                {[...Array(6)].map((_, index) => (
+                                                    <input
+                                                        key={index}
+                                                        id={`otp-input-${index}`}
+                                                        type="text"
+                                                        maxLength={1}
+                                                        value={otpValues[index] || ""}
+                                                        onChange={(e) => handleOTPInputChange(index, e.target.value)}
+                                                        autocomplete = "none"
+                                                    />
+                                                ))}
+                                            </div>
+                                            <p>
+                                                Enter the OTP code that we sent to your email, be careful not to share
+                                                the code with anyone.
+                                            </p>
+                                            <button className={cx("submit-otp")} onClick={verifyOTP}>
+                                                Verify
+                                            </button>
+                                            <div className={cx("send-otp-again")}>Didn’t get the OTP? Resend</div>
+                                        </div>
+                                    ) : (
+                                        <button className={cx("btn_sendOTP")} onClick={handleSendOTP}>
+                                            Send OTP
+                                        </button>
+                                    )}
+                                    <FontAwesomeIcon
+                                        className={cx("btn_icon")}
+                                        icon={faChevronLeft}
+                                        onClick={() => {
+                                            setShowForgetPassword(false);
+                                            setShowInputOTP(false);
+                                        }}
+                                    />
                                 </div>
                             </Fragment>
                         ) : (
@@ -198,7 +251,12 @@ function Login({ setLoginStatus }) {
                                     <p ref={warningFailedLoginRef} className={cx("danger-infor-login")}>
                                         Your password is incorrect. Please check your password again.
                                     </p>
-                                    <Link className={cx("link-forgetPassword")} onClick={() => setShowForgetPassword(true)}>Forget your password?</Link>
+                                    <Link
+                                        className={cx("link-forgetPassword")}
+                                        onClick={() => setShowForgetPassword(true)}
+                                    >
+                                        Forget your password?
+                                    </Link>
                                     <button className={cx("btn_login")} onClick={checkLogin}>
                                         Log In
                                     </button>
