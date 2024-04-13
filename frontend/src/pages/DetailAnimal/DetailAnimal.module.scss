@@ -109,7 +109,7 @@
     width: 50%;
 }
 
-.buttom-items {
+.bottom-items {
     padding: 30px 40px;
     border: 1px solid rgba(0, 0, 0, 0.17);
     width: 100%;
@@ -251,4 +251,26 @@
     margin-left: 30px;
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
+
+
+.delete-post {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.delete_btn {
+    padding: 8px 12px;
+    margin: 20px 32px;
+    border-radius: 8px;
+    background-color: #be400e;
+    color: var(--white-text-color);
+    font-weight: 600;
+    font-size: 1.6rem;
+}
+
+.delete_btn:hover{
+    background-color: #F16F3A;
 }
