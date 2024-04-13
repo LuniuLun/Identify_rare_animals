@@ -69,7 +69,7 @@ function Profile() {
                 // Update successful, reload the page to reflect changes
                 console.log(res.data.data);
                 setUser(res.data.data);
-                // window.location.reload();
+                window.location.reload();
             })
             .catch((error) => {
                 console.error("Error updating user information:", error);

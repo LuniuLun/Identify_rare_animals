@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faLock, faUnlock, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useRef, useState } from "react";
+import { faEnvelope, faLock, faUnlock, faUser, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { Fragment, useEffect, useRef, useState } from "react";
 import axios from "axios";
 const cx = classNames.bind(styles);
 
@@ -18,6 +18,8 @@ function Login({ setLoginStatus }) {
     const [showLoginForm, setShowLoginForm] = useState(true);
     const [usernameoremail, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showInputOTP, setShowInputOTP] = useState(false);
+    const [showForgetPassword, setShowForgetPassword] = useState(false);
     const warningFillInforRef = useRef(null);
     const warningFillInforRefSignup = useRef(null);
     const warningUnvalidPassword = useRef(null);
@@ -26,12 +28,14 @@ function Login({ setLoginStatus }) {
     const wrapperRef = useRef(null);
     const loginModal = useRef(null);
     const registerModal = useRef(null);
+    const [otpValues, setOtpValues] = useState(new Array(6).fill(""));
+
     const changeForm = () => {
         setShowLoginForm(!showLoginForm);
     };
     useEffect(() => {
         sessionStorage.removeItem("userID");
-    }, [])
+    }, []);
     useEffect(() => {
         if (showLoginForm === true) {
             wrapperRef.current.style.backgroundImage = "url(/img/background_login.png)";
@@ -83,16 +87,16 @@ function Login({ setLoginStatus }) {
         }
     };
     const handleSignUp = () => {
-        const email = document.querySelector('.inputEmail').value;
-        const username = document.querySelector('.inputUsername').value;
-        const password = document.querySelector('.inputPassword').value;
-        const confirmPassword = document.querySelector('.inputConfirmationPassword').value;
+        const email = document.querySelector(".inputEmail").value;
+        const username = document.querySelector(".inputUsername").value;
+        const password = document.querySelector(".inputPassword").value;
+        const confirmPassword = document.querySelector(".inputConfirmationPassword").value;
         if (password !== confirmPassword) {
             warningUnvalidPassword.current.style.display = "block";
         } else {
             warningUnvalidPassword.current.style.display = "none";
-            bcrypt.genSalt(10, function(err, salt) {
-                bcrypt.hash(password, salt, function(err, hash) {
+            bcrypt.genSalt(10, function (err, salt) {
+                bcrypt.hash(password, salt, function (err, hash) {
                     const encryptedPassword = hash;
                     const newUser = {
                         userName: username,
@@ -107,11 +111,16 @@ function Login({ setLoginStatus }) {
         }
     };
     const signUp = () => {
-        const email = document.querySelector('.inputEmail').value;
-        const username = document.querySelector('.inputUsername').value;
-        const password = document.querySelector('.inputPassword').value;
-        const confirmPassword = document.querySelector('.inputConfirmationPassword').value;
-        if (email?.trim() !== "" && username?.trim() !== "" && password?.trim() !== "" && confirmPassword?.trim() !== "") {
+        const email = document.querySelector(".inputEmail").value;
+        const username = document.querySelector(".inputUsername").value;
+        const password = document.querySelector(".inputPassword").value;
+        const confirmPassword = document.querySelector(".inputConfirmationPassword").value;
+        if (
+            email?.trim() !== "" &&
+            username?.trim() !== "" &&
+            password?.trim() !== "" &&
+            confirmPassword?.trim() !== ""
+        ) {
             if (warningFillInforRefSignup.current !== null) {
                 warningFillInforRefSignup.current.style.display = "none";
             }
@@ -137,57 +146,136 @@ function Login({ setLoginStatus }) {
             warningUnvalidPassword.current.style.display = "none";
         }
     };
-    
+
+    const handleSendOTP = () => {
+        setShowInputOTP(true);
+    };
+    const verifyOTP = () => {
+        console.log("OTP: " + otpValues);
+    };
+
+
+    const handleOTPInputChange = (index, value) => {
+        const updatedOTP = [...otpValues];
+        if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].includes(parseInt(value)) || value === "" || value === null) {
+            updatedOTP[index] = value;
+            setOtpValues(updatedOTP);
+            if (value !== "") {
+                const nextInput = document.getElementById(`otp-input-${index + 1}`);
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        }
+    };
     return (
         <div ref={wrapperRef} className={cx("wrapper")}>
             {showLoginForm === true ? (
                 <div ref={loginModal} className={cx("login-modal")}>
                     <div className={cx("content")}>
-                        <div className={cx("tittle")}>Welcome</div>
-                        <div className={cx("login-form")}>
-                            <div className={cx("information", "username")}>
-                                <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
-                                <input
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    className={cx("inputUsername")}
-                                    placeholder="Username or email"
-                                />
-                            </div>
-                            <div className={cx("information", "password")}>
-                                <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faLock} />
-                                <input
-                                    type="password"
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className={cx("inputPassword")}
-                                    placeholder="Password"
-                                />
-                            </div>
+                        {showForgetPassword === true ? (
+                            <Fragment>
+                                <div className={cx("tittle")}>Forgot password</div>
+                                <div className={cx("forgot-passwordForm")}>
+                                    <div className={cx("information", "email")}>
+                                        <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
+                                        <input className={cx("inputEmailForgotPassword")} placeholder="Email" />
+                                    </div>
 
-                            <p ref={warningFillInforRef} className={cx("danger-infor")}>
-                                Please fill all information.
-                            </p>
+                                    {showInputOTP === true ? (
+                                        <div className={cx("check-otp")}>
+                                            <p>The OTP has been sent to your email, please check it.</p>
+                                            <div className={cx("input-otp")}>
+                                                {[...Array(6)].map((_, index) => (
+                                                    <input
+                                                        key={index}
+                                                        id={`otp-input-${index}`}
+                                                        type="text"
+                                                        maxLength={1}
+                                                        value={otpValues[index] || ""}
+                                                        onChange={(e) => handleOTPInputChange(index, e.target.value)}
+                                                        autocomplete = "none"
+                                                    />
+                                                ))}
+                                            </div>
+                                            <p>
+                                                Enter the OTP code that we sent to your email, be careful not to share
+                                                the code with anyone.
+                                            </p>
+                                            <button className={cx("submit-otp")} onClick={verifyOTP}>
+                                                Verify
+                                            </button>
+                                            <div className={cx("send-otp-again")}>Didn’t get the OTP? Resend</div>
+                                        </div>
+                                    ) : (
+                                        <button className={cx("btn_sendOTP")} onClick={handleSendOTP}>
+                                            Send OTP
+                                        </button>
+                                    )}
+                                    <FontAwesomeIcon
+                                        className={cx("btn_icon")}
+                                        icon={faChevronLeft}
+                                        onClick={() => {
+                                            setShowForgetPassword(false);
+                                            setShowInputOTP(false);
+                                        }}
+                                    />
+                                </div>
+                            </Fragment>
+                        ) : (
+                            <Fragment>
+                                <div className={cx("tittle")}>Welcome</div>
+                                <div className={cx("login-form")}>
+                                    <div className={cx("information", "username")}>
+                                        <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
+                                        <input
+                                            onChange={(e) => setUsername(e.target.value)}
+                                            className={cx("inputUsername")}
+                                            placeholder="Username or email"
+                                        />
+                                    </div>
+                                    <div className={cx("information", "password")}>
+                                        <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faLock} />
+                                        <input
+                                            type="password"
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className={cx("inputPassword")}
+                                            placeholder="Password"
+                                        />
+                                    </div>
 
-                            <p ref={warningFailedLoginRef} className={cx("danger-infor-login")}>
-                                Your password is incorrect. Please check your password again.
-                            </p>
-                            <Link className={cx("link-forgetPassword")}>Forget your password?</Link>
-                            <button className={cx("btn_login")} onClick={checkLogin}>
-                                Log In
-                            </button>
-                        </div>
-                        <span className={cx("footer")}>
-                            Don't have an account?{" "}
-                            <div onClick={changeForm} className={cx("change-modal")}>
-                                Sign up
-                            </div>
-                        </span>
+                                    <p ref={warningFillInforRef} className={cx("danger-infor")}>
+                                        Please fill all information.
+                                    </p>
+
+                                    <p ref={warningFailedLoginRef} className={cx("danger-infor-login")}>
+                                        Your password is incorrect. Please check your password again.
+                                    </p>
+                                    <Link
+                                        className={cx("link-forgetPassword")}
+                                        onClick={() => setShowForgetPassword(true)}
+                                    >
+                                        Forget your password?
+                                    </Link>
+                                    <button className={cx("btn_login")} onClick={checkLogin}>
+                                        Log In
+                                    </button>
+                                </div>
+                                <span className={cx("footer")}>
+                                    Don't have an account?{" "}
+                                    <div onClick={changeForm} className={cx("change-modal")}>
+                                        Sign up
+                                    </div>
+                                </span>
+                            </Fragment>
+                        )}
                     </div>
                 </div>
             ) : (
                 <div ref={registerModal} className={cx("register-modal")}>
                     <div className={cx("content")}>
                         <div className={cx("tittle")}>Join with us</div>
-                        <div className={cx("login-form")}>
+                        <div className={cx("register-form")}>
                             <div className={cx("information", "email")}>
                                 <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
                                 <input className={cx("inputEmail")} placeholder="Email" />
@@ -218,7 +306,9 @@ function Login({ setLoginStatus }) {
                             <p ref={warningFailedSignupRef} className={cx("danger-infor-login")}>
                                 Đăng kí không thành công.
                             </p>
-                            <button className={cx("btn_signup")} onClick={signUp}>Sign up</button>
+                            <button className={cx("btn_signup")} onClick={signUp}>
+                                Sign up
+                            </button>
                         </div>
                         <span className={cx("footer")}>
                             Already have an account?{" "}
