@@ -10,6 +10,8 @@ const cx = classNames.bind(styles);
 
 function YourObservation() {
     const [animalPost, setAnimalPost] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [animals, setAnimals] = useState([]);
     const {id} = useParams();
     useEffect(() => {
         axios
@@ -17,6 +19,22 @@ function YourObservation() {
             .then((res) => {
                 if (res.data !== null) {
                     setAnimalPost(res.data);
+                }
+            })
+            .catch((err) => console.error(err));
+            axios
+            .get("http://localhost:8080/api/v1/animals")
+            .then((res) => {
+                if (res.data !== null) {
+                    setAnimals(res.data);
+                }
+            })
+            .catch((err) => console.error(err));
+        axios
+            .get("http://localhost:8080/api/v1/users")
+            .then((res) => {
+                if (res.data !== null) {
+                    setUsers(res.data);
                 }
             })
             .catch((err) => console.error(err));
@@ -37,14 +55,14 @@ function YourObservation() {
                 <span className={cx("title")}>The World</span>
                 <div className={cx("parameter")}>
                     <button className={cx("nav", "active")}>
-                        <span className={cx("number")}>173.426.821</span>
+                        <span className={cx("number")}>{animalPost.length}</span>
                         <div className={cx("description")}>
                             <span>OBSERVATIONS</span>
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                         </div>
                     </button>
                     <button className={cx("nav")}>
-                        <span className={cx("number")}>464.157</span>
+                        <span className={cx("number")}>{animals.length}</span>
                         <div className={cx("description")}>
                             <span>SPECIES</span>
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
@@ -58,7 +76,7 @@ function YourObservation() {
                         </div>
                     </button> */}
                     <button className={cx("nav")}>
-                        <span className={cx("number")}>2.958.760</span>
+                        <span className={cx("number")}>{users.length - 1}</span>
                         <div className={cx("description")}>
                             <span>OBSERVERS</span>{" "}
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
