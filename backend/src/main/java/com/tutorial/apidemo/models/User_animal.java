@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "user_animal")
-public class User_animal {
+public class User_animal{
     @Id
     private Integer iDUserAnimal;
     private Integer iDUser;
@@ -95,4 +95,5 @@ public class User_animal {
     public void setAnimal(Animal animal) {
         this.animal = animal;
     }
+
 }
