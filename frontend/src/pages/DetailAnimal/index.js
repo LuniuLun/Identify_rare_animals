@@ -146,11 +146,11 @@ function DetailAnimal() {
                     <div className={cx("time-observations")}>
                         <div className={cx("time-observation")}>
                             <label>Observed:</label>
-                            <input type="date" value={date} onChange={e => setDate(e.target.value)}/>
+                            <input type="date" value={date} onChange={e => setDate(e.target.value)} readOnly={!isYourObservation} />
                         </div>
                         <div className={cx("time-submit")}>
                             <label>Submitted:</label>
-                            <input value={date} readOnly />
+                            <input value={date} readOnly type="date"/>
                         </div>
                     </div>
                     <div className={cx("location")}>
