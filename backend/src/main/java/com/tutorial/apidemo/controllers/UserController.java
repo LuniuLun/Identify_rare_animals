@@ -2,6 +2,8 @@ package com.tutorial.apidemo.controllers;
 
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import aj.org.objectweb.asm.TypeReference;
@@ -240,11 +242,9 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
         for (User_animal userAnimal : found) {
             Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
             if(animal != null) {
-                userAnimal.setAnimal(animal);
-                List<User_album> foundAlbum = user_albumRepository.findByiDUserAnimal(userAnimal.getiDUserAnimal());
-                if (!foundAlbum.isEmpty()) {
-                    userAnimal.getAnimal().setAnimalAva(foundAlbum.get(0).getImageLink());
-                }
+                Animal clonedAnimal = animal.clone(); // Sao chép đối tượng Animal
+                userAnimal.setAnimal(clonedAnimal);
+                userAnimal.getAnimal().setAnimalAva(getUser_AlbumByiDUserA(userAnimal.getiDUserAnimal()).getImageLink());
             }
         }
         return found;
@@ -255,11 +255,9 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
         User_animal userAnimal = user_animalRepository.findByiDUserAnimal(iDUserAnimal);
             Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
             if(animal != null) {
-                userAnimal.setAnimal(animal);
-                List<User_album> foundAlbum = user_albumRepository.findByiDUserAnimal(userAnimal.getiDUserAnimal());
-                if (!foundAlbum.isEmpty()) {
-                    userAnimal.getAnimal().setAnimalAva(foundAlbum.get(0).getImageLink());
-                }
+                Animal clonedAnimal = animal.clone(); // Sao chép đối tượng Animal
+                userAnimal.setAnimal(clonedAnimal);
+                userAnimal.getAnimal().setAnimalAva(getUser_AlbumByiDUserA(userAnimal.getiDUserAnimal()).getImageLink());
             }
         return userAnimal;
     }
@@ -306,20 +304,35 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
         );
     }
     @PutMapping("/editpost/{IDUserAnimal}")
-    public ResponseEntity<ResponseObject> editPost(@RequestBody User_animal newPost, @PathVariable Integer IDUserAnimal) {
+    public ResponseEntity<ResponseObject> editPost(@RequestBody String newPostJson, @PathVariable Integer IDUserAnimal) {
         User_animal updatePost = user_animalRepository.findByiDUserAnimal(IDUserAnimal);
         if(updatePost != null) {
-            updatePost.setDate(newPost.getDate());
-            updatePost.setLocation(newPost.getLocation());
-            updatePost.setNote(newPost.getNote());
-            user_animalRepository.save(updatePost);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("ok", "Update ok", updatePost)
-            );
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                User_animal newPost = objectMapper.readValue(newPostJson, User_animal.class);
+
+                // Set the new values to the existing entity
+                updatePost.setDate(newPost.getDate());
+                updatePost.setLocation(newPost.getLocation());
+                updatePost.setNote(newPost.getNote());
+
+                // Save the updated entity
+                user_animalRepository.save(updatePost);
+
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new ResponseObject("ok", "Update successful", updatePost)
+                );
+            } catch (IOException e) {
+                // Handle JSON parsing exception
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new ResponseObject("fail", "Invalid JSON format", null)
+                );
+            }
         }
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("fail", "Cannot edit this", newPost)
+                    new ResponseObject("fail", "Cannot edit this", newPostJson)
             );
         }
     }
