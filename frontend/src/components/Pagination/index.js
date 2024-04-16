@@ -4,18 +4,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 const cx = classNames.bind(styles);
 
-function Pagination({ currentPage, totalPages, handleOnCLick, setCurrentPage }) {
+function Pagination({ currentPage, totalPages, setCurrentPage }) {
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
     }
     const handlePageChange = (e) => {
-        handleOnCLick();
         setCurrentPage(e.target.value);
     };
 
     const handleShowPreviousPage = () => {
-        handleOnCLick();
         if (currentPage !== 1) {
             setCurrentPage(currentPage - 1);
         } else {
@@ -24,7 +22,6 @@ function Pagination({ currentPage, totalPages, handleOnCLick, setCurrentPage }) 
     };
 
     const handleShowNextPage = () => {
-        handleOnCLick();
         if (currentPage !== totalPages) {
             setCurrentPage(currentPage + 1);
         } else {
