@@ -1,7 +1,7 @@
 import classNames from "classnames/bind";
 import styles from "./DetailAnimal.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBinoculars } from "@fortawesome/free-solid-svg-icons";
+import { faBinoculars, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -31,6 +31,8 @@ function DetailAnimal() {
     const [theRemainAmount, setTheRemainAmount] = useState("");
     const [status, setStatus] = useState(null);
 
+    const [listImage, setListImage] = useState([]);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const { id } = useParams();
 
     useEffect(() => {
@@ -44,9 +46,8 @@ function DetailAnimal() {
                     setNote(infoPost.note);
                     setAnimalName(infoPost.animal.animalName);
                     setAnimalScientificName(infoPost.animal.animalScientificName);
-                    setAnimalAva(infoPost.animal.animalAva);
+                    // setAnimalAva(infoPost.animal.animalAva);
                     setIdYourObservation(parseInt(sessionStorage.getItem("userID")) === infoPost.iDUser);
-                    console.log(isYourObservation);
                 }
                 axios
                     .get("http://localhost:8080/api/v1/users/" + response.data.iDUser)
@@ -74,7 +75,6 @@ function DetailAnimal() {
                             setWWFBiomes(infoDetailAnimal.wwfBiomes);
                             setLevelOfDanger(infoDetailAnimal.levelOfDanger);
                             setTheRemainAmount(infoDetailAnimal.theRemainAmount);
-                            console.log(infoDetailAnimal.levelOfDanger);
                             setStatus(infoDetailAnimal.status);
                         }
                     })
@@ -86,9 +86,28 @@ function DetailAnimal() {
                 console.log("Error fetching animal data:", error);
             });
     }, [id, isYourObservation]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/api/v1/users/animal_album/" + id);
+                if (response.data != null) {
+                    const arrObject = response.data;
+                    const updatedList = arrObject.map((element) => element.imageLink);
+                    setListImage(updatedList);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, [id]);
+
     useEffect(() => {
         window.scrollTo(0, 0);
     });
+
     const deletePost = () => {
         axios
             .delete("http://localhost:8080/api/v1/users/deletepost/" + id)
@@ -107,7 +126,7 @@ function DetailAnimal() {
             .put("http://localhost:8080/api/v1/users/editpost/" + id, {
                 location: location,
                 note: note,
-                date: date
+                date: date,
             })
             .then((response) => {
                 if (response.data) {
@@ -118,6 +137,26 @@ function DetailAnimal() {
                 console.log(e);
             });
     };
+
+    const showNextImage = () => {
+        setCurrentImageIndex((prevIndex) => {
+            if (prevIndex === listImage.length - 1) {
+                return 0;
+            } else {
+                return prevIndex + 1;
+            }
+        });
+    };
+
+    const showPreviousImage = () => {
+        setCurrentImageIndex((prevIndex) => {
+            if (prevIndex === 0) {
+                return listImage.length - 1;
+            } else {
+                return prevIndex - 1;
+            }
+        });
+    };
     return (
         <div className={cx("wrapper")}>
             <div className={cx("title")}>
@@ -126,7 +165,13 @@ function DetailAnimal() {
             </div>
             <div className={cx("top-items")}>
                 <div className={cx("wrapper-image-animal")}>
-                    <img className={cx("image-animal")} alt="" src={animalAva} />
+                    {listImage.length > 1 && (
+                        <FontAwesomeIcon icon={faChevronLeft} className={cx("icon")} onClick={showPreviousImage} />
+                    )}
+                    <img className={cx("image-animal")} alt="" src={listImage[currentImageIndex]} />
+                    {listImage.length > 1 && (
+                        <FontAwesomeIcon icon={faChevronRight} className={cx("icon")} onClick={showPreviousImage} />
+                    )}
                 </div>
                 <div className={cx("bio")}>
                     <div className={cx("user")}>
@@ -146,20 +191,35 @@ function DetailAnimal() {
                     <div className={cx("time-observations")}>
                         <div className={cx("time-observation")}>
                             <label>Observed:</label>
-                            <input type="date" value={date} onChange={e => setDate(e.target.value)} readOnly={!isYourObservation} />
+                            <input
+                                type="date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                readOnly={!isYourObservation}
+                            />
                         </div>
                         <div className={cx("time-submit")}>
                             <label>Submitted:</label>
-                            <input value={date} readOnly type="date"/>
+                            <input value={date} readOnly type="date" />
                         </div>
                     </div>
                     <div className={cx("location")}>
                         <label>Location:</label>
-                        <input value={location} onChange={(e) => setLocation(e.target.value)} autoComplete="off" readOnly={!isYourObservation} />
+                        <input
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
+                            autoComplete="off"
+                            readOnly={!isYourObservation}
+                        />
                     </div>
                     <div className={cx("note")}>
                         <label>Note:</label>
-                        <textarea onChange={(e) => setNote(e.target.value)} autoComplete="off" value={note} readOnly={!isYourObservation}></textarea>
+                        <textarea
+                            onChange={(e) => setNote(e.target.value)}
+                            autoComplete="off"
+                            value={note}
+                            readOnly={!isYourObservation}
+                        ></textarea>
                     </div>
                 </div>
             </div>

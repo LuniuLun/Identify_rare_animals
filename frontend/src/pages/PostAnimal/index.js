@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import WarningBox from "../../components/WarningBox";
+import Loading from "../../components/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -23,10 +24,11 @@ function PostAnimal() {
     const [animalObjects, setAnimalObjects] = useState([]);
     const [focusedIndexes, setFocusedIndexes] = useState([]);
     const [showIcon, setShowIcon] = useState(false);
-    // const [imageShowingRef, setImageShowingRef] = useRef();
     const [showWarning, setShowWarning] = useState(false);
     const [contentWarning, setContentWarning] = useState("");
     const [AnimalIndexesWithEmptyAttributes, setAnimalIndexesWithEmptyAttributes] = useState([]);
+    const [showLoading, setShowLoading] = useState(true);
+
     const idUser = sessionStorage.getItem("userID");
     useEffect(() => {
         if (animalObjects.length === 0) setIsHavingAnimalPost(false);
@@ -541,6 +543,9 @@ function PostAnimal() {
             ) : (
                 <></>
             )}
+            {showLoading === true ? (<div className={cx("wrapper-loading")}>
+                <Loading/>
+            </div>) : (<></>)}
         </div>
     );
 }
