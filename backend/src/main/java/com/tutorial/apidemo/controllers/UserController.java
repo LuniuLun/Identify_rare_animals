@@ -219,6 +219,23 @@ ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
         return found;
     }
 
+    @GetMapping("/animal/search/{search}")
+    public List<User_animal> searchUser_animal(@PathVariable String search) {
+        List<User_animal> found = new ArrayList<>();
+        List<User_animal> allUserAnimals = user_animalRepository.findAll();
+        for (User_animal userAnimal : allUserAnimals) {
+            Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
+            if (animal != null && animal.getAnimalName().toLowerCase().contains(search.toLowerCase())) {
+                Animal clonedAnimal = animal.clone();
+                userAnimal.setAnimal(clonedAnimal);
+                userAnimal.getAnimal().setAnimalAva(getUser_AlbumByiDUserA(userAnimal.getiDUserAnimal()).getImageLink());
+                found.add(userAnimal);
+            }
+        }
+        return found;
+    }
+
+
     @GetMapping("/animal_album/{iDUserAnimal}")
     public List<User_album> getUser_AlbumByiDUserAnimal(@PathVariable Integer iDUserAnimal) {
         return user_albumRepository.findByiDUserAnimal(iDUserAnimal);
