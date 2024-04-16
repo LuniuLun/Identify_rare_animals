@@ -334,6 +334,9 @@ public class UserController {
     public List<User_album> getUser_AlbumByiDUserAnimal(@PathVariable Integer iDUserAnimal) {
         return user_albumRepository.findByiDUserAnimal(iDUserAnimal);
     }
+
+
+
     @GetMapping("/animal_album1/{iDUserAnimal}")
     public User_album getUser_AlbumByiDUserA(@PathVariable Integer iDUserAnimal) {
         return user_albumRepository.findByiDUserAnimal(iDUserAnimal).getFirst();
@@ -360,6 +363,23 @@ public class UserController {
         }
         return found;
     }
+
+    @GetMapping("/animal/search/{iDUser}/{search}")
+    public List<User_animal> searchAllUser_animalByiDUser(@PathVariable Integer iDUser, @PathVariable String search) {
+        List<User_animal> found = new ArrayList<>();
+        List<User_animal> allUserAnimals = user_animalRepository.findByiDUser(iDUser);
+        for (User_animal userAnimal : allUserAnimals) {
+            Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
+            if (animal != null && animal.getAnimalName().toLowerCase().contains(search.toLowerCase())) {
+                Animal clonedAnimal = animal.clone();
+                userAnimal.setAnimal(clonedAnimal);
+                userAnimal.getAnimal().setAnimalAva(getUser_AlbumByiDUserA(userAnimal.getiDUserAnimal()).getImageLink());
+                found.add(userAnimal);
+            }
+        }
+        return found;
+    }
+
 
     @GetMapping("/detailPost/{iDUserAnimal}")
     public User_animal getAllUser_animalByiDUserAnimal(@PathVariable Integer iDUserAnimal) {
