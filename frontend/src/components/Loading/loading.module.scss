@@ -19,7 +19,7 @@
 }
 
 .loading_image {
-    animation: slide 2s linear infinite;
+    animation: slide 1s linear infinite;
     position: absolute;
     top: -376%;
     z-index: 2;
@@ -41,7 +41,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    animation: loading-progress 2s linear infinite;
+    animation: loading-progress 1s linear infinite;
 }
 
 @keyframes loading-progress {
