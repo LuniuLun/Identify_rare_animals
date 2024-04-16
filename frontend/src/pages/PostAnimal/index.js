@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import WarningBox from "../../components/WarningBox";
+import Loading from "../../components/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -23,10 +24,11 @@ function PostAnimal() {
     const [animalObjects, setAnimalObjects] = useState([]);
     const [focusedIndexes, setFocusedIndexes] = useState([]);
     const [showIcon, setShowIcon] = useState(false);
-    // const [imageShowingRef, setImageShowingRef] = useRef();
     const [showWarning, setShowWarning] = useState(false);
     const [contentWarning, setContentWarning] = useState("");
     const [AnimalIndexesWithEmptyAttributes, setAnimalIndexesWithEmptyAttributes] = useState([]);
+    const [showLoading, setShowLoading] = useState(true);
+
     const idUser = sessionStorage.getItem("userID");
     useEffect(() => {
         if (animalObjects.length === 0) setIsHavingAnimalPost(false);
@@ -69,7 +71,7 @@ function PostAnimal() {
             const newAnimalObjects = [];
             for (const file of acceptedFiles) {
                 const newAnimalObject = {
-                    index: animalObjects.length + newAnimalObjects.length,
+                    index: (animalObjects.length > 0 ? animalObjects[animalObjects.length - 1].index + 1 : 0) + newAnimalObjects.length,
                     preview: URL.createObjectURL(file),
                     focused: false,
                     idUser: idUser,
@@ -114,10 +116,12 @@ function PostAnimal() {
                     "Content-Type": "multipart/form-data",
                 },
             });
-    
+
             if (response.status === 200) {
                 try {
-                    const res = await axios.get("http://localhost:8080/api/v1/animals/" + response.data.predicted_label.predicted_label);
+                    const res = await axios.get(
+                        "http://localhost:8080/api/v1/animals/" + response.data.predicted_label.predicted_label
+                    );
                     return [res.data.data.animalName, response.data.predicted_label.predicted_label];
                 } catch (error) {
                     console.error(error);
@@ -329,7 +333,8 @@ function PostAnimal() {
                 })
                 .then((res) => {
                     if (res.status === 200) {
-                        window.location.href = "http://localhost:3000/your_observation/" + sessionStorage.getItem("userID");
+                        window.location.href =
+                            "http://localhost:3000/your_observation/" + sessionStorage.getItem("userID");
                         if (res.data !== null) {
                             console.log(res.data);
                         } else {
@@ -538,6 +543,9 @@ function PostAnimal() {
             ) : (
                 <></>
             )}
+            {showLoading === true ? (<div className={cx("wrapper-loading")}>
+                <Loading/>
+            </div>) : (<></>)}
         </div>
     );
 }

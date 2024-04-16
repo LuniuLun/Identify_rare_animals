@@ -191,6 +191,7 @@
 .danger-infor {
     display: none;
 }
+
 .submit-otp,
 .btn_sendOTP,
 .btn_back,
@@ -210,10 +211,10 @@
     margin: 0 0;
 }
 
-.submit-otp,
-.btn_sendOTP,
-.btn_back,
-.btn_login,
+.submit-otp:hover,
+.btn_sendOTP:hover,
+.btn_back:hover,
+.btn_login:hover,
 .btn_signup:hover{
     background-color: rgba(87, 135, 9, 0.805);
 }

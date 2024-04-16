@@ -12,6 +12,8 @@ function Home() {
     const [animalPost, setAnimalPost] = useState([]);
     const [users, setUsers] = useState([]);
     const [animals, setAnimals] = useState([]);
+    const [searchInput, SetSearchInput] = useState("");
+
     useEffect(() => {
         axios
             .get("http://localhost:8080/api/v1/users/animal")
@@ -39,6 +41,20 @@ function Home() {
             .catch((err) => console.error(err));
     }, []);
 
+    const handleSearch = () => {
+        if (searchInput !== "") {
+            axios
+                .get(`http://localhost:8080/api/v1/users/animal/search/${searchInput}`)
+                .then((res) => {
+                    if (res.data !== null) {
+                        setAnimalPost(res.data);
+                        console.log(res.data);
+                    }
+                })
+                .catch((err) => console.error(err));
+        }
+    };
+
     return (
         <div className={cx("wrapper")}>
             <div className={cx("search")}>
@@ -46,9 +62,18 @@ function Home() {
                 <div className={cx("right-items")}>
                     <div className={cx("wrapper-find-animal")}>
                         <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
-                        <input className={cx("name-animal")} placeholder="Animal" />
+                        <input
+                            className={cx("name-animal")}
+                            value={searchInput}
+                            placeholder="Animal"
+                            onChange={(e) => {
+                                SetSearchInput(e.target.value);
+                            }}
+                        />
                     </div>
-                    <button className={cx("btn_find")}>Go</button>
+                    <button className={cx("btn_find")} onClick={handleSearch}>
+                        Go
+                    </button>
                 </div>
             </div>
             <div className={cx("statistic")}>

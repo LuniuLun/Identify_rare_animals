@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-
+import java.text.SimpleDateFormat;
 import aj.org.objectweb.asm.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutorial.apidemo.models.*;
@@ -309,6 +308,23 @@ public class UserController {
         return found;
     }
 
+    @GetMapping("/animal/search/{search}")
+    public List<User_animal> searchUser_animal(@PathVariable String search) {
+        List<User_animal> found = new ArrayList<>();
+        List<User_animal> allUserAnimals = user_animalRepository.findAll();
+        for (User_animal userAnimal : allUserAnimals) {
+            Animal animal = animalRepository.findByIDAnimal(userAnimal.getiDAnimal());
+            if (animal != null && animal.getAnimalName().toLowerCase().contains(search.toLowerCase())) {
+                Animal clonedAnimal = animal.clone();
+                userAnimal.setAnimal(clonedAnimal);
+                userAnimal.getAnimal().setAnimalAva(getUser_AlbumByiDUserA(userAnimal.getiDUserAnimal()).getImageLink());
+                found.add(userAnimal);
+            }
+        }
+        return found;
+    }
+
+
     @GetMapping("/animal_album/{iDUserAnimal}")
     public List<User_album> getUser_AlbumByiDUserAnimal(@PathVariable Integer iDUserAnimal) {
         return user_albumRepository.findByiDUserAnimal(iDUserAnimal);
@@ -394,20 +410,35 @@ public class UserController {
         );
     }
     @PutMapping("/editpost/{IDUserAnimal}")
-    public ResponseEntity<ResponseObject> editPost(@RequestBody User_animal newPost, @PathVariable Integer IDUserAnimal) {
+    public ResponseEntity<ResponseObject> editPost(@RequestBody String newPostJson, @PathVariable Integer IDUserAnimal) {
         User_animal updatePost = user_animalRepository.findByiDUserAnimal(IDUserAnimal);
         if(updatePost != null) {
-            updatePost.setDate(newPost.getDate());
-            updatePost.setLocation(newPost.getLocation());
-            updatePost.setNote(newPost.getNote());
-            user_animalRepository.save(updatePost);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("ok", "Update ok", updatePost)
-            );
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                User_animal newPost = objectMapper.readValue(newPostJson, User_animal.class);
+
+                // Set the new values to the existing entity
+                updatePost.setDate(newPost.getDate());
+                updatePost.setLocation(newPost.getLocation());
+                updatePost.setNote(newPost.getNote());
+
+                // Save the updated entity
+                user_animalRepository.save(updatePost);
+
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new ResponseObject("ok", "Update successful", updatePost)
+                );
+            } catch (IOException e) {
+                // Handle JSON parsing exception
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new ResponseObject("fail", "Invalid JSON format", null)
+                );
+            }
         }
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("fail", "Cannot edit this", newPost)
+                    new ResponseObject("fail", "Cannot edit this", newPostJson)
             );
         }
     }
