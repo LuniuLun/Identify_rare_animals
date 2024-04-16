@@ -8,7 +8,6 @@ public class Animal implements Cloneable {
     @Id
     @Column(name = "IDAnimal")
     private Integer iDAnimal;
-
     private String animalName;
     @Column(name = "AnimalScientificName")
     private String animalScientificName;
@@ -72,7 +71,6 @@ public class Animal implements Cloneable {
         this.animalAva = animalAva;
     }
     @Override
-
 
     public Animal clone() {
         try {

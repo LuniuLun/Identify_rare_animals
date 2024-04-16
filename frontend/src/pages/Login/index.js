@@ -1,3 +1,4 @@
+// import nodemailer from "nodemailer";
 import bcrypt from "bcryptjs";
 import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
@@ -6,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock, faUnlock, faUser, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { Fragment, useEffect, useRef, useState } from "react";
 import axios from "axios";
+
 const cx = classNames.bind(styles);
 
 function Login({ setLoginStatus }) {
@@ -15,6 +17,7 @@ function Login({ setLoginStatus }) {
         userPassword: "",
         roleAcc: 1, // 0 for admin and 1 for user
     });
+    // const nodemailer = require("nodemailer");
     const [showLoginForm, setShowLoginForm] = useState(true);
     const [usernameoremail, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -148,10 +151,42 @@ function Login({ setLoginStatus }) {
     };
 
     const handleSendOTP = () => {
-        setShowInputOTP(true);
+        const email = document.querySelector(".inputEmailForgotPassword").value;
+        if (email?.trim() !== "") {
+            if (warningFillInforRefSignup.current !== null) {
+                warningFillInforRefSignup.current.style.display = "none";
+            }
+            const requestEmail = {
+                userEmail: email,
+            };
+            axios
+                .post("http://localhost:8080/api/v1/users/forgotpw", requestEmail)
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log(res.data);
+                        if (res.data !== null) {
+                            setShowInputOTP(true);
+                        }
+                    } else {
+                    }
+                })
+                .catch(() => {
+                    // if (warningFailedSignupRef.current !== null) {
+                    //     warningFailedSignupRef.current.style.display = "block";
+                    // }
+                    console.log("Error!");
+                });
+        } 
+        // else if (warningFillInforRefSignup.current !== null && warningUnvalidPassword.current !== null) {
+        //     // console.log(username, password);
+        //     warningFillInforRefSignup.current.style.display = "block";
+        //     warningUnvalidPassword.current.style.display = "none";
+        // }
+        
     };
     const verifyOTP = () => {
-        console.log("OTP: " + otpValues);
+        const otpString = otpValues.join('');
+        console.log("OTP: " + otpString);
     };
 
 
@@ -167,6 +202,7 @@ function Login({ setLoginStatus }) {
                 }
             }
         }
+        setOtpValues(updatedOTP);
     };
     return (
         <div ref={wrapperRef} className={cx("wrapper")}>
