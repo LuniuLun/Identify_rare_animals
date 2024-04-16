@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "animals")
 public class Animal implements Cloneable {
+    @Id
+    Integer iDAnimal;
     private String animalName;
     @Column(name = "AnimalScientificName")
     private String animalScientificName;
@@ -21,13 +23,13 @@ public class Animal implements Cloneable {
         this.animalScientificName = animalScientificName;
         this.iDDetail = iDDetail;
     }
-    public Animal clone() {
-        try {
-            return (Animal) super.clone();
-        } catch (CloneNotSupportedException e) {
-            return null; // or handle the exception as needed
-        }
-    }
+//    public Animal clone() {
+//        try {
+//            return (Animal) super.clone();
+//        } catch (CloneNotSupportedException e) {
+//            return null; // or handle the exception as needed
+//        }
+//    }
     public Integer getiDAnimal() {
         return iDAnimal;
     }
@@ -68,7 +70,6 @@ public class Animal implements Cloneable {
         this.animalAva = animalAva;
     }
     @Override
-
     public Animal clone() {
         try {
             return (Animal) super.clone();

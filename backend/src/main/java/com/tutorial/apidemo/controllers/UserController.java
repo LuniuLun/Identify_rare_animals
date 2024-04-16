@@ -2,6 +2,8 @@ package com.tutorial.apidemo.controllers;
 
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import aj.org.objectweb.asm.TypeReference;
@@ -11,6 +13,13 @@ import com.tutorial.apidemo.repositories.*;
 import com.tutorial.apidemo.service.FirebaseFileService;
 import com.tutorial.apidemo.service.IStorageService;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +27,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.util.Random;
+import java.time.LocalDate;
 import java.util.Date;
 
 import com.tutorial.apidemo.models.User;
@@ -47,6 +58,9 @@ public class UserController {
     private User_animalRepository user_animalRepository;
     @Autowired
     private User_albumRepository user_albumRepository;
+
+    private int otp;
+    private LocalDateTime otpTime;
 
     @GetMapping("")
     List<User> getAllUsers() {
@@ -102,23 +116,101 @@ public class UserController {
 //                new ResponseObject("ok", "Insert user successfully", userRepository.save(newUser)));
 //    }
 
-@PostMapping("/insert")
-ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
-    User foundUser = userRepository.findByUserName(newUser.getUserName().trim());
-    if (foundUser != null) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                new ResponseObject("failed", "Username already taken", ""));
+    @PostMapping("/insert")
+    ResponseEntity<ResponseObject> insertUser(@RequestBody User newUser) {
+        User foundUser = userRepository.findByUserName(newUser.getUserName().trim());
+        if (foundUser != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    new ResponseObject("failed", "Username already taken", ""));
+        }
+        System.out.println(newUser.getUserName() + " " + newUser.getUserEmail() + " " + newUser.getUserPassword());
+        User savedUser = userRepository.save(newUser);
+        if (savedUser != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("ok", "Insert user successfully", savedUser));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ResponseObject("failed", "Failed to insert user", ""));
+        }
     }
-    System.out.println(newUser.getUserName() + " " + newUser.getUserEmail() + " " + newUser.getUserPassword());
-    User savedUser = userRepository.save(newUser);
-    if (savedUser != null) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("ok", "Insert user successfully", savedUser));
-    } else {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                new ResponseObject("failed", "Failed to insert user", ""));
+
+    public boolean sendOTP(String email) {
+        System.out.println(email);
+        final String username = "raniland1404@gmail.com";
+        final String password = "xvqg sltd mffn aadm";
+        Properties prop = new Properties();
+        prop.put("mail.smtp.host", "smtp.gmail.com");
+        prop.put("mail.smtp.port", "465");
+        prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.starttls.enable", "false");
+        prop.put("mail.smtp.ssl.enable", "true");
+        prop.put("mail.smtp.ssl.protocols", "TLSv1.2");
+        prop.put("mail.smtp.ssl.checkserveridentity", "false");
+        prop.put("mail.smtp.ssl.socketFactory.port", "465");
+        prop.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        prop.put("mail.smtp.socketFactory.fallback", "false");
+
+        Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("raniland1404@gmail.com"));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(email)
+            );
+            message.setSubject("Your OTP for gmail authenticity");
+            Random rand = new Random();
+            otp = rand.nextInt((999999 - 100000) + 1) + 100000;
+            message.setText("Your gmail authentic OTP is: " + otp);
+            Transport.send(message);
+            otpTime = LocalDateTime.now();
+            return true;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-}
+
+
+    public String checkOTP(int userOTP, int minutesLimit) {
+        if (userOTP == otp) {
+            LocalDateTime now = LocalDateTime.now();
+            long minutesSinceOTP = ChronoUnit.MINUTES.between(otpTime, now);
+
+            if (minutesSinceOTP <= minutesLimit) {
+                return "";
+            }
+            else {
+                return "The OTP is overdue!";
+            }
+        }
+        else {
+            return "The OTP is incorrect!";
+        }
+    }
+
+    @PostMapping("/forgotpw")
+    ResponseEntity<ResponseObject> checkEmailAndSendOTP(@RequestBody User user) {
+        User foundByEmail = userRepository.findByEmail(user.getUserEmail().trim());
+        System.out.println(foundByEmail);
+        if(foundByEmail != null){
+            if(sendOTP(user.getUserEmail().trim())) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new ResponseObject("ok", "Send OTP successfully", foundByEmail));
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                        new ResponseObject("failed", "Failed to send OTP", ""));
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ResponseObject("failed", "Email is not exist or has not been registered", ""));
+        }
+    }
 
 
     @PutMapping("/{id}")
