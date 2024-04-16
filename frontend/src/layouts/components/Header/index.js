@@ -134,7 +134,7 @@ function Header() {
     return (
         <div className={cx("wrapper")}>
             <div className={cx("right-item")}>
-                <Link to={"/"} className={cx("logo")} onClick={() => window.location.reload()}>
+                <Link to={"/"} className={cx("logo")} >
                     <p>R</p>aniland
                 </Link>
                 <button className={cx("wrapper-find-icon")}>

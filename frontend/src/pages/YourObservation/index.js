@@ -6,23 +6,36 @@ import AnimalCard from "../../components/AnimalCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import Pagination from "../../components/Pagination";
 const cx = classNames.bind(styles);
 
 function YourObservation() {
     const [animalPost, setAnimalPost] = useState([]);
+    const [animalPostFollowingPage, setAnimalPostFollowingPage] = useState([]);
     const [users, setUsers] = useState([]);
     const [animals, setAnimals] = useState([]);
-    const {id} = useParams();
+    const [searchInput, SetSearchInput] = useState("");
+    const [quantityPosts, setQuantityPosts] = useState();
+    const [currentPage, setCurrentPage] = useState(1);
+    const { id } = useParams();
+
+    useEffect(() => {
+        setAnimalPostFollowingPage(animalPost.slice((currentPage - 1) * 12, 12 * currentPage));
+    }, [animalPost, currentPage]);
+
     useEffect(() => {
         axios
             .get("http://localhost:8080/api/v1/users/animal/" + id)
             .then((res) => {
                 if (res.data !== null) {
-                    setAnimalPost(res.data);
+                    const arr = [...res.data].reverse();
+                    setAnimalPost(arr);
+                    setQuantityPosts(Math.ceil(arr.length / 12));
+                    setAnimalPostFollowingPage(arr.slice((currentPage - 1) * 12, 12 * currentPage));
                 }
             })
             .catch((err) => console.error(err));
-            axios
+        axios
             .get("http://localhost:8080/api/v1/animals")
             .then((res) => {
                 if (res.data !== null) {
@@ -38,7 +51,24 @@ function YourObservation() {
                 }
             })
             .catch((err) => console.error(err));
-    }, []);
+    }, [currentPage, id]);
+
+    const handleSearch = () => {
+        if (searchInput !== "") {
+            axios
+                .get(`http://localhost:8080/api/v1/users/animal/search/${id}/${searchInput}`)
+                .then((res) => {
+                    if (res.data !== null) {
+                        const arr = [...res.data].reverse();
+                        setAnimalPost(arr);
+                        setQuantityPosts(Math.ceil(arr.length / 12));
+                        setAnimalPostFollowingPage(arr.slice((currentPage - 1) * 12, 12 * currentPage));
+                    }
+                })
+                .catch((err) => console.error(err));
+        }
+    };
+
     return (
         <div className={cx("wrapper")}>
             <div className={cx("search")}>
@@ -46,9 +76,18 @@ function YourObservation() {
                 <div className={cx("right-items")}>
                     <div className={cx("wrapper-find-animal")}>
                         <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
-                        <input className={cx("name-animal")} placeholder="Animal" />
+                        <input
+                            className={cx("name-animal")}
+                            value={searchInput}
+                            placeholder="Animal"
+                            onChange={(e) => {
+                                SetSearchInput(e.target.value);
+                            }}
+                        />
                     </div>
-                    <button className={cx("btn_find")}>Go</button>
+                    <button className={cx("btn_find")} onClick={handleSearch}>
+                        Go
+                    </button>
                 </div>
             </div>
             <div className={cx("statistic")}>
@@ -85,9 +124,12 @@ function YourObservation() {
                 </div>
             </div>
             <div className={cx("content")}>
-                {[...animalPost].reverse().map((item, index) => {
+                {animalPostFollowingPage.map((item, index) => {
                     return <AnimalCard key={index} animalPost={item} />;
                 })}
+            </div>
+            <div className={cx("pagination")}>
+                <Pagination currentPage={currentPage} totalPages={quantityPosts} setCurrentPage={setCurrentPage} />
             </div>
         </div>
     );

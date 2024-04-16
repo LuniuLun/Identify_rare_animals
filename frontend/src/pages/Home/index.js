@@ -17,7 +17,7 @@ function Home() {
     const [searchInput, SetSearchInput] = useState("");
     const [quantityPosts, setQuantityPosts] = useState();
     const [currentPage, setCurrentPage] = useState(1);
-
+    
     useEffect(() => {
         setAnimalPostFollowingPage(animalPost.slice((currentPage - 1) * 12, 12 * currentPage));
     }, [animalPost, currentPage]);
@@ -132,7 +132,6 @@ function Home() {
                 <Pagination
                     currentPage={currentPage}
                     totalPages={quantityPosts}
-                    handleOnCLick={handleChangePage}
                     setCurrentPage={setCurrentPage}
                 />
             </div>
