@@ -28,7 +28,11 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.util.Random;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 
 import com.tutorial.apidemo.models.User;
 import com.tutorial.apidemo.models.User_album;
@@ -310,6 +314,7 @@ public class UserController {
 
     @GetMapping("/animal/search/{search}")
     public List<User_animal> searchUser_animal(@PathVariable String search) {
+
         List<User_animal> found = new ArrayList<>();
         List<User_animal> allUserAnimals = user_animalRepository.findAll();
         for (User_animal userAnimal : allUserAnimals) {
