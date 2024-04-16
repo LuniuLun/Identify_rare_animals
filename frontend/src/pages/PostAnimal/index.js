@@ -27,9 +27,9 @@ function PostAnimal() {
     const [showWarning, setShowWarning] = useState(false);
     const [contentWarning, setContentWarning] = useState("");
     const [AnimalIndexesWithEmptyAttributes, setAnimalIndexesWithEmptyAttributes] = useState([]);
-    const [showLoading, setShowLoading] = useState(true);
-
+    const [showLoading, setShowLoading] = useState(false);
     const idUser = sessionStorage.getItem("userID");
+
     useEffect(() => {
         if (animalObjects.length === 0) setIsHavingAnimalPost(false);
     }, [animalObjects]);
@@ -69,9 +69,12 @@ function PostAnimal() {
         accept: "image/*",
         onDrop: async (acceptedFiles) => {
             const newAnimalObjects = [];
+            setShowLoading(true);
             for (const file of acceptedFiles) {
                 const newAnimalObject = {
-                    index: (animalObjects.length > 0 ? animalObjects[animalObjects.length - 1].index + 1 : 0) + newAnimalObjects.length,
+                    index:
+                        (animalObjects.length > 0 ? animalObjects[animalObjects.length - 1].index + 1 : 0) +
+                        newAnimalObjects.length,
                     preview: URL.createObjectURL(file),
                     focused: false,
                     idUser: idUser,
@@ -103,6 +106,7 @@ function PostAnimal() {
                 ...newAnimalObjects,
                 ...previous.slice(newAnimalObjects.length, previous.length),
             ]);
+            setShowLoading(false);
         },
     });
 
@@ -292,66 +296,71 @@ function PostAnimal() {
     };
 
     const handleSubmitPost = async () => {
-        // Lọc ra các đối tượng có tất cả các thuộc tính rỗng trừ note
-        const emptyAttributesObj = animalObjects.filter((animalObj) =>
-            Object.entries(animalObj).some(([key, value]) => key !== "note" && value === "")
-        );
-        // Lấy ra mảng animalIndex của các đối tượng có thuộc tính rỗng
-        const indexesEmptyAttributesObj = emptyAttributesObj.map((animalObj) => animalObj.index);
+        if (animalObjects.length > 0) {
+            // Lọc ra các đối tượng có tất cả các thuộc tính rỗng trừ note
+            const emptyAttributesObj = animalObjects.filter((animalObj) =>
+                Object.entries(animalObj).some(([key, value]) => key !== "note" && value === "")
+            );
+            // Lấy ra mảng animalIndex của các đối tượng có thuộc tính rỗng
+            const indexesEmptyAttributesObj = emptyAttributesObj.map((animalObj) => animalObj.index);
 
-        if (indexesEmptyAttributesObj.length === 0) {
-            console.log("All fields are not empty");
-            const filteredAnimalObjects = animalObjects.map((animalObj) => {
-                const { index, preview, focused, ...rest } = animalObj;
-                return rest;
-            });
-            for (let item of filteredAnimalObjects) {
-                if (Array.isArray(item.files)) {
-                    var i = 0;
-                    for (let file of item.files) {
-                        const response = await uploadFile(file);
-                        if (response) {
-                            item.files[i] = response;
-                            i++;
-                            console.log(response);
+            if (indexesEmptyAttributesObj.length === 0) {
+                console.log("All fields are not empty");
+                const filteredAnimalObjects = animalObjects.map((animalObj) => {
+                    const { index, preview, focused, ...rest } = animalObj;
+                    return rest;
+                });
+                for (let item of filteredAnimalObjects) {
+                    if (Array.isArray(item.files)) {
+                        var i = 0;
+                        for (let file of item.files) {
+                            const response = await uploadFile(file);
+                            if (response) {
+                                item.files[i] = response;
+                                i++;
+                                console.log(response);
+                            }
                         }
-                    }
-                } else {
-                    const response = await uploadFile(item.files);
-                    if (response) {
-                        item.files = [response];
+                    } else {
+                        const response = await uploadFile(item.files);
+                        if (response) {
+                            item.files = [response];
+                        }
                     }
                 }
-            }
 
-            axios
-                .post("http://127.0.0.1:8080/api/v1/users/postAnimal", [...filteredAnimalObjects], {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                })
-                .then((res) => {
-                    if (res.status === 200) {
-                        window.location.href =
-                            "http://localhost:3000/your_observation/" + sessionStorage.getItem("userID");
-                        if (res.data !== null) {
-                            console.log(res.data);
-                        } else {
-                            console.log("Response data is null");
+                axios
+                    .post("http://127.0.0.1:8080/api/v1/users/postAnimal", [...filteredAnimalObjects], {
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                    })
+                    .then((res) => {
+                        if (res.status === 200) {
+                            window.location.href =
+                                "http://localhost:3000/your_observation/" + sessionStorage.getItem("userID");
+                            if (res.data !== null) {
+                                console.log(res.data);
+                            } else {
+                                console.log("Response data is null");
+                            }
                         }
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
 
-            console.log(filteredAnimalObjects);
-        } else {
-            setAnimalIndexesWithEmptyAttributes(indexesEmptyAttributesObj);
+                console.log(filteredAnimalObjects);
+            } else {
+                setAnimalIndexesWithEmptyAttributes(indexesEmptyAttributesObj);
+                setShowWarning(true);
+                setContentWarning("Please fill in all information!");
+                console.log(indexesEmptyAttributesObj);
+            }
+        }else {
             setShowWarning(true);
-            setContentWarning("Please fill in all information!");
-            console.log(indexesEmptyAttributesObj);
+            setContentWarning("There are no posts yet!");
         }
     };
 
@@ -543,9 +552,13 @@ function PostAnimal() {
             ) : (
                 <></>
             )}
-            {showLoading === true ? (<div className={cx("wrapper-loading")}>
-                <Loading/>
-            </div>) : (<></>)}
+            {showLoading === true ? (
+                <div className={cx("wrapper-loading")}>
+                    <Loading messsage={"Recognizing..."} />
+                </div>
+            ) : (
+                <></>
+            )}
         </div>
     );
 }
