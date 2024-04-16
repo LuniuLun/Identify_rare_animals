@@ -5,21 +5,32 @@ import { faMagnifyingGlass, faCircleRight } from "@fortawesome/free-solid-svg-ic
 import AnimalCard from "../../components/AnimalCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Pagination from "../../components/Pagination";
+import Loading from "../../components/Loading";
 
 const cx = classNames.bind(styles);
 
 function Home() {
     const [animalPost, setAnimalPost] = useState([]);
+    const [animalPostFollowingPage, setAnimalPostFollowingPage] = useState([]);
     const [users, setUsers] = useState([]);
     const [animals, setAnimals] = useState([]);
     const [searchInput, SetSearchInput] = useState("");
+    const [quantityPosts, setQuantityPosts] = useState();
+    const [currentPage, setCurrentPage] = useState(1);
 
+    useEffect(() => {
+        setAnimalPostFollowingPage(animalPost.slice((currentPage - 1) * 12, 12 * currentPage));
+    }, [animalPost, currentPage]);
     useEffect(() => {
         axios
             .get("http://localhost:8080/api/v1/users/animal")
             .then((res) => {
                 if (res.data !== null) {
-                    setAnimalPost(res.data);
+                    const arr = [...res.data].reverse();
+                    setAnimalPost(arr);
+                    setQuantityPosts(Math.ceil(arr.length / 12));
+                    setAnimalPostFollowingPage(arr.slice((currentPage - 1) * 12, 12 * currentPage));
                 }
             })
             .catch((err) => console.error(err));
@@ -39,7 +50,7 @@ function Home() {
                 }
             })
             .catch((err) => console.error(err));
-    }, []);
+    }, [currentPage]);
 
     const handleSearch = () => {
         if (searchInput !== "") {
@@ -54,6 +65,8 @@ function Home() {
                 .catch((err) => console.error(err));
         }
     };
+
+    const handleChangePage = () => {};
 
     return (
         <div className={cx("wrapper")}>
@@ -110,10 +123,19 @@ function Home() {
                 </div>
             </div>
             <div className={cx("content")}>
-                {animalPost.map((item, index) => {
+                {animalPostFollowingPage.map((item, index) => {
                     return <AnimalCard key={index} animalPost={item} />;
                 })}
             </div>
+            <div className={cx("pagination")}>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={quantityPosts}
+                    handleOnCLick={handleChangePage}
+                    setCurrentPage={setCurrentPage}
+                />
+            </div>
+
         </div>
     );
 }

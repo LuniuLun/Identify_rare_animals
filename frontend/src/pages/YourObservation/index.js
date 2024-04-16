@@ -85,7 +85,7 @@ function YourObservation() {
                 </div>
             </div>
             <div className={cx("content")}>
-                {animalPost.map((item, index) => {
+                {[...animalPost].reverse().map((item, index) => {
                     return <AnimalCard key={index} animalPost={item} />;
                 })}
             </div>
