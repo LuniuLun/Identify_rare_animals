@@ -189,6 +189,7 @@ function Login({ setLoginStatus }) {
         const otpString = otpValues.join("");
         console.log("OTP: " + otpString);
         setShowChangePassword(true);
+        setShowInputOTP(false)
     };
 
     const handleOTPInputChange = (index, value) => {
