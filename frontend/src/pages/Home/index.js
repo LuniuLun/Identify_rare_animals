@@ -17,7 +17,6 @@ function Home() {
     const [searchInput, SetSearchInput] = useState("");
     const [quantityPosts, setQuantityPosts] = useState();
     const [currentPage, setCurrentPage] = useState(1);
-
     useEffect(() => {
         setAnimalPostFollowingPage(animalPost.slice((currentPage - 1) * 12, 12 * currentPage));
     }, [animalPost, currentPage]);
@@ -29,7 +28,7 @@ function Home() {
                     const arr = [...res.data].reverse();
                     setAnimalPost(arr);
                     setQuantityPosts(Math.ceil(arr.length / 12));
-                    setAnimalPostFollowingPage(arr.slice((currentPage - 1) * 12, 12 * currentPage));
+                    setAnimalPostFollowingPage(arr.slice(0, 12));
                 }
             })
             .catch((err) => console.error(err));
@@ -49,7 +48,7 @@ function Home() {
                 }
             })
             .catch((err) => console.error(err));
-    }, [currentPage]);
+    }, []);
 
     const handleSearch = () => {
         if (searchInput !== "") {
@@ -60,13 +59,13 @@ function Home() {
                         const arr = [...res.data].reverse();
                         setAnimalPost(arr);
                         setQuantityPosts(Math.ceil(arr.length / 12));
-                        setAnimalPostFollowingPage(arr.slice((currentPage - 1) * 12, 12 * currentPage));
+                        setAnimalPostFollowingPage(arr.slice(0, 12));
+                        setCurrentPage(1);
                     }
                 })
                 .catch((err) => console.error(err));
         }
     };
-
 
     return (
         <div className={cx("wrapper")}>
@@ -128,11 +127,7 @@ function Home() {
                 })}
             </div>
             <div className={cx("pagination")}>
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={quantityPosts}
-                    setCurrentPage={setCurrentPage}
-                />
+                <Pagination currentPage={currentPage} totalPages={quantityPosts} setCurrentPage={setCurrentPage} />
             </div>
         </div>
     );

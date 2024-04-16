@@ -31,7 +31,7 @@ function YourObservation() {
                     const arr = [...res.data].reverse();
                     setAnimalPost(arr);
                     setQuantityPosts(Math.ceil(arr.length / 12));
-                    setAnimalPostFollowingPage(arr.slice((currentPage - 1) * 12, 12 * currentPage));
+                    setAnimalPostFollowingPage(arr.slice(0, 12));
                 }
             })
             .catch((err) => console.error(err));
@@ -51,7 +51,7 @@ function YourObservation() {
                 }
             })
             .catch((err) => console.error(err));
-    }, [currentPage, id]);
+    }, [id]);
 
     const handleSearch = () => {
         if (searchInput !== "") {
@@ -62,7 +62,8 @@ function YourObservation() {
                         const arr = [...res.data].reverse();
                         setAnimalPost(arr);
                         setQuantityPosts(Math.ceil(arr.length / 12));
-                        setAnimalPostFollowingPage(arr.slice((currentPage - 1) * 12, 12 * currentPage));
+                        setAnimalPostFollowingPage(arr.slice(0, 12));
+                        setCurrentPage(1);
                     }
                 })
                 .catch((err) => console.error(err));
