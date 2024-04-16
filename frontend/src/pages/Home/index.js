@@ -6,7 +6,6 @@ import AnimalCard from "../../components/AnimalCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Pagination from "../../components/Pagination";
-import Loading from "../../components/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -58,8 +57,10 @@ function Home() {
                 .get(`http://localhost:8080/api/v1/users/animal/search/${searchInput}`)
                 .then((res) => {
                     if (res.data !== null) {
-                        setAnimalPost(res.data);
-                        console.log(res.data);
+                        const arr = [...res.data].reverse();
+                        setAnimalPost(arr);
+                        setQuantityPosts(Math.ceil(arr.length / 12));
+                        setAnimalPostFollowingPage(arr.slice((currentPage - 1) * 12, 12 * currentPage));
                     }
                 })
                 .catch((err) => console.error(err));
@@ -135,7 +136,6 @@ function Home() {
                     setCurrentPage={setCurrentPage}
                 />
             </div>
-
         </div>
     );
 }
