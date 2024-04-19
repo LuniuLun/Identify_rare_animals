@@ -26,8 +26,11 @@ function Login({ setLoginStatus }) {
     const warningFillInforRef = useRef(null);
     const warningFillInforRefSignup = useRef(null);
     const warningUnvalidPassword = useRef(null);
+    const warningUnvalidNewPassword = useRef(null);
     const warningFailedLoginRef = useRef(null);
     const warningFailedSignupRef = useRef(null);
+    const warningFailedChangePasswordRef = useRef(null);
+    const warningFillInforRefNewPassword = useRef(null);
     const wrapperRef = useRef(null);
     const loginModal = useRef(null);
     const registerModal = useRef(null);
@@ -187,9 +190,49 @@ function Login({ setLoginStatus }) {
     };
     const verifyOTP = () => {
         const otpString = otpValues.join("");
-        console.log("OTP: " + otpString);
-        setShowChangePassword(true);
-        setShowInputOTP(false)
+        const email = document.querySelector(".inputEmailForgotPassword").value;
+        // const eml = document.querySelector(".inputEmailChangePassword"); 
+        if (otpString?.trim() !== "") {
+            // if (warningFillInforRefSignup.current !== null) {
+            //     warningFillInforRefSignup.current.style.display = "none";
+            // }
+            const requestOTP = {
+                otpUser: otpString,
+            };
+            axios
+                .post("http://localhost:8080/api/v1/users/checkotp", requestOTP)
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log(res.data);
+                        console.log("OTP: " + otpString);
+                        console.log(res.data.data);
+                        if (res.data.data === "") {
+                            const setemail = {
+                                userEmail: email,
+                            };
+                            setUser(setemail);
+                            console.log(user.userEmail);
+                            setShowChangePassword(true);
+                            setShowInputOTP(false)
+                            // eml.value = email;
+                        }
+                    } else {
+                    }
+                })
+                .catch(() => {
+                    // if (warningFailedSignupRef.current !== null) {
+                    //     warningFailedSignupRef.current.style.display = "block";
+                    // }
+                    console.log("Error!");
+                });
+        }
+        // else if (warningFillInforRefSignup.current !== null && warningUnvalidPassword.current !== null) {
+        //     // console.log(username, password);
+        //     warningFillInforRefSignup.current.style.display = "block";
+        //     warningUnvalidPassword.current.style.display = "none";
+        // }
+        
+        // const otp = parseInt(otpString);
     };
 
     const handleOTPInputChange = (index, value) => {
@@ -207,7 +250,57 @@ function Login({ setLoginStatus }) {
         setOtpValues(updatedOTP);
     };
 
-    const handleChangePassword = () => {};
+    const handleChangePassword = () => {
+        const password = document.querySelector(".newPassword").value;
+        const confirmPassword = document.querySelector(".confirmationNewPassword").value;
+        if (password !== confirmPassword) {
+            warningUnvalidNewPassword.current.style.display = "block";
+        } else {
+            warningUnvalidNewPassword.current.style.display = "none";
+            bcrypt.genSalt(10, function (err, salt) {
+                bcrypt.hash(password, salt, function (err, hash) {
+                    const encryptedPassword = hash;
+                    const userforchange = {
+                        userEmail: user.userEmail,
+                        userPassword: encryptedPassword,
+                    };
+                    setUser(userforchange);
+                });
+            });
+            console.log(user);
+        }
+    };
+    const changePassword = () => {
+        const password = document.querySelector(".newPassword").value;
+        const confirmPassword = document.querySelector(".confirmationNewPassword").value;
+        if (password?.trim() !== "" && confirmPassword?.trim() !== "") {
+            if (warningFillInforRefNewPassword.current !== null) {
+                warningFillInforRefNewPassword.current.style.display = "none";
+            }
+            axios
+                .put("http://localhost:8080/api/v1/users/changepw", user)
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log(res.data);
+                        if (res.data !== null) {
+                            console.log("Change password successfully");
+                        }
+                    } else {
+                    }
+                })
+                .catch(() => {
+                    if (warningFailedChangePasswordRef.current !== null) {
+                        warningFailedChangePasswordRef.current.style.display = "block";
+                    }
+                    console.log("Error!");
+                });
+        }
+        else if (warningFillInforRefNewPassword.current !== null && warningUnvalidNewPassword.current !== null) {
+            // console.log(username, password);
+            warningFillInforRefNewPassword.current.style.display = "block";
+            warningUnvalidNewPassword.current.style.display = "none";
+        }
+    }
 
     return (
         <div ref={wrapperRef} className={cx("wrapper")}>
@@ -237,17 +330,23 @@ function Login({ setLoginStatus }) {
                                                     placeholder="Password"
                                                 />
                                             </div>
-                                            <div className={cx("information", "confimationPassowrd")}>
+                                            <div className={cx("information", "confimationPassword")}>
                                                 <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faLock} />
                                                 <input
                                                     className={cx("confirmationNewPassword")}
                                                     placeholder="Password confirmation"
                                                     type="password"
-                                                    // onChange={handleSignUp}
+                                                    onChange={handleChangePassword}
                                                 />
                                             </div>
-                                            <p ref={warningUnvalidPassword} className={cx("danger-infor")}>
-                                                Mật khẩu chưa khớp.
+                                            <p ref={warningFillInforRefNewPassword} className={cx("danger-infor")}>
+                                                Please fill all information.
+                                            </p>
+                                            <p ref={warningUnvalidNewPassword} className={cx("danger-infor")}>
+                                                The confirm password does not match.
+                                            </p>
+                                            <p ref={warningFailedChangePasswordRef} className={cx("danger-infor-login")}>
+                                                Change password unsuccessfully.
                                             </p>
                                         </div>
                                     ) : (
@@ -272,7 +371,7 @@ function Login({ setLoginStatus }) {
                                             </div>
                                             <p>
                                                 Enter the OTP code that we sent to your email, be careful not to share
-                                                the code with anyone.
+                                                the code with anyone. Your otp code will be effective within only 2 minutes!
                                             </p>
                                             <button className={cx("submit-otp")} onClick={verifyOTP}>
                                                 Verify
@@ -280,7 +379,7 @@ function Login({ setLoginStatus }) {
                                             <div className={cx("send-otp-again")}>Didn’t get the OTP? Resend</div>
                                         </div>
                                     ) : showChangePassword === true ? (
-                                        <button className={cx("btn_changePassword")} onClick={handleChangePassword}>
+                                        <button className={cx("btn_changePassword")} onClick={changePassword}>
                                             Save
                                         </button>
                                     ) : (
@@ -374,13 +473,13 @@ function Login({ setLoginStatus }) {
                                 />
                             </div>
                             <p ref={warningFillInforRefSignup} className={cx("danger-infor")}>
-                                Hãy điền đầy đủ thông tin.
+                                Please fill all information.
                             </p>
                             <p ref={warningUnvalidPassword} className={cx("danger-infor")}>
-                                Mật khẩu chưa khớp.
+                                The confirm password does not match.
                             </p>
                             <p ref={warningFailedSignupRef} className={cx("danger-infor-login")}>
-                                Đăng kí không thành công.
+                                Sign up unsuccessfully.
                             </p>
                             <button className={cx("btn_signup")} onClick={signUp}>
                                 Sign up
