@@ -1,0 +1,218 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 20px 180px;
+    background-color: #fff;
+
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 500;
+    font-style: italic;
+    padding: 30px 10px;
+    background-color: var(--greyish-background-color);
+}
+
+.scientific-name {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #848484;
+    margin-left: 20px;
+}
+
+.top-items {
+    display: flex;
+    border: 1px solid rgba(0, 0, 0, 0.17);
+}
+
+.wrapper-image-animal {
+    border: 1px solid rgba(0, 0, 0, 0.17);
+    display: flex;
+    align-items: center;
+    padding: 20px 8px;
+    justify-content: center;
+}
+
+.wrapper-image-animal .icon {
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--greyish-text-color);
+    padding: 4px 6px;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.image-animal {
+    height: 400px;
+    width: 600px;
+    padding: 0 10px;
+    object-fit: contain;
+}
+
+.bio {
+    display: flex;
+    height: 20%;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.17);
+}
+
+.ava-user {
+    height: 46px;
+    width: 46px;
+    border-radius: 50%;
+    margin-right: 8px;  
+    object-fit: cover;
+}
+
+.username {
+    font-size: 1.8rem;
+    color: var(--black-text-color);
+    margin: 4px;
+    font-weight: 500;
+}
+
+.quantity-observation {
+    display: flex;
+    margin: 4px;
+    font-size: 1.4rem;
+    color: var(--grey-text-color);
+}
+
+.scope-icon {
+    color: var(--primary-color);
+    font-size: 1.6rem;
+    margin-right: 4px;
+}
+.note,
+.time-observations, .location {
+    display: flex;
+    padding: 20px;
+}
+
+.location {
+    align-items: center;
+}
+
+.note {
+    min-height: 160px;
+}
+
+.time-observation,
+.time-submit {
+    display: flex;
+    width: 50%;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.note label,
+.location label,
+.time-submit label,
+.time-observation label {
+    color: #000;
+    font-weight: 500;
+    font-size: 1.4rem;
+    flex: 1;
+}
+
+.time-submit input,
+.time-observation input {
+    border: 0;
+    outline: 0;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--grey-text-color);
+    width: 50%;
+}
+.location input,
+.note textarea {    
+    padding: 8px 20px;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--grey-text-color);
+    border: 1px solid rgba(0, 0, 0, 0.17);
+    background-color: var(--greyish-background-color);
+    width: 100%;
+    margin-left: 20px;
+}
+
+
+.location input:focus,
+.note textarea:focus{
+    outline: 0;
+    box-shadow: 0px 0px 3px 2px var(--primary-color);
+}
+
+.bottom-items {
+    padding: 30px 40px;
+    border: 1px solid rgba(0, 0, 0, 0.17);
+    width: 100%;
+}
+
+.information {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.information>span,
+.conservation>span {
+    width: 100%;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    color: var(--black-text-color);
+    font-weight: 800;
+}
+
+.wrapper-btn_show{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.show-detail-animal {
+    text-align: center;
+    padding: 10px 16px;
+    background-color: var(--blue-color);
+    color: #fff;
+    font-weight: 600;
+}
+
+.detail-animal {
+    width: 100%;
+}
+
+
+.change-post {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.edit_btn,
+.delete_btn {
+    padding: 8px 12px;
+    margin: 20px 32px 20px 0;
+    border-radius: 8px;
+    background-color: #be400e;
+    color: var(--white-text-color);
+    font-weight: 600;
+    font-size: 1.6rem;
+}
+.edit_btn:hover
+.delete_btn:hover{
+    background-color: #F16F3A;
+}
