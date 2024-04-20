@@ -22,7 +22,7 @@ function AnimalCard({ animalPost }) {
             .catch((err) => console.error(err));
     }, [animalPost.date, animalPost.iDUser]);
     return (
-        <Link to={"/detailAnimal/" + animalPost.iDUserAnimal} className={cx("card")}>
+        <Link to={"/detailPost/" + animalPost.iDUserAnimal} className={cx("card")}>
             <img className={cx("img-animal")} src={animalPost.animal.animalAva} alt="" />
             <span className={cx("name-animal")}>{animalPost.animal.animalName}</span>
             <span className={cx("scientific-name")}>{animalPost.animal.animalScientificName}</span>
