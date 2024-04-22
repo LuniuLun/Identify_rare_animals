@@ -66,9 +66,13 @@
 
 .btn_find {
     padding: 8px 16px;
-    background-color: #F16F3A;
+    background-color: #7E964C;
     color: var(--white-text-color);
     border-radius: 4px;
+}
+
+.btn_find:hover {
+    background-color: #F16F3A;
 }
 
 .statistic {

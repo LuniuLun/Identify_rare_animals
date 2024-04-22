@@ -36,10 +36,6 @@ function Admin() {
                     </div>
                     <div className={cx("items")}>
                         <img src="/img/con_rua.png" alt="" className={cx("ava-animal")}></img>
-                        <div className={cx("buttons")}>
-                            <button className={cx("btn_upload")}>Upload new photo</button>
-                            <button className={cx("btn_remove")}>Remove photo</button>
-                        </div> 
                     </div>
                     <div className={cx("add-space")}></div>
                     <div className={cx("items")}>

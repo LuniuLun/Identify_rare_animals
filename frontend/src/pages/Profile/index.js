@@ -74,7 +74,7 @@ function Profile() {
                         <div className={cx("discription")}>
                             This is the username you will use to log in, and other users can use to identify you on
                             iNaturalist
-                        </div
+                        </div>
                         <input type="text" value={user.userName}/>
                     </div>
                     <div className={cx("item")}>
