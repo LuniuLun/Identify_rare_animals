@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDays, faLocationDot, faXmark } from "@fortawesome/free-solid-svg-icons";
 import AnimalCard from "../../components/AnimalCard";
-import UploadFileComponent from "../../components/FileUpload";
 import AnimalLabel from "../../components/AnimalLabel";
 const cx = classNames.bind(styles);
 

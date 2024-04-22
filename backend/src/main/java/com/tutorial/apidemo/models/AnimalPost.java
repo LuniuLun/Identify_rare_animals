@@ -1,6 +1,8 @@
 package com.tutorial.apidemo.models;
 
 
+import jakarta.persistence.Column;
+
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +12,7 @@ public class AnimalPost {
     private String scientificName;
     private List<String> files;
     private String location;
+    @Column(name = "Date")
     private Date dateTime;
     private String note;
 

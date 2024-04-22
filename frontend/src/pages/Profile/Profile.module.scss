@@ -55,6 +55,20 @@
 .wrapper-ava {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+}
+
+.change-avatar{
+    display: flex;
+}
+.more-image{
+}
+
+.more-image p{    
+    padding: 8px 20px;
+    background-color: var(--primary-color);
+    color: var(--white-text-color);
+    border-radius: 16px;
 }
 
 .item label {

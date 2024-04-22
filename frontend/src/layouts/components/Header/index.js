@@ -6,6 +6,7 @@ import { faChevronDown, faMagnifyingGlass } from "@fortawesome/free-solid-svg-ic
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Fragment, useEffect, useState } from "react";
 import axios from "axios";
+import DetailAnimal from "../../../components/DetailAnimal";
 
 const cx = classNames.bind(styles);
 
@@ -20,7 +21,7 @@ function Header() {
     const [detailAnimal, setDetailAnimal] = useState(null);
     const [userAva, setUserAva] = useState("");
     const [animalImage, setAnimalImage] = useState("");
-
+    const [showDetailAnimal, setShowDetailAnimal] = useState(false);
     useEffect(() => {
         const idUser = sessionStorage.getItem("userID");
         if (idUser !== null) {
@@ -96,13 +97,11 @@ function Header() {
             if (resRecognize.status === 200) {
                 setCompletedRecognization(true);
                 setScientificName(resRecognize.data.predicted_label);
-                setAnimalImage(resRecognize.data.url_image)
+                setAnimalImage(resRecognize.data.url_image);
                 console.log(resRecognize.data);
                 setAccurary(resRecognize.data.confidence);
                 const [resAnimal, resDetail] = await Promise.all([
-                    axios.get(
-                        "http://localhost:8080/api/v1/animals/" + resRecognize.data.predicted_label
-                    ),
+                    axios.get("http://localhost:8080/api/v1/animals/" + resRecognize.data.predicted_label),
                     axios.get(
                         "http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" +
                             resRecognize.data.predicted_label
@@ -142,33 +141,33 @@ function Header() {
                 </button>
                 <div className={cx("list-options")}>
                     <Link className={cx("link")} to={"/"}>
-                        <span>Explore</span>
+                        <span>Khám phá</span>
                     </Link>
                     {isLogin === true ? (
                         <Link className={cx("link")} to={"/your_observation/" + sessionStorage.getItem("userID")}>
-                            <span>Your Observations</span>
+                            <span>Quan sát của bạn</span>
                         </Link>
                     ) : (
                         <></>
                     )}
                     <Link className={cx("link")} to={"/"}>
-                        <span>Community</span>
+                        <span>Cộng đồng</span>
                         <FontAwesomeIcon className={cx("down-icon")} icon={faChevronDown} />
                     </Link>
                     <Link className={cx("link")} to={"/"}>
-                        <span>More</span>
+                        <span>Thêm</span>
                         <FontAwesomeIcon className={cx("down-icon")} icon={faChevronDown} />
                     </Link>
                 </div>
             </div>
             <div className={cx("left-item")}>
                 <Link to={"#"} className={cx("btn_addAnimal")} onClick={openModal}>
-                    Recognize
+                    Nhận dạng
                 </Link>
                 {isLogin === true ? (
                     <Fragment>
                         <Link to={"/post_animal"} className={cx("btn_addAnimal")}>
-                            Upload
+                            Tải lên
                         </Link>
                         <img
                             src={userAva !== "" ? userAva : "/img/no-user-img.jpg"}
@@ -180,17 +179,24 @@ function Header() {
                         {showListOptionsUser === true ? (
                             <div className={cx("list-options-user")}>
                                 <Link to={"/Profile"} className={cx("option-user")} onClick={setOpenOptions}>
-                                    Profile
+                                    Hồ sơ
                                 </Link>
                                 <Link
                                     to={"http://localhost:3000/your_observation/" + sessionStorage.getItem("userID")}
                                     className={cx("option-user")}
                                     onClick={setOpenOptions}
                                 >
-                                    Your Observations
+                                    Quan sát của bạn
+                                </Link>
+                                <Link
+                                    // to={"http://localhost:3000/your_observation/" + sessionStorage.getItem("userID")}
+                                    className={cx("option-user")}
+                                    onClick={setOpenOptions}
+                                >
+                                    Nhận dạng của bạn
                                 </Link>
                                 <Link to={"/post_animal"} className={cx("option-user")}>
-                                    Uploads
+                                    Tải lên
                                 </Link>
                                 <Link
                                     to={"/login"}
@@ -201,7 +207,7 @@ function Header() {
                                         setOpenOptions();
                                     }}
                                 >
-                                    Sign out
+                                    Đăng xuất
                                 </Link>
                             </div>
                         ) : (
@@ -210,7 +216,7 @@ function Header() {
                     </Fragment>
                 ) : (
                     <Link className={cx("link")} to={"/login"}>
-                        Log In
+                        Đăng nhập
                     </Link>
                 )}
             </div>
@@ -221,23 +227,27 @@ function Header() {
                         <FontAwesomeIcon icon={faXmark} className={cx("close-icon")} onClick={closeModal} />
                         {completedRecognization === true ? (
                             <>
-                                <div className={cx("title")}>Identification Result</div>
+                                <div className={cx("title")}>Kết quả Nhận dạng</div>
                                 <div className={cx("top-items")}>
                                     <div className={cx("wrapper-image-animal")}>
-                                        <img className={cx("image-animal")} alt="" src={animalImage !== "" ? animalImage : ""} />
+                                        <img
+                                            className={cx("image-animal")}
+                                            alt=""
+                                            src={animalImage !== "" ? animalImage : ""}
+                                        />
                                     </div>
                                     <div className={cx("detail-result")}>
                                         <div className={cx("accurary-result")}>
-                                            <label>Accuray:</label>
-                                            <input className={cx("accurary")} value={accurary} readOnly/>
+                                            <label>Độ chính xác:</label>
+                                            <input className={cx("accurary")} value={accurary} readOnly />
                                         </div>
                                         <div className={cx("list-names")}>
                                             {/* <div className={cx("name")}>
-                                                <label>Species Name: </label>
-                                                <input className={cx("species-name")} value={speciesName} readOnly />
-                                            </div> */}
+                                        <label>Tên loài: </label>
+                                        <input className={cx("species-name")} value={speciesName} readOnly />
+                                    </div> */}
                                             <div className={cx("name")}>
-                                                <label>Scientific Name: </label>
+                                                <label>Tên khoa học: </label>
                                                 <input
                                                     className={cx("scientific-name")}
                                                     value={scientificName}
@@ -245,7 +255,7 @@ function Header() {
                                                 />
                                             </div>
                                             <div className={cx("name")}>
-                                                <label>Animal: </label>
+                                                <label>Động vật: </label>
                                                 <input className={cx("animal")} value={animalName} readOnly />
                                             </div>
                                         </div>
@@ -272,135 +282,25 @@ function Header() {
                                                     src="/img/con_cong.jpg"
                                                 />
                                             </div>
-                                            <button className={cx("btn-more")}>MORE</button>
+                                            <button className={cx("btn-more")}>XEM THÊM</button>
                                         </div>
                                     </div>
                                 </div>
-                                <div className={cx("title")}>Detail</div>
-                                {detailAnimal !== null ? (
-                                    <div className={cx("buttom-items")}>
-                                        <div className={cx("information")}>
-                                            <span>Description </span>
-                                            <div className={cx("detail-information")}>
-                                                <label>Appearance: </label>
-                                                <span className={cx("apearance")}>{detailAnimal.appearance}</span>
-                                            </div>
-                                            <div className={cx("detail-information")}>
-                                                <label>Habits and Lifestyle: </label>
-                                                <span className={cx("habits")}>{detailAnimal.habits}</span>
-                                            </div>
-                                        </div>
-                                        <div className={cx("information")}>
-                                            <span>Distribution </span>
-                                            <div className={cx("short-detail-information")}>
-                                                <label>Continents: </label>
-                                                <span className={cx("continents")}>{detailAnimal.continents}</span>
-                                            </div>
-                                            <div className={cx("short-detail-information")}>
-                                                <label>Coutries: </label>
-                                                <span className={cx("coutries")}>{detailAnimal.countries}</span>
-                                            </div>
-                                            <div className={cx("short-detail-information")}>
-                                                <label>WWF Biomes: </label>
-                                                <span className={cx("wwf-biomes")}>{detailAnimal.wwfBiomes}</span>
-                                            </div>
-                                        </div>
-                                        <div className={cx("wrapper-two-infomation")}>
-                                            <div className={cx("information", "information-status")}>
-                                                <span>Status </span>
-                                                <div className={cx("detail-information")}>
-                                                    <span className={cx("Status")}>{detailAnimal.status}</span>
-                                                </div>
-                                            </div>
-                                            <div className={cx("conservation")}>
-                                                <span>Conservation status </span>
-                                                <div className={cx("detail-information")}>
-                                                    <ul className={cx("list-label")}>
-                                                        <li>Extinct</li>
-                                                        <p></p>
-                                                        <li>Threatened</li>
-                                                        <p></p>
-                                                        <li>
-                                                            <p>Least</p>
-                                                            <p>Concern</p>
-                                                        </li>
-                                                    </ul>
-                                                    <ul className={cx("list-status")}>
-                                                        <li
-                                                            className={cx(
-                                                                detailAnimal.levelOfDanger.trim() === "Extinct"
-                                                                    ? "level-danger"
-                                                                    : ""
-                                                            )}
-                                                        >
-                                                            EX
-                                                        </li>
-                                                        <li
-                                                            className={cx(
-                                                                detailAnimal.levelOfDanger.trim() ===
-                                                                    "Extinct in the Wild"
-                                                                    ? "level-danger"
-                                                                    : ""
-                                                            )}
-                                                        >
-                                                            EW
-                                                        </li>
-                                                        <li
-                                                            className={cx(
-                                                                detailAnimal.levelOfDanger.trim() === "Highly threatend"
-                                                                    ? "level-danger"
-                                                                    : ""
-                                                            )}
-                                                        >
-                                                            CR
-                                                        </li>
-                                                        <li
-                                                            className={cx(
-                                                                detailAnimal.levelOfDanger.trim() === "Endangered"
-                                                                    ? "level-danger"
-                                                                    : ""
-                                                            )}
-                                                        >
-                                                            EN
-                                                        </li>
-                                                        <li
-                                                            className={cx(
-                                                                detailAnimal.levelOfDanger.trim() === "Vulnerable"
-                                                                    ? "level-danger"
-                                                                    : ""
-                                                            )}
-                                                        >
-                                                            VU
-                                                        </li>
-                                                        <li
-                                                            className={cx(
-                                                                detailAnimal.levelOfDanger.trim() === "Near Threatened"
-                                                                    ? "level-danger"
-                                                                    : ""
-                                                            )}
-                                                        >
-                                                            NT
-                                                        </li>
-                                                        <li
-                                                            className={cx(
-                                                                detailAnimal.levelOfDanger.trim() === "Least Concern"
-                                                                    ? "level-danger"
-                                                                    : ""
-                                                            )}
-                                                        >
-                                                            LC
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div className={cx("left-quantity")}>
-                                                    <label>The remaining amount: </label>
-                                                    <input readOnly value={detailAnimal.theRemainAmount} />
-                                                </div>
-                                            </div>
-                                        </div>
+                                {showDetailAnimal === true ? (
+                                    <div className={cx("detail-animal")}>
+                                        <DetailAnimal animalScientificName={scientificName} />
                                     </div>
                                 ) : (
-                                    <></>
+                                    <div className={cx("wrapper-btn_show")}>
+                                        <button
+                                            className={cx("show-detail-animal")}
+                                            onClick={() => {
+                                                setShowDetailAnimal(true);
+                                            }}
+                                        >
+                                            Hiển thị chi tiết
+                                        </button>
+                                    </div>
                                 )}
                             </>
                         ) : (

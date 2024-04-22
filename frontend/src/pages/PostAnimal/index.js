@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import WarningBox from "../../components/WarningBox";
+import Loading from "../../components/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -23,11 +24,12 @@ function PostAnimal() {
     const [animalObjects, setAnimalObjects] = useState([]);
     const [focusedIndexes, setFocusedIndexes] = useState([]);
     const [showIcon, setShowIcon] = useState(false);
-    // const [imageShowingRef, setImageShowingRef] = useRef();
     const [showWarning, setShowWarning] = useState(false);
     const [contentWarning, setContentWarning] = useState("");
     const [AnimalIndexesWithEmptyAttributes, setAnimalIndexesWithEmptyAttributes] = useState([]);
+    const [showLoading, setShowLoading] = useState(false);
     const idUser = sessionStorage.getItem("userID");
+
     useEffect(() => {
         if (animalObjects.length === 0) setIsHavingAnimalPost(false);
     }, [animalObjects]);
@@ -67,9 +69,12 @@ function PostAnimal() {
         accept: "image/*",
         onDrop: async (acceptedFiles) => {
             const newAnimalObjects = [];
+            setShowLoading(true);
             for (const file of acceptedFiles) {
                 const newAnimalObject = {
-                    index: animalObjects.length + newAnimalObjects.length,
+                    index:
+                        (animalObjects.length > 0 ? animalObjects[animalObjects.length - 1].index + 1 : 0) +
+                        newAnimalObjects.length,
                     preview: URL.createObjectURL(file),
                     focused: false,
                     idUser: idUser,
@@ -101,6 +106,7 @@ function PostAnimal() {
                 ...newAnimalObjects,
                 ...previous.slice(newAnimalObjects.length, previous.length),
             ]);
+            setShowLoading(false);
         },
     });
 
@@ -114,10 +120,12 @@ function PostAnimal() {
                     "Content-Type": "multipart/form-data",
                 },
             });
-    
+
             if (response.status === 200) {
                 try {
-                    const res = await axios.get("http://localhost:8080/api/v1/animals/" + response.data.predicted_label.predicted_label);
+                    const res = await axios.get(
+                        "http://localhost:8080/api/v1/animals/" + response.data.predicted_label.predicted_label
+                    );
                     return [res.data.data.animalName, response.data.predicted_label.predicted_label];
                 } catch (error) {
                     console.error(error);
@@ -288,65 +296,71 @@ function PostAnimal() {
     };
 
     const handleSubmitPost = async () => {
-        // Lọc ra các đối tượng có tất cả các thuộc tính rỗng trừ note
-        const emptyAttributesObj = animalObjects.filter((animalObj) =>
-            Object.entries(animalObj).some(([key, value]) => key !== "note" && value === "")
-        );
-        // Lấy ra mảng animalIndex của các đối tượng có thuộc tính rỗng
-        const indexesEmptyAttributesObj = emptyAttributesObj.map((animalObj) => animalObj.index);
+        if (animalObjects.length > 0) {
+            // Lọc ra các đối tượng có tất cả các thuộc tính rỗng trừ note
+            const emptyAttributesObj = animalObjects.filter((animalObj) =>
+                Object.entries(animalObj).some(([key, value]) => key !== "note" && value === "")
+            );
+            // Lấy ra mảng animalIndex của các đối tượng có thuộc tính rỗng
+            const indexesEmptyAttributesObj = emptyAttributesObj.map((animalObj) => animalObj.index);
 
-        if (indexesEmptyAttributesObj.length === 0) {
-            console.log("All fields are not empty");
-            const filteredAnimalObjects = animalObjects.map((animalObj) => {
-                const { index, preview, focused, ...rest } = animalObj;
-                return rest;
-            });
-            for (let item of filteredAnimalObjects) {
-                if (Array.isArray(item.files)) {
-                    var i = 0;
-                    for (let file of item.files) {
-                        const response = await uploadFile(file);
-                        if (response) {
-                            item.files[i] = response;
-                            i++;
-                            console.log(response);
+            if (indexesEmptyAttributesObj.length === 0) {
+                console.log("All fields are not empty");
+                const filteredAnimalObjects = animalObjects.map((animalObj) => {
+                    const { index, preview, focused, ...rest } = animalObj;
+                    return rest;
+                });
+                for (let item of filteredAnimalObjects) {
+                    if (Array.isArray(item.files)) {
+                        var i = 0;
+                        for (let file of item.files) {
+                            const response = await uploadFile(file);
+                            if (response) {
+                                item.files[i] = response;
+                                i++;
+                                console.log(response);
+                            }
                         }
-                    }
-                } else {
-                    const response = await uploadFile(item.files);
-                    if (response) {
-                        item.files = [response];
+                    } else {
+                        const response = await uploadFile(item.files);
+                        if (response) {
+                            item.files = [response];
+                        }
                     }
                 }
-            }
 
-            axios
-                .post("http://127.0.0.1:8080/api/v1/users/postAnimal", [...filteredAnimalObjects], {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                })
-                .then((res) => {
-                    if (res.status === 200) {
-                        window.location.href = "http://localhost:3000/your_observation/" + sessionStorage.getItem("userID");
-                        if (res.data !== null) {
-                            console.log(res.data);
-                        } else {
-                            console.log("Response data is null");
+                axios
+                    .post("http://127.0.0.1:8080/api/v1/users/postAnimal", [...filteredAnimalObjects], {
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                    })
+                    .then((res) => {
+                        if (res.status === 200) {
+                            window.location.href =
+                                "http://localhost:3000/your_observation/" + sessionStorage.getItem("userID");
+                            if (res.data !== null) {
+                                console.log(res.data);
+                            } else {
+                                console.log("Response data is null");
+                            }
                         }
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
 
-            console.log(filteredAnimalObjects);
+                console.log(filteredAnimalObjects);
+            } else {
+                setAnimalIndexesWithEmptyAttributes(indexesEmptyAttributesObj);
+                setShowWarning(true);
+                setContentWarning("Please fill in all information!");
+                console.log(indexesEmptyAttributesObj);
+            }
         } else {
-            setAnimalIndexesWithEmptyAttributes(indexesEmptyAttributesObj);
             setShowWarning(true);
-            setContentWarning("Please fill in all information!");
-            console.log(indexesEmptyAttributesObj);
+            setContentWarning("There are no posts yet!");
         }
     };
 
@@ -358,23 +372,23 @@ function PostAnimal() {
                         <input type="file" id="fileInput" style={{ display: "none" }} onChange={handleFileChange} />
                         <button className={cx("more-image")} onClick={handleButtonClick}>
                             <FontAwesomeIcon icon={faPlus} className={cx("icon-nav")} />
-                            <p>ADD</p>
+                            <p>THÊM</p>
                         </button>
                     </div>
                     <button className={cx("remove-image")} onClick={removeImage}>
                         <FontAwesomeIcon icon={faXmark} className={cx("icon-nav")} />
-                        <p>Remove</p>
+                        <p>Xoá</p>
                     </button>
                     <button className={cx("combine-image")} onClick={handleCombine}>
                         <FontAwesomeIcon icon={faObjectGroup} className={cx("icon-combine")} />
-                        <p>Combine</p>
+                        <p>Kết hợp</p>
                     </button>
                     <button className={cx("select-all")} onClick={sellectAll}>
-                        <p>Select All</p>
+                        <p>Chọn tất cả</p>
                     </button>
                 </div>
                 <button className={cx("submit-post")} onClick={handleSubmitPost}>
-                    <p>Submit</p>
+                    <p>Gửi</p>
                 </button>
             </div>
             <div className={cx("body")} {...getRootProps()} onClick={(e) => e.stopPropagation()}>
@@ -435,14 +449,14 @@ function PostAnimal() {
                                             )}
                                         </div>
                                         {/* <div className={cx("icon-container")}>
-                                            {showIcon && (
-                                                <FontAwesomeIcon
-                                                    icon={faMagnifyingGlass}
-                                                    index={image.index}
-                                                    className={cx("icon-show")}
-                                                />
-                                            )}
-                                        </div> */}
+                                    {showIcon && (
+                                        <FontAwesomeIcon
+                                            icon={faMagnifyingGlass}
+                                            index={image.index}
+                                            className={cx("icon-show")}
+                                        />
+                                    )}
+                                </div> */}
                                         {Array.isArray(image.preview) ? (
                                             <span className={cx("current-image")}>
                                                 {currentImageIndex + 1}/{image.preview.length}
@@ -457,7 +471,7 @@ function PostAnimal() {
                                             <input
                                                 value={image.speciesName}
                                                 className={cx("species-name")}
-                                                placeholder="Species name"
+                                                placeholder="Tên loài"
                                                 readOnly
                                             />
                                         </div>
@@ -475,14 +489,14 @@ function PostAnimal() {
                                                         );
                                                     });
                                                 }}
-                                                placeholder="Date"
+                                                placeholder="Ngày"
                                             />
                                         </div>
                                         <div className={cx("information")}>
                                             <FontAwesomeIcon icon={faLocationDot} className={cx("icon")} />
                                             <input
                                                 className={cx("location")}
-                                                placeholder="Location"
+                                                placeholder="Địa điểm"
                                                 onChange={(e) => {
                                                     animalObjects.map((item) => {
                                                         return item.index === image.index ? (
@@ -497,7 +511,7 @@ function PostAnimal() {
                                         <div className={cx("information")}>
                                             <textarea
                                                 className={cx("note")}
-                                                placeholder="Note"
+                                                placeholder="Ghi chú"
                                                 onChange={(e) => {
                                                     animalObjects.map((item) => {
                                                         return item.index === image.index ? (
@@ -519,9 +533,9 @@ function PostAnimal() {
                         <input type="file" id="fileInput" style={{ display: "none" }} onChange={handleFileChange} />
                         <div onClick={handleButtonClick}>
                             {isDragActive ? (
-                                <p className={cx("introduction")}>Drop the image here...</p>
+                                <p className={cx("introduction")}>Kéo và thả hình ảnh vào đây...</p>
                             ) : (
-                                <p className={cx("introduction")}>Drag & drop image here or click to select image</p>
+                                <p className={cx("introduction")}>Kéo và thả hình ảnh vào đây hoặc nhấn để chọn ảnh</p>
                             )}
                         </div>
                     </div>
@@ -534,6 +548,13 @@ function PostAnimal() {
                         handleSubmitButton={changeStatusBox}
                         handleCancelButton={changeStatusBox}
                     />
+                </div>
+            ) : (
+                <></>
+            )}
+            {showLoading === true ? (
+                <div className={cx("wrapper-loading")}>
+                    <Loading messsage={"Đang nhận dạng..."} />
                 </div>
             ) : (
                 <></>

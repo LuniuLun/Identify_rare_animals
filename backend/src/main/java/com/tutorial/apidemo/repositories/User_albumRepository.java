@@ -17,4 +17,5 @@ public interface User_albumRepository extends JpaRepository<User_album, Long> {
     void saveUser_album(Integer iDUserAnimal, String imageLink);
 
     List<User_album> findByiDUserAnimal(Integer iDUserAnimal);
+
 }

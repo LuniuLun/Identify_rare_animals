@@ -95,8 +95,8 @@ public class AnimalController {
         List<Animal_album> foundAlbum = animal_albumRepository.findByiDAnimal(iDAnimal);
         return foundAlbum;
     }
-    @GetMapping("/search")
-    public List<Animal> searchAnimal(@RequestBody String search) {
+    @GetMapping("/search/{search}")
+    public List<Animal> searchAnimal(@PathVariable String search) {
         List<Animal> foundAnimal = repository.findByKeywordIgnoreCase(search.toLowerCase());
         for(Animal animal: foundAnimal) {
             List<Animal_album> animalAlbum = animal_albumRepository.findByiDAnimal(animal.getiDAnimal());
@@ -106,4 +106,5 @@ public class AnimalController {
         }
         return foundAnimal;
     }
+
 }

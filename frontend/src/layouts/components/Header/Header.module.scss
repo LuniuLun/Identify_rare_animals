@@ -124,7 +124,7 @@
     text-align: left;
 }
 
-.option-user:nth-child(4) {
+.option-user:nth-child(5) {
     border-top: 1px solid #ccc;
     margin-top: 4px;
 }
@@ -318,7 +318,7 @@
     width: 100px;
 }
 
-.btn-more {
+.btn-more, .show-detail-animal {
     text-align: center;
     padding: 6px 16px;
     background-color: var(--blue-color);
@@ -326,145 +326,14 @@
     font-weight: 600;
 }
 
-
-
-
-
-
-.buttom-items {
-    padding: 30px 40px;
-    border: 1px solid rgba(0, 0, 0, 0.17);
+.wrapper-btn_show{
     width: 100%;
-}
-
-.information {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 40px;
-    width: 100%;
-}
-
-.information>span,
-.conservation>span {
-    width: 100%;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-    color: var(--black-text-color);
-    font-weight: 800;
-}
-
-.detail-information {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 0;
-}
-
-.short-detail-information {
-    display: flex;
-    padding: 10px 0;
-    align-items: center;
-}
-
-.detail-information label {
-    padding: 6px 0;
-    color: var(--black-text-color);
-    font-weight: 500;
-}
-
-.short-detail-information>span,
-.detail-information>span {
-    margin: 6px;
-    color: var(--greyish-text-color);
-    outline: 0;
-    border: 0;
-    height: auto;
-    resize: vertical;
-    line-height: 2rem;
-}
-
-.wrapper-two-infomation {
-    display: flex;
-}
-
-.information-status {
-    width: 80%;
-}
-
-.information {}
-
-.detail-information {}
-
-.Status {}
-
-.conservation {
-    display: flex;
-    flex-direction: column;
-    margin-left: 20px;
-}
-
-.detail-information {}
-
-.list-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.2rem;
-    color: var(--black-text-color);
-    font-weight: 600;
-    margin: 0 6px 0 13px;
-}
-
-.list-label>p {
-    border: 1px solid #ccc;
-}
-
-.list-label li {
-    list-style: none;
-}
-
-.list-status {
     display: flex;
     align-items: center;
     justify-content: center;
-    justify-content: space-between;
-    font-size: 1.2rem;
-    margin: 10px 0;
+    margin: 20px 0;
 }
 
-.list-status li {
-    list-style: none;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    font-weight: 600;
-    height: 30px;
-    width: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.list-status .level-danger {
-    background-color: rgba(212, 88, 54, 0.941);
-    color: var(--white-text-color);
-}
-
-.left-quantity {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 30px 0;
-}
-
-.left-quantity label {
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: var(--black-text-color);
-    width: 80%;
-}
-
-.left-quantity input {
-    outline: 0;
-    border: 0;
-    color: rgba(163, 69, 43, 0.941);
-    font-weight: 800;
-    width: 20%;
+.detail-animal {
+    width: 100%;
 }
