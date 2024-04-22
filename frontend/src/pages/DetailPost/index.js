@@ -25,7 +25,6 @@ function DetailPost() {
 
     const [showDetailAnimal, setShowDetailAnimal] = useState(false);
 
-
     const [listImage, setListImage] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const { id } = useParams();
@@ -151,13 +150,13 @@ function DetailPost() {
                             <p className={cx("username")}>{displayName}</p>
                             <p className={cx("quantity-observation")}>
                                 <FontAwesomeIcon icon={faBinoculars} className={cx("scope-icon")} />
-                                3.191 observations
+                                3.191 quan sát
                             </p>
                         </div>
                     </div>
                     <div className={cx("time-observations")}>
                         <div className={cx("time-observation")}>
-                            <label>Observed:</label>
+                            <label>Quan sát:</label>
                             <input
                                 type="date"
                                 value={date}
@@ -166,12 +165,12 @@ function DetailPost() {
                             />
                         </div>
                         <div className={cx("time-submit")}>
-                            <label>Submitted:</label>
+                            <label>Đã gửi:</label>
                             <input value={date} readOnly type="date" />
                         </div>
                     </div>
                     <div className={cx("location")}>
-                        <label>Location:</label>
+                        <label>Địa điểm:</label>
                         <input
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
@@ -180,7 +179,7 @@ function DetailPost() {
                         />
                     </div>
                     <div className={cx("note")}>
-                        <label>Note:</label>
+                        <label>Ghi chú:</label>
                         <textarea
                             onChange={(e) => setNote(e.target.value)}
                             autoComplete="off"
@@ -203,17 +202,17 @@ function DetailPost() {
                             setShowDetailAnimal(true);
                         }}
                     >
-                        Show detail
+                        Hiển thị chi tiết
                     </button>
                 </div>
             )}
             {isYourObservation === true ? (
                 <div className={cx("change-post")}>
                     <button className={cx("edit_btn")} onClick={editPost}>
-                        Save
+                        Lưu
                     </button>
                     <button className={cx("delete_btn")} onClick={deletePost}>
-                        Delete
+                        Xóa
                     </button>
                 </div>
             ) : (

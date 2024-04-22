@@ -16,9 +16,9 @@ function DetailAnimal({ animalScientificName }) {
     const [theRemainAmount, setTheRemainAmount] = useState("");
     const [status, setStatus] = useState(null);
 
-    const [listImage, setListImage] = useState([]);
+    // const [listImage, setListImage] = useState([]);
     // const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const { id } = useParams();
+    // const { id } = useParams();
 
     useEffect(() => {
         axios
@@ -41,99 +41,97 @@ function DetailAnimal({ animalScientificName }) {
             });
     }, [animalScientificName]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get("http://localhost:8080/api/v1/users/animal_album/" + id);
-                if (response.data != null) {
-                    const arrObject = response.data;
-                    const updatedList = arrObject.map((element) => element.imageLink);
-                    setListImage(updatedList);
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await axios.get("http://localhost:8080/api/v1/users/animal_album/" + id);
+    //             if (response.data != null) {
+    //                 const arrObject = response.data;
+    //                 const updatedList = arrObject.map((element) => element.imageLink);
+    //                 setListImage(updatedList);
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching data:", error);
+    //         }
+    //     };
 
-        fetchData();
-    }, [id]);
+    //     fetchData();
+    // }, [id]);
 
     return (
         <div className={cx("wrapper")}>
-            <div className={cx("title")}>Detail</div>
+            <div className={cx("title")}>Chi tiết</div>
             <div className={cx("bottom-items")}>
                 <div className={cx("information")}>
-                    <span>Description</span>
+                    <span>Mô tả</span>
                     <div className={cx("detail-information")}>
-                        <label>Appearance: </label>
+                        <label>Diện mạo: </label>
                         <span className={cx("apearance")}>{appearance}</span>
                     </div>
                     <div className={cx("detail-information")}>
-                        <label>Habits and Lifestyle: </label>
+                        <label>Thói quen và Lối sống: </label>
                         <span className={cx("habits")}>{habits}</span>
                     </div>
                 </div>
                 <div className={cx("information")}>
-                    <span>Distribution </span>
+                    <span>Sự phân bố </span>
                     <div className={cx("short-detail-information")}>
-                        <label>Continents: </label>
+                        <label>Châu lục: </label>
                         <span className={cx("continents")}>{continents}</span>
                     </div>
                     <div className={cx("short-detail-information")}>
-                        <label>Countries: </label>
+                        <label>Quốc gia: </label>
                         <span className={cx("Countries")}>{countries}</span>
                     </div>
                     <div className={cx("short-detail-information")}>
-                        <label>WWF Biomes: </label>
+                        <label>Các môi trường sống WWF: </label>
                         <span className={cx("wwf-biomes")}>{wwfBiomes}</span>
                     </div>
                 </div>
                 <div className={cx("wrapper-two-infomation")}>
                     <div className={cx("information", "information-status")}>
-                        <span>Status </span>
+                        <span>Tình trạng </span>
                         <div className={cx("detail-information")}>
                             <span className={cx("Status")}>{status}</span>
                         </div>
                     </div>
                     <div className={cx("conservation")}>
-                        <span>Conservation status </span>
+                        <span>Tình trạng bảo tồn </span>
                         <div className={cx("detail-information")}>
                             <ul className={cx("list-label")}>
-                                <li>Extinct</li>
+                                <li>Tuyệt chủng</li>
                                 <p></p>
-                                <li>Threatened</li>
+                                <li>Đang bị đe dọa</li>
                                 <p></p>
                                 <li>
-                                    <p>Least</p>
+                                    <p>Ít lo ngại</p>
                                     <p>Concern</p>
                                 </li>
                             </ul>
                             <ul className={cx("list-status")}>
-                                <li className={cx(levelOfDanger.trim() === "Extinct" ? "level-danger" : "")}>EX</li>
+                                <li className={cx(levelOfDanger.trim() === "Tuyệt chủng" ? "level-danger" : "")}>EX</li>
                                 <li
-                                    className={cx(levelOfDanger.trim() === "Extinct in the Wild" ? "level-danger" : "")}
+                                    className={cx(
+                                        levelOfDanger.trim() === "Tuyệt chủng ở tự nhiên" ? "level-danger" : ""
+                                    )}
                                 >
                                     EW
                                 </li>
-                                <li className={cx(levelOfDanger.trim() === "Highly threatend" ? "level-danger" : "")}>
+                                <li className={cx(levelOfDanger.trim() === "Rất bị đe dọa" ? "level-danger" : "")}>
                                     CR
                                 </li>
-                                <li className={cx(levelOfDanger.trim() === "Endangered" ? "level-danger" : "")}>EN</li>
-                                <li className={cx(levelOfDanger.trim() === "Vulnerable" ? "level-danger" : "")}>VU</li>
-                                <li className={cx(levelOfDanger.trim() === "Near Threatened" ? "level-danger" : "")}>
-                                    NT
-                                </li>
-                                <li className={cx(levelOfDanger.trim() === "Least Concern" ? "level-danger" : "")}>
-                                    LC
-                                </li>
+                                <li className={cx(levelOfDanger.trim() === "Nguy cấp" ? "level-danger" : "")}>EN</li>
+                                <li className={cx(levelOfDanger.trim() === "Có nguy cơ" ? "level-danger" : "")}>VU</li>
+                                <li className={cx(levelOfDanger.trim() === "Gần nguy cơ" ? "level-danger" : "")}>NT</li>
+                                <li className={cx(levelOfDanger.trim() === "Ít lo ngại" ? "level-danger" : "")}>LC</li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 <div className={cx("information")}>
-                    <span>Distribution </span>
+                    <span>Sự phân bố </span>
                     <div className={cx("left-quantity", "short-detail-information")}>
-                        <label>The remaining amount: </label>
+                        <label>Lượng còn lại: </label>
                         <span>{theRemainAmount}</span>
                     </div>
                 </div>
