@@ -109,21 +109,27 @@ function DetailAnimal({ animalScientificName }) {
                                 </li>
                             </ul>
                             <ul className={cx("list-status")}>
-                                <li className={cx(levelOfDanger.trim() === "Tuyệt chủng" ? "level-danger" : "")}>EX</li>
+                                <li className={cx(levelOfDanger.trim() === "Extinct" ? "level-danger" : "")}>EX</li>
                                 <li
-                                    className={cx(
-                                        levelOfDanger.trim() === "Tuyệt chủng ở tự nhiên" ? "level-danger" : ""
-                                    )}
+                                    className={cx(levelOfDanger.trim() === "Extinct in the Wild" ? "level-danger" : "")}
                                 >
                                     EW
                                 </li>
-                                <li className={cx(levelOfDanger.trim() === "Rất bị đe dọa" ? "level-danger" : "")}>
+                                <li
+                                    className={cx(
+                                        levelOfDanger.trim() === "Critically Endangered" ? "level-danger" : ""
+                                    )}
+                                >
                                     CR
                                 </li>
-                                <li className={cx(levelOfDanger.trim() === "Nguy cấp" ? "level-danger" : "")}>EN</li>
-                                <li className={cx(levelOfDanger.trim() === "Có nguy cơ" ? "level-danger" : "")}>VU</li>
-                                <li className={cx(levelOfDanger.trim() === "Gần nguy cơ" ? "level-danger" : "")}>NT</li>
-                                <li className={cx(levelOfDanger.trim() === "Ít lo ngại" ? "level-danger" : "")}>LC</li>
+                                <li className={cx(levelOfDanger.trim() === "Endangered" ? "level-danger" : "")}>EN</li>
+                                <li className={cx(levelOfDanger.trim() === "Vulnerable" ? "level-danger" : "")}>VU</li>
+                                <li className={cx(levelOfDanger.trim() === "Near Threatened" ? "level-danger" : "")}>
+                                    NT
+                                </li>
+                                <li className={cx(levelOfDanger.trim() === "Least Concern" ? "level-danger" : "")}>
+                                    LC
+                                </li>
                             </ul>
                         </div>
                     </div>
