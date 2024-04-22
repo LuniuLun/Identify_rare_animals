@@ -358,7 +358,7 @@ function PostAnimal() {
                 setContentWarning("Please fill in all information!");
                 console.log(indexesEmptyAttributesObj);
             }
-        }else {
+        } else {
             setShowWarning(true);
             setContentWarning("There are no posts yet!");
         }
@@ -372,23 +372,23 @@ function PostAnimal() {
                         <input type="file" id="fileInput" style={{ display: "none" }} onChange={handleFileChange} />
                         <button className={cx("more-image")} onClick={handleButtonClick}>
                             <FontAwesomeIcon icon={faPlus} className={cx("icon-nav")} />
-                            <p>ADD</p>
+                            <p>THÊM</p>
                         </button>
                     </div>
                     <button className={cx("remove-image")} onClick={removeImage}>
                         <FontAwesomeIcon icon={faXmark} className={cx("icon-nav")} />
-                        <p>Remove</p>
+                        <p>Xoá</p>
                     </button>
                     <button className={cx("combine-image")} onClick={handleCombine}>
                         <FontAwesomeIcon icon={faObjectGroup} className={cx("icon-combine")} />
-                        <p>Combine</p>
+                        <p>Kết hợp</p>
                     </button>
                     <button className={cx("select-all")} onClick={sellectAll}>
-                        <p>Select All</p>
+                        <p>Chọn tất cả</p>
                     </button>
                 </div>
                 <button className={cx("submit-post")} onClick={handleSubmitPost}>
-                    <p>Submit</p>
+                    <p>Gửi</p>
                 </button>
             </div>
             <div className={cx("body")} {...getRootProps()} onClick={(e) => e.stopPropagation()}>
@@ -449,14 +449,14 @@ function PostAnimal() {
                                             )}
                                         </div>
                                         {/* <div className={cx("icon-container")}>
-                                            {showIcon && (
-                                                <FontAwesomeIcon
-                                                    icon={faMagnifyingGlass}
-                                                    index={image.index}
-                                                    className={cx("icon-show")}
-                                                />
-                                            )}
-                                        </div> */}
+                                    {showIcon && (
+                                        <FontAwesomeIcon
+                                            icon={faMagnifyingGlass}
+                                            index={image.index}
+                                            className={cx("icon-show")}
+                                        />
+                                    )}
+                                </div> */}
                                         {Array.isArray(image.preview) ? (
                                             <span className={cx("current-image")}>
                                                 {currentImageIndex + 1}/{image.preview.length}
@@ -471,7 +471,7 @@ function PostAnimal() {
                                             <input
                                                 value={image.speciesName}
                                                 className={cx("species-name")}
-                                                placeholder="Species name"
+                                                placeholder="Tên loài"
                                                 readOnly
                                             />
                                         </div>
@@ -489,14 +489,14 @@ function PostAnimal() {
                                                         );
                                                     });
                                                 }}
-                                                placeholder="Date"
+                                                placeholder="Ngày"
                                             />
                                         </div>
                                         <div className={cx("information")}>
                                             <FontAwesomeIcon icon={faLocationDot} className={cx("icon")} />
                                             <input
                                                 className={cx("location")}
-                                                placeholder="Location"
+                                                placeholder="Địa điểm"
                                                 onChange={(e) => {
                                                     animalObjects.map((item) => {
                                                         return item.index === image.index ? (
@@ -511,7 +511,7 @@ function PostAnimal() {
                                         <div className={cx("information")}>
                                             <textarea
                                                 className={cx("note")}
-                                                placeholder="Note"
+                                                placeholder="Ghi chú"
                                                 onChange={(e) => {
                                                     animalObjects.map((item) => {
                                                         return item.index === image.index ? (
@@ -533,9 +533,9 @@ function PostAnimal() {
                         <input type="file" id="fileInput" style={{ display: "none" }} onChange={handleFileChange} />
                         <div onClick={handleButtonClick}>
                             {isDragActive ? (
-                                <p className={cx("introduction")}>Drop the image here...</p>
+                                <p className={cx("introduction")}>Kéo và thả hình ảnh vào đây...</p>
                             ) : (
-                                <p className={cx("introduction")}>Drag & drop image here or click to select image</p>
+                                <p className={cx("introduction")}>Kéo và thả hình ảnh vào đây hoặc nhấn để chọn ảnh</p>
                             )}
                         </div>
                     </div>
@@ -554,7 +554,7 @@ function PostAnimal() {
             )}
             {showLoading === true ? (
                 <div className={cx("wrapper-loading")}>
-                    <Loading messsage={"Recognizing..."} />
+                    <Loading messsage={"Đang nhận dạng..."} />
                 </div>
             ) : (
                 <></>

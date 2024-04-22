@@ -141,33 +141,33 @@ function Header() {
                 </button>
                 <div className={cx("list-options")}>
                     <Link className={cx("link")} to={"/"}>
-                        <span>Explore</span>
+                        <span>Khám phá</span>
                     </Link>
                     {isLogin === true ? (
                         <Link className={cx("link")} to={"/your_observation/" + sessionStorage.getItem("userID")}>
-                            <span>Your Observations</span>
+                            <span>Quan sát của bạn</span>
                         </Link>
                     ) : (
                         <></>
                     )}
                     <Link className={cx("link")} to={"/"}>
-                        <span>Community</span>
+                        <span>Cộng đồng</span>
                         <FontAwesomeIcon className={cx("down-icon")} icon={faChevronDown} />
                     </Link>
                     <Link className={cx("link")} to={"/"}>
-                        <span>More</span>
+                        <span>Thêm</span>
                         <FontAwesomeIcon className={cx("down-icon")} icon={faChevronDown} />
                     </Link>
                 </div>
             </div>
             <div className={cx("left-item")}>
                 <Link to={"#"} className={cx("btn_addAnimal")} onClick={openModal}>
-                    Recognize
+                    Nhận dạng
                 </Link>
                 {isLogin === true ? (
                     <Fragment>
                         <Link to={"/post_animal"} className={cx("btn_addAnimal")}>
-                            Upload
+                            Tải lên
                         </Link>
                         <img
                             src={userAva !== "" ? userAva : "/img/no-user-img.jpg"}
@@ -179,17 +179,24 @@ function Header() {
                         {showListOptionsUser === true ? (
                             <div className={cx("list-options-user")}>
                                 <Link to={"/Profile"} className={cx("option-user")} onClick={setOpenOptions}>
-                                    Profile
+                                    Hồ sơ
                                 </Link>
                                 <Link
                                     to={"http://localhost:3000/your_observation/" + sessionStorage.getItem("userID")}
                                     className={cx("option-user")}
                                     onClick={setOpenOptions}
                                 >
-                                    Your Observations
+                                    Quan sát của bạn
+                                </Link>
+                                <Link
+                                    // to={"http://localhost:3000/your_observation/" + sessionStorage.getItem("userID")}
+                                    className={cx("option-user")}
+                                    onClick={setOpenOptions}
+                                >
+                                    Nhận dạng của bạn
                                 </Link>
                                 <Link to={"/post_animal"} className={cx("option-user")}>
-                                    Uploads
+                                    Tải lên
                                 </Link>
                                 <Link
                                     to={"/login"}
@@ -200,7 +207,7 @@ function Header() {
                                         setOpenOptions();
                                     }}
                                 >
-                                    Sign out
+                                    Đăng xuất
                                 </Link>
                             </div>
                         ) : (
@@ -209,7 +216,7 @@ function Header() {
                     </Fragment>
                 ) : (
                     <Link className={cx("link")} to={"/login"}>
-                        Log In
+                        Đăng nhập
                     </Link>
                 )}
             </div>
@@ -220,7 +227,7 @@ function Header() {
                         <FontAwesomeIcon icon={faXmark} className={cx("close-icon")} onClick={closeModal} />
                         {completedRecognization === true ? (
                             <>
-                                <div className={cx("title")}>Identification Result</div>
+                                <div className={cx("title")}>Kết quả Nhận dạng</div>
                                 <div className={cx("top-items")}>
                                     <div className={cx("wrapper-image-animal")}>
                                         <img
@@ -231,16 +238,16 @@ function Header() {
                                     </div>
                                     <div className={cx("detail-result")}>
                                         <div className={cx("accurary-result")}>
-                                            <label>Accuray:</label>
+                                            <label>Độ chính xác:</label>
                                             <input className={cx("accurary")} value={accurary} readOnly />
                                         </div>
                                         <div className={cx("list-names")}>
                                             {/* <div className={cx("name")}>
-                                                <label>Species Name: </label>
-                                                <input className={cx("species-name")} value={speciesName} readOnly />
-                                            </div> */}
+                                        <label>Tên loài: </label>
+                                        <input className={cx("species-name")} value={speciesName} readOnly />
+                                    </div> */}
                                             <div className={cx("name")}>
-                                                <label>Scientific Name: </label>
+                                                <label>Tên khoa học: </label>
                                                 <input
                                                     className={cx("scientific-name")}
                                                     value={scientificName}
@@ -248,7 +255,7 @@ function Header() {
                                                 />
                                             </div>
                                             <div className={cx("name")}>
-                                                <label>Animal: </label>
+                                                <label>Động vật: </label>
                                                 <input className={cx("animal")} value={animalName} readOnly />
                                             </div>
                                         </div>
@@ -275,7 +282,7 @@ function Header() {
                                                     src="/img/con_cong.jpg"
                                                 />
                                             </div>
-                                            <button className={cx("btn-more")}>MORE</button>
+                                            <button className={cx("btn-more")}>XEM THÊM</button>
                                         </div>
                                     </div>
                                 </div>
@@ -291,7 +298,7 @@ function Header() {
                                                 setShowDetailAnimal(true);
                                             }}
                                         >
-                                            Show detail
+                                            Hiển thị chi tiết
                                         </button>
                                     </div>
                                 )}

@@ -70,52 +70,52 @@ function Home() {
     return (
         <div className={cx("wrapper")}>
             <div className={cx("search")}>
-                <span>Observations</span>
+                <span>Quan sát</span>
                 <div className={cx("right-items")}>
                     <div className={cx("wrapper-find-animal")}>
                         <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
                         <input
                             className={cx("name-animal")}
                             value={searchInput}
-                            placeholder="Animal"
+                            placeholder="Động vật"
                             onChange={(e) => {
                                 SetSearchInput(e.target.value);
                             }}
                         />
                     </div>
                     <button className={cx("btn_find")} onClick={handleSearch}>
-                        Go
+                        Tìm kiếm
                     </button>
                 </div>
             </div>
             <div className={cx("statistic")}>
-                <span className={cx("title")}>The World</span>
+                <span className={cx("title")}>Toàn cầu</span>
                 <div className={cx("parameter")}>
                     <button className={cx("nav", "active")}>
                         <span className={cx("number")}>{animalPost.length}</span>
                         <div className={cx("description")}>
-                            <span>OBSERVATIONS</span>
+                            <span>QUAN SÁT</span>
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                         </div>
                     </button>
                     <button className={cx("nav")}>
                         <span className={cx("number")}>{animals.length}</span>
                         <div className={cx("description")}>
-                            <span>SPECIES</span>
+                            <span>LOÀI</span>
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                         </div>
                     </button>
                     {/* <button className={cx("nav")}>
-                        <span className={cx("number")}>347.101</span>
-                        <div className={cx("description")}>
-                            <span>IDENTIFIERS </span>
-                            <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
-                        </div>
-                    </button> */}
+                <span className={cx("number")}>347.101</span>
+                <div className={cx("description")}>
+                    <span>NGƯỜI NHẬN DẠNG </span>
+                    <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
+                </div>
+            </button> */}
                     <button className={cx("nav")}>
                         <span className={cx("number")}>{users.length - 1}</span>
                         <div className={cx("description")}>
-                            <span>OBSERVERS</span>{" "}
+                            <span>NGƯỜI QUAN SÁT</span>{" "}
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                         </div>
                     </button>
