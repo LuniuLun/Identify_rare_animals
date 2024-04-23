@@ -69,7 +69,8 @@
     position: relative;
 }
 
-.btn_addAnimal {
+.btn_addAnimal,
+.save-recognization-result {
     padding: 7px 10px;
     background-color: var(--primary-color);
     color: var(--white-text-color);
@@ -89,7 +90,7 @@
     width: 36px;
     border-radius: 50%;
     margin-right: 6px;
-    cursor: pointer;    
+    cursor: pointer;
     object-fit: cover;
 }
 
@@ -318,7 +319,8 @@
     width: 100px;
 }
 
-.btn-more, .show-detail-animal {
+.btn-more,
+.show-detail-animal {
     text-align: center;
     padding: 6px 16px;
     background-color: var(--blue-color);
@@ -326,7 +328,7 @@
     font-weight: 600;
 }
 
-.wrapper-btn_show{
+.wrapper-btn_show {
     width: 100%;
     display: flex;
     align-items: center;
@@ -336,4 +338,34 @@
 
 .detail-animal {
     width: 100%;
+}
+
+
+.wrapper-loading {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, .2);
+}
+
+.wrapper-btn_save-result{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+.save-recognization-result {
+    width: 10%;
+    padding: 7px 10px;
+    background-color: var(--primary-color);
+    color: var(--white-text-color);
+    border-radius: 16px;
+    margin-top:20px;
+    margin-right: 40px;
+    font-size: 1.6rem;
+    font-weight: 500;
 }

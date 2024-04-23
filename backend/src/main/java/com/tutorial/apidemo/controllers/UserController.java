@@ -269,7 +269,7 @@ public class UserController {
         return listR;
     }
 
-    @PostMapping("/newresult")
+    @PostMapping("/newResult")
     public ResponseEntity<ResponseObject> insertResult(@RequestBody Results newResult) {
         Animal foundAnimal = animalRepository.findByAnimalScientificName(newResult.getAnimalScientificName());
         if (foundAnimal != null) {
@@ -285,7 +285,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/deleteresult/{iDResult}")
+    @DeleteMapping("/deleteResult/{iDResult}")
     public ResponseEntity<ResponseObject> deleteResultByIDResult(@PathVariable Integer iDResult) {
         boolean exist = resultsRepository.existsById(Long.valueOf(iDResult));
         if (exist) {

@@ -79,6 +79,7 @@ public class AnimalController {
             updateDetail.setWwfBiomes(newDetail.getWwfBiomes());
             updateDetail.setLevelOfDanger(newDetail.getLevelOfDanger());
             updateDetail.setTheRemainAmount(newDetail.getTheRemainAmount());
+            updateDetail.setStatus(newDetail.getStatus());
             detail_animalRepository.save(updateDetail);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("ok", "Update ok", updateDetail)

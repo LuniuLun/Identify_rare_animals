@@ -7,6 +7,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import DetailAnimal from "../../../components/DetailAnimal";
+import Loading from "../../../components/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -14,14 +15,17 @@ function Header() {
     const [isLogin, setIsLogin] = useState(false);
     const [showListOptionsUser, setShowListOptionsUser] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [completedRecognization, setCompletedRecognization] = useState(false);
+    const [detailAnimal, setDetailAnimal] = useState(null);
+    const [showDetailAnimal, setShowDetailAnimal] = useState(false);
+    const [relativeAnimalImage, setRelativeAnimalImage] = useState([]);
     const [animalName, setAnimalName] = useState("");
     const [scientificName, setScientificName] = useState("");
     const [accurary, setAccurary] = useState("");
-    const [completedRecognization, setCompletedRecognization] = useState(false);
-    const [detailAnimal, setDetailAnimal] = useState(null);
     const [userAva, setUserAva] = useState("");
     const [animalImage, setAnimalImage] = useState("");
-    const [showDetailAnimal, setShowDetailAnimal] = useState(false);
+    const [idAnimal, setIdAnimal] = useState("");
+
     useEffect(() => {
         const idUser = sessionStorage.getItem("userID");
         if (idUser !== null) {
@@ -42,50 +46,6 @@ function Header() {
         const requestData = {
             recognize: "true",
         };
-        // axios
-        //     .post("http://127.0.0.1:5000/recognize_animal", requestData, {
-        //         headers: {
-        //             Accept: "application/json",
-        //             "Content-Type": "application/json",
-        //         },
-        //     })
-        //     .then((res) => {
-        //         console.log(res);
-        //         if (res.status === 200) {
-        //             setCompletedRecognization(true);
-        //             setScientificName(res.data.predicted_label.predicted_label);
-        //             setAccurary(res.data.predicted_label.confidence);
-
-        //             axios
-        //                 .get("http://localhost:8080/api/v1/animals/" + res.data.predicted_label.predicted_label)
-        //                 .then((res) => {
-        //                     setAnimalName(res.data.data[0].animalName);
-        //                     console.log(res.data);
-        //                 })
-        //                 .catch((error) => {
-        //                     console.error(error);
-        //                 });
-
-        //             axios
-        //                 .get(
-        //                     "http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" +
-        //                         res.data.predicted_label.predicted_label
-        //                 )
-        //                 .then((res) => {
-        //                     console.log(res.data);
-        //                     setDetailAnimal(res.data);
-        //                 })
-        //                 .catch((error) => {
-        //                     console.error(error);
-        //                 });
-        //         } else {
-        //             throw new Error("Failed to recognization animal.");
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.error("Error recognizing animal:", error);
-        //         // Handle the error here, you can set an error message state
-        //     });
         try {
             const resRecognize = await axios.post("http://127.0.0.1:5000/recognize_animal", requestData, {
                 headers: {
@@ -107,8 +67,14 @@ function Header() {
                             resRecognize.data.predicted_label
                     ),
                 ]);
-
+                console.log(resAnimal);
+                const resRelativeAblum = await axios.get(
+                    "http://localhost:8080/api/v1/animals/album/" + resAnimal.data.data.iDAnimal
+                );
+                console.log(resRelativeAblum);
+                setRelativeAnimalImage(resRelativeAblum.data);
                 setAnimalName(resAnimal.data.data.animalName);
+                setIdAnimal(resAnimal.data.data.iDAnimal);
                 setDetailAnimal(resDetail.data);
                 console.log(resAnimal.data.data.animalName);
                 console.log(resDetail.data);
@@ -117,7 +83,6 @@ function Header() {
             }
         } catch (error) {
             console.error("Error recognizing animal:", error);
-            // Xử lý lỗi ở đây, bạn có thể set state cho thông báo lỗi
         }
     };
 
@@ -128,6 +93,28 @@ function Header() {
 
     const setOpenOptions = () => {
         setShowListOptionsUser((previous) => !previous);
+    };
+
+    const saveRecognitionResult = async () => {
+        const requestData = {
+            iDUser: sessionStorage.getItem("userID"),
+            imageLink: animalImage,
+            predictedAnimal: idAnimal,
+            predictedAccuracy: parseInt(accurary.replace("%", "")),
+            animalScientificName: scientificName,
+        };
+        console.log(requestData);
+        const saveRecognition = await axios.post("http://localhost:8080/api/v1/users/newResult", requestData, {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+        });
+        if (saveRecognition.status === 200) {
+            setShowModal(false);
+            setCompletedRecognization(false);
+            window.location.href = "http://localhost:3000/recognize_animal_history";
+        }
     };
 
     return (
@@ -189,7 +176,7 @@ function Header() {
                                     Quan sát của bạn
                                 </Link>
                                 <Link
-                                    // to={"http://localhost:3000/your_observation/" + sessionStorage.getItem("userID")}
+                                    to={"http://localhost:3000/recognize_animal_history"}
                                     className={cx("option-user")}
                                     onClick={setOpenOptions}
                                 >
@@ -261,28 +248,18 @@ function Header() {
                                         </div>
                                         <div className={cx("regular-images")}>
                                             <div className={cx("list-iamges")}>
-                                                <img
-                                                    className={cx("regular-image-animal")}
-                                                    alt=""
-                                                    src="/img/con_cong.jpg"
-                                                />
-                                                <img
-                                                    className={cx("regular-image-animal")}
-                                                    alt=""
-                                                    src="/img/con_cong.jpg"
-                                                />
-                                                <img
-                                                    className={cx("regular-image-animal")}
-                                                    alt=""
-                                                    src="/img/con_cong.jpg"
-                                                />
-                                                <img
-                                                    className={cx("regular-image-animal")}
-                                                    alt=""
-                                                    src="/img/con_cong.jpg"
-                                                />
+                                                {relativeAnimalImage.slice(0, 4).map((item, index) => {
+                                                    return (
+                                                        <img
+                                                            key={index}
+                                                            className={cx("regular-image-animal")}
+                                                            alt=""
+                                                            src={item.imageLink}
+                                                        />
+                                                    );
+                                                })}
                                             </div>
-                                            <button className={cx("btn-more")}>XEM THÊM</button>
+                                            {/* <button className={cx("btn-more")}>XEM THÊM</button> */}
                                         </div>
                                     </div>
                                 </div>
@@ -302,9 +279,23 @@ function Header() {
                                         </button>
                                     </div>
                                 )}
+                                {isLogin === true ? (
+                                    <div className={cx("wrapper-btn_save-result")}>
+                                        <button
+                                            className={cx("save-recognization-result")}
+                                            onClick={saveRecognitionResult}
+                                        >
+                                            Lưu
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <></>
+                                )}
                             </>
                         ) : (
-                            <div>ĐANG CHỜ KẾT QUẢ NHẬN DẠNG</div>
+                            <div className={cx("wrapper-loading")}>
+                                <Loading messsage={"Đang chờ kết quả nhận dạng..."} />
+                            </div>
                         )}
                     </div>
                 </div>
