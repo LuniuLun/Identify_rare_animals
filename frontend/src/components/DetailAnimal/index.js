@@ -105,7 +105,7 @@ function DetailAnimal({ animalScientificName }) {
                                 <p></p>
                                 <li>
                                     <p>Ít lo ngại</p>
-                                    <p>Concern</p>
+                                    <p>Quan tâm</p>
                                 </li>
                             </ul>
                             <ul className={cx("list-status")}>

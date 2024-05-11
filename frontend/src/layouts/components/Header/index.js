@@ -25,6 +25,7 @@ function Header() {
     const [userAva, setUserAva] = useState("");
     const [animalImage, setAnimalImage] = useState("");
     const [idAnimal, setIdAnimal] = useState("");
+    const [imageUrl, setImageUrl] = useState("http://192.168.0.107/cam-lo.jpg");
 
     useEffect(() => {
         const idUser = sessionStorage.getItem("userID");
@@ -41,49 +42,67 @@ function Header() {
         }
     }, []);
 
+    useEffect(() => {
+        if (imageUrl !== "") {
+            const interval = setInterval(() => {
+                // Cập nhật URL của hình ảnh bằng cách thêm một timestamp mới
+                setImageUrl((prevUrl) => prevUrl.split("?")[0] + "?" + new Date().getTime());
+            }, 50); // 5000 milliseconds = 1 seconds
+
+            // Xóa interval khi component unmount để tránh memory leak
+            return () => clearInterval(interval);
+        }
+    }, [imageUrl]);
     const openModal = async () => {
         setShowModal(true);
-        const requestData = {
-            recognize: "true",
-        };
-        try {
-            const resRecognize = await axios.post("http://127.0.0.1:5000/recognize_animal", requestData, {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (resRecognize.status === 200) {
-                setCompletedRecognization(true);
-                setScientificName(resRecognize.data.predicted_label);
-                setAnimalImage(resRecognize.data.url_image);
-                console.log(resRecognize.data);
-                setAccurary(resRecognize.data.confidence);
-                const [resAnimal, resDetail] = await Promise.all([
-                    axios.get("http://localhost:8080/api/v1/animals/" + resRecognize.data.predicted_label),
-                    axios.get(
-                        "http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" +
-                            resRecognize.data.predicted_label
-                    ),
-                ]);
-                console.log(resAnimal);
-                const resRelativeAblum = await axios.get(
-                    "http://localhost:8080/api/v1/animals/album/" + resAnimal.data.data.iDAnimal
-                );
-                console.log(resRelativeAblum);
-                setRelativeAnimalImage(resRelativeAblum.data);
-                setAnimalName(resAnimal.data.data.animalName);
-                setIdAnimal(resAnimal.data.data.iDAnimal);
-                setDetailAnimal(resDetail.data);
-                console.log(resAnimal.data.data.animalName);
-                console.log(resDetail.data);
-            } else {
-                throw new Error("Failed to recognize animal.");
-            }
-        } catch (error) {
-            console.error("Error recognizing animal:", error);
+        function recognizeAnimal() {
+            axios
+                .post("http://127.0.0.1:5000/recognize_animal", { image_url: imageUrl })
+                .then(async (resRecognize) => {
+                    // Xử lý phản hồi từ server
+                    if (resRecognize.status === 200) {
+                        console.log(resRecognize.data);
+                        const confidenceWithPercentage = resRecognize.data.confidence; // "74.77%"
+                        const confidenceWithoutPercentage = parseInt(confidenceWithPercentage.replace(/%/g, "")); // 74
+                        if (confidenceWithoutPercentage < 80) {
+                            recognizeAnimal(); // Gọi lại hàm đệ quy nếu độ chính xác thấp hơn 80%
+                        } else {
+                            setCompletedRecognization(true);
+                            setScientificName(resRecognize.data.predicted_label);
+                            setAnimalImage(resRecognize.data.url_image);
+                            setAccurary(resRecognize.data.confidence);
+                            console.log(resRecognize.data.predicted_label);
+                            const [resAnimal, resDetail] = await Promise.all([
+                                axios.get("http://localhost:8080/api/v1/animals/" + resRecognize.data.predicted_label),
+                                axios.get(
+                                    "http://localhost:8080/api/v1/animals/detailbyanimalscientificname/" +
+                                        resRecognize.data.predicted_label
+                                ),
+                            ]);
+                            console.log(resAnimal);
+                            const resRelativeAblum = await axios.get(
+                                "http://localhost:8080/api/v1/animals/album/" + resAnimal.data.data.iDAnimal
+                            );
+                            console.log(resRelativeAblum);
+                            setRelativeAnimalImage(resRelativeAblum.data);
+                            setAnimalName(resAnimal.data.data.animalName);
+                            setIdAnimal(resAnimal.data.data.iDAnimal);
+                            setDetailAnimal(resDetail.data);
+                            console.log(resAnimal.data.data.animalName);
+                            console.log(resDetail.data);
+                            setImageUrl("");
+                        }
+                    } else {
+                        throw new Error("Failed to recognize animal.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error recognizing animal:", error);
+                });
         }
+
+        // Gọi hàm đệ quy để bắt đầu quá trình nhận dạng
+        recognizeAnimal();
     };
 
     const closeModal = () => {
@@ -116,7 +135,6 @@ function Header() {
             window.location.href = "http://localhost:3000/recognize_animal_history";
         }
     };
-
     return (
         <div className={cx("wrapper")}>
             <div className={cx("right-item")}>
@@ -212,7 +230,12 @@ function Header() {
                 <div className={cx("modal")}>
                     <div className={cx("modal-content")}>
                         <FontAwesomeIcon icon={faXmark} className={cx("close-icon")} onClick={closeModal} />
-                        {completedRecognization === true ? (
+                        {imageUrl !== "" ? (
+                            <div className={cx("wrapper-cam-esp32")}>
+                                <h2>Recognize</h2>
+                                <img src={imageUrl} alt="animal-img" />
+                            </div>
+                        ) : (
                             <>
                                 <div className={cx("title")}>Kết quả Nhận dạng</div>
                                 <div className={cx("top-items")}>
@@ -292,10 +315,6 @@ function Header() {
                                     <></>
                                 )}
                             </>
-                        ) : (
-                            <div className={cx("wrapper-loading")}>
-                                <Loading messsage={"Đang chờ kết quả nhận dạng..."} />
-                            </div>
                         )}
                     </div>
                 </div>
@@ -307,3 +326,13 @@ function Header() {
 }
 
 export default Header;
+
+// {/* <>
+// {completedRecognization === true ? (
+
+// ) : (
+//     <div className={cx("wrapper-loading")}>
+//         <Loading messsage={"Đang chờ kết quả nhận dạng..."} />
+//     </div>
+// )}
+// </> */}
