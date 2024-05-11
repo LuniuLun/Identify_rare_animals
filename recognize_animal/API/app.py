@@ -10,6 +10,7 @@ import numpy as np
 import tkinter as tk
 from tkinter import Canvas, messagebox
 from PIL import Image, ImageTk
+from urllib.request import urlretrieve
 import subprocess 
 
 
@@ -74,49 +75,6 @@ def predict_animal():
     result = animal_controller.predict_animal_label(image_path)
     return jsonify(result)  # Sử dụng jsonify để trả về response JSON
 
-
-
-url = 'http://192.168.100.235/cam-lo.jpg'
-temp_file_path = ""
-server_url = ""
-photo = None
-root = None
-canvas = None
-is_server_running = False
-def start_server():
-    subprocess.Popen("python app.py", shell=True)
-
-def restart_server():
-    subprocess.Popen("python app.py", shell=True)
-
-def stop_application():
-    global root, canvas, photo
-    if root:
-        root.quit()
-    root = None
-    canvas = None
-    photo = None
-
-def capture_and_update(canvas):
-    global url, photo, root
-    try:
-        img = urllib.request.urlopen(url)
-        img_np = np.array(bytearray(img.read()), dtype=np.uint8)
-        frame = cv2.imdecode(img_np, -1)
-        
-        # Convert frame from OpenCV to a format that can be displayed on tkinter
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        img = Image.fromarray(frame)
-        photo = ImageTk.PhotoImage(image=img)
-        canvas.create_image(0, 0, anchor=tk.NW, image=photo)
-        
-        # Repeat this process every 10ms
-        root.after(10, capture_and_update, canvas)
-        
-    except Exception as e:
-        print("Error:", e)
-        messagebox.showerror("Error", "An error occurred while capturing and displaying the image.")
-
 def capture_and_send(canvas):
     global temp_file_path
     animal_controller = AnimalController()
@@ -163,45 +121,51 @@ def capture_and_send(canvas):
 
 @app.route("/recognize_animal", methods=["POST"])
 def recognize_animal():
-    global root, canvas, photo, url, temp_file_path
+    if 'image_url' not in request.json:
+        return jsonify({"error": "No image URL provided"}), 400
     
-    if not request.is_json:
-        return jsonify({"error": "Request must be JSON"}), 400
+    image_url = request.json['image_url']
+    animal_controller = AnimalController()
     
-    data = request.json
-    if 'recognize' not in data:
-        return jsonify({"error": "'recognize' is required"}), 400
-    
-    recognize = data['recognize']
-    
-    if recognize == "true":
-        try:
-            if root is not None:
-                return jsonify({"error": "Session is running, please stop before starting a new one"}), 400
-            
-            root = tk.Tk()
-            root.title("Display Video from URL")
-            
-            canvas = tk.Canvas(root, width=640, height=480)
-            canvas.pack()
+    try:
+        req = urllib.request.urlopen(image_url)
+        arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+        img = cv2.imdecode(arr, -1)
 
-            capture_and_update(canvas)
+        temp_file_path = "D:/VisualStudioCode/Project/Identify_rare_animals/recognize_animal/FileUpload/temp.jpg"
+        cv2.imwrite(temp_file_path, img)
+        file_path = "temp.jpg"
+        cv2.imwrite(file_path, img)
 
-            stop_button = tk.Button(root, text="Capture", command=stop_application)
-            stop_button.pack()
+        storage.child(file_path).put(file_path)
 
-            root.mainloop()
-            
-            result = capture_and_send(canvas)
-            restart_server()
-            return jsonify(result)
-            
-        except Exception as e:
-            print("Error:", e)
-            return jsonify({"error": "An error occurred while processing the image"}), 500
-    
-    else:
-        return jsonify({"message": "'Recognize' is not True"}), 400
+        auth = firebase.auth()
+        email = "nguyenducvan260903@gmail.com"
+        password = "123456"
+        user = auth.sign_in_with_email_and_password(email, password)
+        url_image = storage.child(file_path).get_url(user["idToken"])
+
+        result_tuple = animal_controller.predict_animal_label(temp_file_path)
+
+        if result_tuple is not None:
+            predicted_label = result_tuple['predicted_label']['predicted_label']
+            confidence = result_tuple['predicted_label']['confidence']
+
+            result_dict = {
+                "predicted_label": predicted_label,
+                "confidence": confidence,
+                "url_image": url_image
+            }
+        else:
+            result_dict = {
+                "error": "Result tuple is None"
+            }
+        print(result_dict)
+        return jsonify(result_dict)
+    except Exception as e:
+        print("Error:", e)
+        messagebox.showerror("Error", "An error occurred while capturing and predicting the animal.")
+    return jsonify({"message": "'Recognize' is not True"}), 400
 
 
 
