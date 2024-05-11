@@ -179,8 +179,11 @@ public class UserController {
     }
 
 
-    public String checkOTP(int userOTP, int minutesLimit) {
-        if (userOTP == otp) {
+    public String checkOTP(String userOTP, int minutesLimit) {
+        String otpString = String.valueOf(otp);
+        System.out.println(otpString);
+        if (userOTP.equals(otpString)) {
+            System.out.println(userOTP);
             LocalDateTime now = LocalDateTime.now();
             long minutesSinceOTP = ChronoUnit.MINUTES.between(otpTime, now);
 
@@ -198,6 +201,7 @@ public class UserController {
 
     @PostMapping("/forgotpw")
     ResponseEntity<ResponseObject> checkEmailAndSendOTP(@RequestBody User user) {
+        System.out.println(user.getUserEmail());
         User foundByEmail = userRepository.findByEmail(user.getUserEmail().trim());
         System.out.println(foundByEmail);
         if(foundByEmail != null){
@@ -212,6 +216,40 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject("failed", "Email is not exist or has not been registered", ""));
+        }
+    }
+    @PostMapping("/checkotp")
+    ResponseEntity<ResponseObject> checkValidOTP(@RequestBody User user) {
+        System.out.println(user.getOtp());
+        String res = checkOTP(user.getOtp(), 2);
+        System.out.println(res);
+        if(res.equals("")) {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("ok", "Well done", ""));
+        }
+        else if(res.equals("The OTP is incorrect!")) {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("unvalidOTP", "OTP is incorrect", "The OTP is incorrect!"));
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("unvalidOTP", "OTP is overdue", "The OTP is overdue!"));
+        }
+    }
+    @PutMapping("/changepw")
+    ResponseEntity<ResponseObject> changePW(@RequestBody User user) {
+        User foundByEmail = userRepository.findByEmail(user.getUserEmail().trim());
+        if(foundByEmail != null) {
+            foundByEmail.setUserPassword(user.getUserPassword());
+            userRepository.save(foundByEmail);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("ok", "Change password successfully", foundByEmail)
+            );
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ResponseObject("failed", "Change password unsuccessfully", "")
+            );
         }
     }
 

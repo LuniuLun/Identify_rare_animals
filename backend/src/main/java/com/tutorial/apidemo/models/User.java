@@ -25,6 +25,10 @@ public class User {
     private String avatarUser;
     @Column(name = "Role")
     private int roleAcc;
+    @Transient
+    private String otpUser;
+
+
 
     public User() {
     }
@@ -128,5 +132,13 @@ public class User {
                 ", avatarUser='" + avatarUser + '\'' +
                 ", roleAcc=" + roleAcc +
                 '}';
+    }
+
+    public String getOtp() {
+        return otpUser;
+    }
+
+    public void setOtpUser(String otpUser) {
+        this.otpUser = otpUser;
     }
 }
