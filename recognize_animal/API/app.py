@@ -12,7 +12,7 @@ from tkinter import Canvas, messagebox
 from PIL import Image, ImageTk
 from urllib.request import urlretrieve
 import subprocess 
-
+import time
 
 app = Flask(__name__)
 
@@ -75,59 +75,69 @@ def predict_animal():
     result = animal_controller.predict_animal_label(image_path)
     return jsonify(result)  # Sử dụng jsonify để trả về response JSON
 
-def capture_and_send(canvas):
-    global temp_file_path
-    animal_controller = AnimalController()
+# @app.route("/recognize_animal", methods=["POST"])
+# def recognize_animal():
+#     if 'image_url' not in request.json:
+#         return jsonify({"error": "No image URL provided"}), 400
+    
+#     image_url = request.json['image_url']
+#     animal_controller = AnimalController()
+    
+#     try:
+#         req = urllib.request.urlopen(image_url)
+#         arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+#         img = cv2.imdecode(arr, -1)
 
+#         temp_file_path = "D:/VisualStudioCode/Project/Identify_rare_animals/recognize_animal/FileUpload/temp.jpg"
+#         cv2.imwrite(temp_file_path, img)
+#         file_path = "temp.jpg"
+#         cv2.imwrite(file_path, img)
+
+#         storage.child(file_path).put(file_path)
+
+#         auth = firebase.auth()
+#         email = "nguyenducvan260903@gmail.com"
+#         password = "123456"
+#         user = auth.sign_in_with_email_and_password(email, password)
+#         url_image = storage.child(file_path).get_url(user["idToken"])
+
+#         result_tuple = animal_controller.predict_animal_label(temp_file_path)
+
+#         if result_tuple is not None:
+#             predicted_label = result_tuple['predicted_label']['predicted_label']
+#             confidence = result_tuple['predicted_label']['confidence']
+
+#             result_dict = {
+#                 "predicted_label": predicted_label,
+#                 "confidence": confidence,
+#                 "url_image": url_image
+#             }
+#         else:
+#             result_dict = {
+#                 "error": "Result tuple is None"
+#             }
+#         print(result_dict)
+#         return jsonify(result_dict)
+#     except Exception as e:
+#         print("Error:", e)
+#         messagebox.showerror("Error", "An error occurred while capturing and predicting the animal.")
+#     return jsonify({"message": "'Recognize' is not True"}), 400
+
+
+@app.route("/recognize_animal", methods=["POST"])
+def recognize_animal():
     try:
-        req = urllib.request.urlopen(url)
-        arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
-        img = cv2.imdecode(arr, -1)
+        if 'image_url' not in request.json:
+            return jsonify({"error": "Không có URL hình ảnh"}), 400
 
-        temp_file_path = "D:/VisualStudioCode/Project/Identify_rare_animals/recognize_animal/FileUpload/temp.jpg"
-        cv2.imwrite(temp_file_path, img)
-        file_path = "temp.jpg"
-        cv2.imwrite(file_path, img)
-
-        storage.child(file_path).put(file_path)
-
+        image_url = request.json['image_url']
+        # Xác thực với Firebase
         auth = firebase.auth()
         email = "nguyenducvan260903@gmail.com"
         password = "123456"
         user = auth.sign_in_with_email_and_password(email, password)
-        url_image = storage.child(file_path).get_url(user["idToken"])
 
-        result_tuple = animal_controller.predict_animal_label(temp_file_path)
-
-        if result_tuple is not None:
-            predicted_label = result_tuple['predicted_label']['predicted_label']
-            confidence = result_tuple['predicted_label']['confidence']
-
-            result_dict = {
-                "predicted_label": predicted_label,
-                "confidence": confidence,
-                "url_image": url_image
-            }
-        else:
-            result_dict = {
-                "error": "Result tuple is None"
-            }
-        print(result_dict)
-        return result_dict
-
-    except Exception as e:
-        print("Error:", e)
-        messagebox.showerror("Error", "An error occurred while capturing and predicting the animal.")
-
-@app.route("/recognize_animal", methods=["POST"])
-def recognize_animal():
-    if 'image_url' not in request.json:
-        return jsonify({"error": "No image URL provided"}), 400
-    
-    image_url = request.json['image_url']
-    animal_controller = AnimalController()
-    
-    try:
+        # Tải và xử lý hình ảnh
         req = urllib.request.urlopen(image_url)
         arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
         img = cv2.imdecode(arr, -1)
@@ -137,37 +147,41 @@ def recognize_animal():
         file_path = "temp.jpg"
         cv2.imwrite(file_path, img)
 
-        storage.child(file_path).put(file_path)
+        # Đổi tên tập tin hình ảnh
+        file_name = "temp_" + str(time.time()) + ".jpg"
+        # Tải lên hình ảnh lên Firebase Storage
+        storage = firebase.storage()
+        storage.child(file_name).put(temp_file_path)
+        url_image = storage.child(file_name).get_url(user["idToken"])
 
-        auth = firebase.auth()
-        email = "nguyenducvan260903@gmail.com"
-        password = "123456"
-        user = auth.sign_in_with_email_and_password(email, password)
-        url_image = storage.child(file_path).get_url(user["idToken"])
-
+        # Thực hiện nhận diện động vật
+        animal_controller = AnimalController()
         result_tuple = animal_controller.predict_animal_label(temp_file_path)
 
         if result_tuple is not None:
             predicted_label = result_tuple['predicted_label']['predicted_label']
             confidence = result_tuple['predicted_label']['confidence']
-
             result_dict = {
                 "predicted_label": predicted_label,
                 "confidence": confidence,
                 "url_image": url_image
             }
         else:
-            result_dict = {
-                "error": "Result tuple is None"
-            }
-        print(result_dict)
+            result_dict = {"error": "Tuple kết quả là None"}
+
         return jsonify(result_dict)
+
     except Exception as e:
-        print("Error:", e)
-        messagebox.showerror("Error", "An error occurred while capturing and predicting the animal.")
-    return jsonify({"message": "'Recognize' is not True"}), 400
-
-
+        # Ghi log lỗi hoặc trả về trong phản hồi JSON
+        print("Lỗi:", e)
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    try:
+        app.run(debug=True)
+    except Exception as e:
+        print("Error:", e)
+        # Tải lại máy chủ
+        print("Reloading server...")
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
