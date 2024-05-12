@@ -25,7 +25,7 @@ function Header() {
     const [userAva, setUserAva] = useState("");
     const [animalImage, setAnimalImage] = useState("");
     const [idAnimal, setIdAnimal] = useState("");
-    const [imageUrl, setImageUrl] = useState("http://192.168.0.107/cam-lo.jpg");
+    const [imageUrl, setImageUrl] = useState("http://192.168.0.103/cam-lo.jpg");
 
     useEffect(() => {
         const idUser = sessionStorage.getItem("userID");

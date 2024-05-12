@@ -5,6 +5,7 @@
     flex-direction: column;
     justify-content: center;
     margin-bottom: 20px;
+    position: relative;
 }
 
 .head {
@@ -95,6 +96,7 @@
 .wrapper-detail-animal {
     display: flex;
     flex-wrap: wrap;
+    font-weight: 500;
 }
 
 .form-detail {
@@ -149,6 +151,7 @@
 .information span {
     padding: 6px 0px;
     font-size: 14px;
+    text-align: center;
 }
 
 .icon {
@@ -196,11 +199,26 @@
 }
 
 .close-icon {
-    position: absolute;
-    right: 0;
-    top: 0;
+    position: fixed;
+    right: 11%;
+    top: 11%;
     font-size: 3rem;
     color: #ccc;
     padding: 8px 10px;
     cursor: pointer;
+    z-index: 20;
+}
+
+
+.wrapper-warningBox{
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, .2);
 }
