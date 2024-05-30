@@ -25,7 +25,7 @@ function Header() {
     const [userAva, setUserAva] = useState("");
     const [animalImage, setAnimalImage] = useState("");
     const [idAnimal, setIdAnimal] = useState("");
-    const [imageUrl, setImageUrl] = useState("http://192.168.0.103/cam-lo.jpg");
+    const [imageUrl, setImageUrl] = useState("http://172.20.10.3/cam-lo.jpg");
 
     useEffect(() => {
         const idUser = sessionStorage.getItem("userID");
@@ -64,8 +64,8 @@ function Header() {
                         console.log(resRecognize.data);
                         const confidenceWithPercentage = resRecognize.data.confidence; // "74.77%"
                         const confidenceWithoutPercentage = parseInt(confidenceWithPercentage.replace(/%/g, "")); // 74
-                        if (confidenceWithoutPercentage < 80) {
-                            recognizeAnimal(); // Gọi lại hàm đệ quy nếu độ chính xác thấp hơn 80%
+                        if (confidenceWithoutPercentage < 75) {
+                            recognizeAnimal(); // Gọi lại hàm đệ quy nếu độ chính xác thấp hơn 70%
                         } else {
                             setCompletedRecognization(true);
                             setScientificName(resRecognize.data.predicted_label);

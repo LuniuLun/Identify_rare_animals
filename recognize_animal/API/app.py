@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import Canvas, messagebox
 from PIL import Image, ImageTk
 from urllib.request import urlretrieve
+import requests
 import subprocess 
 import time
 
@@ -123,7 +124,28 @@ def predict_animal():
 #         messagebox.showerror("Error", "An error occurred while capturing and predicting the animal.")
 #     return jsonify({"message": "'Recognize' is not True"}), 400
 
-
+animals = [
+    {"id": "1", "scientific_name": "Neofelis nebulosa"},
+    {"id": "2", "scientific_name": "Lophura hatinhensis"},
+    {"id": "3", "scientific_name": "Graphium antiphates"},
+    {"id": "4", "scientific_name": "Ciconia episcopus"},
+    {"id": "5", "scientific_name": "Eretmochelys imbricata"},
+    {"id": "6", "scientific_name": "Pavo muticus"},
+    {"id": "7", "scientific_name": "Rhincodon typus"},
+    {"id": "8", "scientific_name": "Prionailurus viverrinus"},
+    {"id": "9", "scientific_name": "Lutrogale perspicillata"},
+    {"id": "10", "scientific_name": "Saundersilarus saundersi"},
+    {"id": "11", "scientific_name": "Phodilus badius"},
+    {"id": "12", "scientific_name": "Tragulus napu"},
+    {"id": "13", "scientific_name": "Caloenas nicobarica nicobarica"},
+    {"id": "14", "scientific_name": "Ardeotis nigriceps"},
+]
+# Hàm để tìm ID dựa trên tên khoa học
+def get_id_by_scientific_name(scientific_name):
+    for animal in animals:
+        if animal['scientific_name'] == scientific_name:
+            return animal['id']
+    return None
 @app.route("/recognize_animal", methods=["POST"])
 def recognize_animal():
     try:
@@ -160,7 +182,25 @@ def recognize_animal():
 
         if result_tuple is not None:
             predicted_label = result_tuple['predicted_label']['predicted_label']
+            print(predicted_label)
             confidence = result_tuple['predicted_label']['confidence']
+            confidence_without_percentage = int(float(confidence.replace('%', '')))  # Convert to float first, then to int
+            print(confidence_without_percentage)  # Outputs: 74
+            if(confidence_without_percentage >= 75):
+                id_animal = get_id_by_scientific_name(predicted_label)
+                print(id_animal)
+                url = "http://172.20.10.3/"
+                # Convert the ID to a string and send it as a POST request
+                timeout_seconds = 0.5  # Set the timeout to 0.5 seconds
+                try:
+                    # Send the ID as a form-encoded request
+                    response = requests.post(url, data=str(id_animal), timeout=timeout_seconds)
+                    response.raise_for_status()  # Check for HTTP request errors
+                except requests.exceptions.Timeout:
+                    print("The request timed out after", timeout_seconds, "seconds.")
+                except requests.exceptions.RequestException as e:
+                    print("An error occurred during the request:", str(e))
+            
             result_dict = {
                 "predicted_label": predicted_label,
                 "confidence": confidence,
