@@ -186,12 +186,12 @@ def recognize_animal():
             confidence = result_tuple['predicted_label']['confidence']
             confidence_without_percentage = int(float(confidence.replace('%', '')))  # Convert to float first, then to int
             print(confidence_without_percentage)  # Outputs: 74
-            if(confidence_without_percentage >= 75):
+            if(confidence_without_percentage >= 80):
                 id_animal = get_id_by_scientific_name(predicted_label)
                 print(id_animal)
-                url = "http://172.20.10.3/"
+                url = "http://192.168.0.107/"
                 # Convert the ID to a string and send it as a POST request
-                timeout_seconds = 0.5  # Set the timeout to 0.5 seconds
+                timeout_seconds = 5  # Set the timeout to 0.5 seconds
                 try:
                     # Send the ID as a form-encoded request
                     response = requests.post(url, data=str(id_animal), timeout=timeout_seconds)
@@ -200,7 +200,7 @@ def recognize_animal():
                     print("The request timed out after", timeout_seconds, "seconds.")
                 except requests.exceptions.RequestException as e:
                     print("An error occurred during the request:", str(e))
-            
+
             result_dict = {
                 "predicted_label": predicted_label,
                 "confidence": confidence,

@@ -99,8 +99,8 @@
 #include <esp32cam.h>
 #include "DFRobotDFPlayerMini.h"
 
-const char* WIFI_SSID = "Dylan 🐳🐳";
-const char* WIFI_PASS = "25042003";
+const char* WIFI_SSID = "Duc Van";
+const char* WIFI_PASS = "26092003";
 
 WebServer server(80);
 DFRobotDFPlayerMini dfplayer;
@@ -152,6 +152,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println();
   
+
   {
     using namespace esp32cam;
     Config cfg;
