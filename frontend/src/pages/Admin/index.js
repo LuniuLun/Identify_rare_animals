@@ -10,7 +10,7 @@ const cx = classNames.bind(styles);
 
 function Admin() {
     const [findAnimaInput, setFindAnimalInput] = useState("");
-    const [currentIdAnimal, setCurrentIdAnimal] = useState();
+    const [currentIdAnimal, setCurrentIdAnimal] = useState(1);
     const [animal, setAnimal] = useState([]);
     const [avaAnimal, setAvaAnimal] = useState("");
     const [speciesName, setSpeciesName] = useState("");
@@ -23,6 +23,17 @@ function Admin() {
     const [continents, setContinents] = useState("");
     const [countries, setCountries] = useState("");
     const [status, setStatus] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [role, setRole] = useState();
+    useEffect(() => {
+        setRole(sessionStorage.getItem("role"));
+        const roleAcc = sessionStorage.getItem("role");
+        if (roleAcc && roleAcc === "0") {
+            setLoading(true);
+        } else {
+            window.location.href = "http://localhost:3000";
+        }
+    }, []);
 
     useEffect(() => {
         axios
@@ -30,13 +41,23 @@ function Admin() {
             .then((res) => {
                 if (res.data !== null) {
                     setAnimal(res.data);
-                    setCurrentIdAnimal(res.data[0].iDAnimal);
+                    const currentEditAnimalAdmin = sessionStorage.getItem("currentEditAnimalAdmin");
+                    if (currentEditAnimalAdmin !== null) {
+                        console.log(currentEditAnimalAdmin);
+                        setCurrentIdAnimal(parseInt(currentEditAnimalAdmin));                    
+                        setAvaAnimal(res.data[currentEditAnimalAdmin - 1].animalAva);
+                        setSpeciesName(res.data[currentEditAnimalAdmin - 1].animalName);
+                        setScientificName(res.data[currentEditAnimalAdmin - 1].animalScientificName);
+                    } else {
+                        setCurrentIdAnimal(res.data[0].iDAnimal);        
+                        sessionStorage.setItem("currentEditAnimalAdmin", currentIdAnimal);                    
+                        setAvaAnimal(res.data[0].animalAva);
+                        setSpeciesName(res.data[0].animalName);
+                        setScientificName(res.data[0].animalScientificName);
+                    }
                     console.log(res.data);
-                    setAvaAnimal(res.data[0].animalAva);
-                    setSpeciesName(res.data[0].animalName);
-                    setScientificName(res.data[0].animalScientificName);
                     axios
-                        .get("http://localhost:8080/api/v1/animals/detailbyidanimal/" + res.data[0].iDAnimal)
+                        .get("http://localhost:8080/api/v1/animals/detailbyidanimal/" + currentEditAnimalAdmin)
                         .then((res) => {
                             setDangerLevel(res.data.levelOfDanger);
                             setRemainingAmount(res.data.theRemainAmount);
@@ -51,6 +72,8 @@ function Admin() {
                 }
             })
             .catch((e) => console.log(e));
+
+
     }, []);
 
     const getDetailAnimal = (iDAnimal) => {
@@ -71,6 +94,8 @@ function Admin() {
                 setStatus(res.data.status);
             })
             .catch((e) => console.log(e));
+
+        sessionStorage.setItem("currentEditAnimalAdmin", iDAnimal);
     };
 
     const handleFindAnimal = () => {
@@ -127,228 +152,252 @@ function Admin() {
 
     return (
         <div className={cx("wrapper")}>
-            <div className={cx("header")}>
-                <div className={cx("right-item")}>
-                    <Link to={"/"} className={cx("logo")}>
-                        <p>R</p>aniland
-                    </Link>
-                    <button className={cx("wrapper-find-icon")}>
-                        <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
-                    </button>
-                </div>
-                <div className={cx("left-item")}>
-                    <div className={cx("link")}>
-                        <span>Admin</span>
-                    </div>
-                </div>
-            </div>
-            <div className={cx("body")}>
-                <div className={cx("left-body")}>
-                    <div className={cx("edit-profile")}>
-                        <div className={cx("items")}>
-                            <h2>Edit Detail</h2>
-                            <button className={cx("btn_save")} onClick={handleSaveDetailAnimal}>
-                                Save
-                            </button>
+            {loading === true ? (
+                <>
+                    {" "}
+                    <div className={cx("header")}>
+                        <div className={cx("right-item")}>
+                            <Link to={"/"} className={cx("logo")}>
+                                <p>R</p>aniland
+                            </Link>
+                            <Link className={cx("link")} to={"/"}>
+                                <span>Khám phá</span>
+                            </Link>
+                            {role === "0" ? (
+                                <Link className={cx("link")} to={"/admin"}>
+                                    <span>Quản lí thông tin động vật</span>
+                                </Link>
+                            ) : (
+                                <></>
+                            )}
                         </div>
-                        <div className={cx("items")}>
-                            <img src={avaAnimal} alt="" className={cx("ava-animal")} />
-                        </div>
-                        <div className={cx("add-space")}></div>
-                        <div className={cx("items")}>
-                            <label>Species name:</label>
-                            <input
-                                type="text"
-                                value={speciesName}
-                                className={cx("name")}
-                                placeholder="Species name"
-                                readOnly
-                            />
-                        </div>
-                        <div className={cx("items")}>
-                            <label>Scientific name:</label>
-                            <input
-                                className={cx("name")}
-                                placeholder="Scientific name"
-                                value={scientificName}
-                                readOnly
-                            />
-                        </div>
-                        <div className={cx("items")}>
-                            <label>Level of danger:</label>
-                            <div className={cx("status")}>
-                                <ul className={cx("list-status")}>
-                                    <li
-                                        data-value="Extinct"
-                                        className={cx(levelOfDanger.trim() === "Extinct" ? "level-danger" : "")}
-                                        onClick={(e) => {
-                                            setDangerLevel(e.currentTarget.getAttribute("data-value"));
-                                            console.log(e.currentTarget.getAttribute("data-value"));
-                                        }}
-                                    >
-                                        EX
-                                    </li>
-                                    <li
-                                        data-value="Extinct in the Wild"
-                                        className={cx(
-                                            levelOfDanger.trim() === "Extinct in the Wild" ? "level-danger" : ""
-                                        )}
-                                        onClick={(e) => {
-                                            setDangerLevel(e.currentTarget.getAttribute("data-value"));
-                                            console.log(e.currentTarget.getAttribute("data-value"));
-                                        }}
-                                    >
-                                        EW
-                                    </li>
-                                    <li
-                                        data-value="Critically Endangered"
-                                        className={cx(
-                                            levelOfDanger.trim() === "Critically Endangered" ? "level-danger" : ""
-                                        )}
-                                        onClick={(e) => {
-                                            setDangerLevel(e.currentTarget.getAttribute("data-value"));
-                                            console.log(e.currentTarget.getAttribute("data-value"));
-                                        }}
-                                    >
-                                        CR
-                                    </li>
-                                    <li
-                                        data-value="Endangered"
-                                        className={cx(levelOfDanger.trim() === "Endangered" ? "level-danger" : "")}
-                                        onClick={(e) => {
-                                            setDangerLevel(e.currentTarget.getAttribute("data-value"));
-                                            console.log(e.currentTarget.getAttribute("data-value"));
-                                        }}
-                                    >
-                                        EN
-                                    </li>
-                                    <li
-                                        data-value="Vulnerable"
-                                        className={cx(levelOfDanger.trim() === "Vulnerable" ? "level-danger" : "")}
-                                        onClick={(e) => {
-                                            setDangerLevel(e.currentTarget.getAttribute("data-value"));
-                                            console.log(e.currentTarget.getAttribute("data-value"));
-                                        }}
-                                    >
-                                        VU
-                                    </li>
-                                    <li
-                                        data-value="Near Threatened"
-                                        className={cx(levelOfDanger.trim() === "Near Threatened" ? "level-danger" : "")}
-                                        onClick={(e) => {
-                                            setDangerLevel(e.currentTarget.getAttribute("data-value"));
-                                            console.log(e.currentTarget.getAttribute("data-value"));
-                                        }}
-                                    >
-                                        NT
-                                    </li>
-                                    <li
-                                        data-value="Least Concern"
-                                        className={cx(levelOfDanger.trim() === "Least Concern" ? "level-danger" : "")}
-                                        onClick={(e) => {
-                                            setDangerLevel(e.currentTarget.getAttribute("data-value"));
-                                            console.log(e.currentTarget.getAttribute("data-value"));
-                                        }}
-                                    >
-                                        LC
-                                    </li>
-                                </ul>
+                        <div className={cx("left-item")}>
+                            <div className={cx("link")}>
+                                <span>Admin</span>
                             </div>
                         </div>
-                        <div className={cx("items")}>
-                            <label>Remaining amount:</label>
-                            <input
-                                className={cx("name", "remain-amount")}
-                                onChange={(e) => setRemainingAmount(e.target.value)}
-                                value={remainingAmount}
-                            />
-                        </div>
-                        <div className={cx("add-space")}>
-                            <p>Description</p>
-                        </div>
-                        <div className={cx("items")}>
-                            <label>Appearance:</label>
-                            <textarea
-                                className={cx("content")}
-                                value={appearance}
-                                onChange={(e) => setAppearance(e.target.value)}
-                            ></textarea>
-                        </div>
-                        <div className={cx("items")}>
-                            <label>Habits and Lifestyle:</label>
-                            <textarea
-                                className={cx("habits")}
-                                value={habits}
-                                onChange={(e) => setHabits(e.target.value)}
-                            ></textarea>
-                        </div>
-                        <div className={cx("add-space")}>
-                            <p>Distribution</p>
-                        </div>
-                        <div className={cx("items")}>
-                            <label>WWF biomes:</label>
-                            <textarea
-                                className={cx("content")}
-                                value={wwfBiomes}
-                                onChange={(e) => setWwfBiomes(e.target.value)}
-                            ></textarea>
-                        </div>
-                        <div className={cx("items")}>
-                            <label>Continents:</label>
-                            <textarea
-                                className={cx("continents")}
-                                value={continents}
-                                onChange={(e) => setContinents(e.target.value)}
-                            ></textarea>
-                        </div>
-                        <div className={cx("items")}>
-                            <label>Countries:</label>
-                            <textarea
-                                className={cx("location")}
-                                value={countries}
-                                onChange={(e) => setCountries(e.target.value)}
-                            ></textarea>
-                        </div>
-                        <div className={cx("add-space")}>
-                            <p>Status</p>
-                        </div>
-                        <div className={cx("items")}>
-                            <textarea
-                                className={cx("more")}
-                                onChange={(e) => setStatus(e.target.value)}
-                                value={status}
-                            ></textarea>
-                        </div>
                     </div>
-                </div>
-                <div className={cx("right-body")}>
-                    <div className={cx("search")}>
-                        <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
-                        <input
-                            className={cx("name-animal")}
-                            placeholder="Animal Name"
-                            onChange={(e) => {
-                                setFindAnimalInput(e.target.value);
-                            }}
-                        />
-                        <button className={cx("btn_find")} onClick={handleFindAnimal}>
-                            Go
-                        </button>
-                    </div>
-                    <div className={cx("animal-list")}>
-                        {animal.map((item, index) => {
-                            return (
-                                <AnimalLabel
-                                    animal={item}
-                                    key={index}
-                                    iDDetail={item.iDDetail}
-                                    handleOnClick={getDetailAnimal}
+                    <div className={cx("body")}>
+                        <div className={cx("left-body")}>
+                            <div className={cx("edit-profile")}>
+                                <div className={cx("items")}>
+                                    <h2>Chi tiết</h2>
+                                    <button className={cx("btn_save")} onClick={handleSaveDetailAnimal}>
+                                        Lưu
+                                    </button>
+                                </div>
+                                <div className={cx("items")}>
+                                    <img src={avaAnimal} alt="" className={cx("ava-animal")} />
+                                </div>
+                                <div className={cx("add-space")}></div>
+                                <div className={cx("items")}>
+                                    <label>Loài</label>
+                                    <input
+                                        type="text"
+                                        value={speciesName}
+                                        className={cx("name")}
+                                        placeholder="Species name"
+                                        readOnly
+                                    />
+                                </div>
+                                <div className={cx("items")}>
+                                    <label>Tên khoa học:</label>
+                                    <input
+                                        className={cx("name")}
+                                        placeholder="Scientific name"
+                                        value={scientificName}
+                                        readOnly
+                                    />
+                                </div>
+                                <div className={cx("items")}>
+                                    <label>Tình trạng bảo tồn:</label>
+                                    <div className={cx("status")}>
+                                        <ul className={cx("list-status")}>
+                                            <li
+                                                data-value="Extinct"
+                                                className={cx(levelOfDanger.trim() === "Extinct" ? "level-danger" : "")}
+                                                onClick={(e) => {
+                                                    setDangerLevel(e.currentTarget.getAttribute("data-value"));
+                                                    console.log(e.currentTarget.getAttribute("data-value"));
+                                                }}
+                                            >
+                                                EX
+                                            </li>
+                                            <li
+                                                data-value="Extinct in the Wild"
+                                                className={cx(
+                                                    levelOfDanger.trim() === "Extinct in the Wild" ? "level-danger" : ""
+                                                )}
+                                                onClick={(e) => {
+                                                    setDangerLevel(e.currentTarget.getAttribute("data-value"));
+                                                    console.log(e.currentTarget.getAttribute("data-value"));
+                                                }}
+                                            >
+                                                EW
+                                            </li>
+                                            <li
+                                                data-value="Critically Endangered"
+                                                className={cx(
+                                                    levelOfDanger.trim() === "Critically Endangered"
+                                                        ? "level-danger"
+                                                        : ""
+                                                )}
+                                                onClick={(e) => {
+                                                    setDangerLevel(e.currentTarget.getAttribute("data-value"));
+                                                    console.log(e.currentTarget.getAttribute("data-value"));
+                                                }}
+                                            >
+                                                CR
+                                            </li>
+                                            <li
+                                                data-value="Endangered"
+                                                className={cx(
+                                                    levelOfDanger.trim() === "Endangered" ? "level-danger" : ""
+                                                )}
+                                                onClick={(e) => {
+                                                    setDangerLevel(e.currentTarget.getAttribute("data-value"));
+                                                    console.log(e.currentTarget.getAttribute("data-value"));
+                                                }}
+                                            >
+                                                EN
+                                            </li>
+                                            <li
+                                                data-value="Vulnerable"
+                                                className={cx(
+                                                    levelOfDanger.trim() === "Vulnerable" ? "level-danger" : ""
+                                                )}
+                                                onClick={(e) => {
+                                                    setDangerLevel(e.currentTarget.getAttribute("data-value"));
+                                                    console.log(e.currentTarget.getAttribute("data-value"));
+                                                }}
+                                            >
+                                                VU
+                                            </li>
+                                            <li
+                                                data-value="Near Threatened"
+                                                className={cx(
+                                                    levelOfDanger.trim() === "Near Threatened" ? "level-danger" : ""
+                                                )}
+                                                onClick={(e) => {
+                                                    setDangerLevel(e.currentTarget.getAttribute("data-value"));
+                                                    console.log(e.currentTarget.getAttribute("data-value"));
+                                                }}
+                                            >
+                                                NT
+                                            </li>
+                                            <li
+                                                data-value="Least Concern"
+                                                className={cx(
+                                                    levelOfDanger.trim() === "Least Concern" ? "level-danger" : ""
+                                                )}
+                                                onClick={(e) => {
+                                                    setDangerLevel(e.currentTarget.getAttribute("data-value"));
+                                                    console.log(e.currentTarget.getAttribute("data-value"));
+                                                }}
+                                            >
+                                                LC
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div className={cx("items")}>
+                                    <label>Số lương còn lại:</label>
+                                    <input
+                                        className={cx("name", "remain-amount")}
+                                        onChange={(e) => setRemainingAmount(e.target.value)}
+                                        value={remainingAmount}
+                                    />
+                                </div>
+                                <div className={cx("add-space")}>
+                                    <p>Mô tả</p>
+                                </div>
+                                <div className={cx("items")}>
+                                    <label>Diện mạo:</label>
+                                    <textarea
+                                        className={cx("content")}
+                                        value={appearance}
+                                        onChange={(e) => setAppearance(e.target.value)}
+                                    ></textarea>
+                                </div>
+                                <div className={cx("items")}>
+                                    <label>Thói quen và Lối sống:</label>
+                                    <textarea
+                                        className={cx("habits")}
+                                        value={habits}
+                                        onChange={(e) => setHabits(e.target.value)}
+                                    ></textarea>
+                                </div>
+                                <div className={cx("add-space")}>
+                                    <p>Phân bố</p>
+                                </div>
+                                <div className={cx("items")}>
+                                    <label>Các môi trường sống WWF:</label>
+                                    <textarea
+                                        className={cx("content")}
+                                        value={wwfBiomes}
+                                        onChange={(e) => setWwfBiomes(e.target.value)}
+                                    ></textarea>
+                                </div>
+                                <div className={cx("items")}>
+                                    <label>Châu lục:</label>
+                                    <textarea
+                                        className={cx("continents")}
+                                        value={continents}
+                                        onChange={(e) => setContinents(e.target.value)}
+                                    ></textarea>
+                                </div>
+                                <div className={cx("items")}>
+                                    <label>Quốc gia:</label>
+                                    <textarea
+                                        className={cx("location")}
+                                        value={countries}
+                                        onChange={(e) => setCountries(e.target.value)}
+                                    ></textarea>
+                                </div>
+                                <div className={cx("add-space")}>
+                                    <p>Tình trạng</p>
+                                </div>
+                                <div className={cx("items")}>
+                                    <textarea
+                                        className={cx("more")}
+                                        onChange={(e) => setStatus(e.target.value)}
+                                        value={status}
+                                    ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={cx("right-body")}>
+                            <div className={cx("search")}>
+                                <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
+                                <input
+                                    className={cx("name-animal")}
+                                    placeholder="Tên động vật"
+                                    onChange={(e) => {
+                                        setFindAnimalInput(e.target.value);
+                                    }}
                                 />
-                            );
-                        })}
+                                <button className={cx("btn_find")} onClick={handleFindAnimal}>
+                                    Go
+                                </button>
+                            </div>
+                            <div className={cx("animal-list")}>
+                                {animal.map((item, index) => {
+                                    return (
+                                        <AnimalLabel
+                                            animal={item}
+                                            key={index}
+                                            iDDetail={item.iDDetail}
+                                            handleOnClick={getDetailAnimal}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </>
+            ) : (
+                <></>
+            )}
         </div>
     );
 }

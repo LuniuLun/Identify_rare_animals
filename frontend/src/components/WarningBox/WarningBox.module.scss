@@ -8,6 +8,7 @@
     border-radius: 4px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
     animation: scaleUp 0.2s ease-out;
+    z-index: 9999;
 }
 
 @keyframes scaleUp {

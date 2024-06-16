@@ -73,6 +73,7 @@ function Login({ setLoginStatus }) {
                         console.log(res.data.data.iDUser);
                         if (res.data !== null) {
                             sessionStorage.setItem("userID", res.data.data.iDUser);
+                            sessionStorage.setItem("role", res.data.data.roleAcc);
                             if (res.data.data.roleAcc === 0) {
                                 window.location.href = "http://localhost:3000/admin";
                             } else {
@@ -314,7 +315,7 @@ function Login({ setLoginStatus }) {
                                     {showChangePassword === false ? (
                                         <div className={cx("information", "email")}>
                                             <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
-                                            <input className={cx("inputEmailForgotPassword")} placeholder="Email" />
+                                            <input className={cx("inputEmailForgotPassword")} type="email" placeholder="Email" />
                                         </div>
                                     ) : (
                                         <></>
@@ -453,7 +454,7 @@ function Login({ setLoginStatus }) {
                         <div className={cx("register-form")}>
                             <div className={cx("information", "email")}>
                                 <FontAwesomeIcon className={cx("icon", "letter-icon")} icon={faEnvelope} />
-                                <input className={cx("inputEmail")} placeholder="Email" />
+                                <input className={cx("inputEmail")} placeholder="Email" type="email" />
                             </div>
                             <div className={cx("information", "username")}>
                                 <FontAwesomeIcon className={cx("icon", "lock-icon")} icon={faUser} />

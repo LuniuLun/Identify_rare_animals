@@ -70,8 +70,8 @@ function Footer() {
             </div>
             <div className={cx("bottom-item")}>
                 <span>
-                    Member of the <Link className={cx("link")}>iNaturalist Network</Link> | Powered by{" "}
-                    <Link className={cx("link")}>iNaturalist open source software</Link> | Documentation for{" "}
+                    Member of the <Link className={cx("link")}>Raniland Network</Link> | Powered by{" "}
+                    <Link className={cx("link")}>Raniland open source software</Link> | Documentation for{" "}
                     <Link className={cx("link")}>developers</Link>
                 </span>
             </div>
