@@ -35,8 +35,6 @@
 // ===========================
 // Enter your WiFi credentials
 // ===========================
-const char* ssid = "Duc Van";
-const char* password = "26092003";
 const char* ssid = "kwinkwin";
 const char* password = "kwinkwin0112";
 
