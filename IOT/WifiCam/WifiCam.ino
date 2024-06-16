@@ -3,8 +3,8 @@
 // #include <WiFi.h>
 // #include <esp32cam.h>
 
-// const char* WIFI_SSID = "Dylan 🐳🐳";
-// const char* WIFI_PASS = "25042003";
+// const char* WIFI_SSID = "Bé Nii";
+// const char* WIFI_PASS = "22012003";
  
 // WebServer server(80);
  
@@ -99,8 +99,8 @@
 #include <esp32cam.h>
 #include "DFRobotDFPlayerMini.h"
 
-const char* WIFI_SSID = "Duc Van";
-const char* WIFI_PASS = "26092003";
+const char* WIFI_SSID = "kwinkwin";
+const char* WIFI_PASS = "kwinkwin0112";
 
 WebServer server(80);
 DFRobotDFPlayerMini dfplayer;

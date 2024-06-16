@@ -70,7 +70,7 @@ function Home() {
     return (
         <div className={cx("wrapper")}>
             <div className={cx("search")}>
-                <span>Quan sát</span>
+                <span>KHÁM PHÁ</span>
                 <div className={cx("right-items")}>
                     <div className={cx("wrapper-find-animal")}>
                         <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />

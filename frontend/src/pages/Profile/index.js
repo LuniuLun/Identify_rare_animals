@@ -100,10 +100,10 @@ function Profile() {
                 <div className={cx("title")}>Cài đặt</div>
                 <div className={cx("list-options")}>
                     <span className={cx("option", "active")}>Hồ sơ</span>
-                    <span className={cx("option")}>Tài khoản</span>
+                    {/* <span className={cx("option")}>Tài khoản</span>
                     <span className={cx("option")}>Thông báo</span>
                     <span className={cx("option")}>Nội dung & Hiển thị</span>
-                    <span className={cx("option")}>Ứng dụng</span>
+                    <span className={cx("option")}>Ứng dụng</span> */}
                 </div>
             </div>
             <div className={cx("content")}>

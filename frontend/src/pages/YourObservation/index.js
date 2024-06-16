@@ -73,7 +73,7 @@ function YourObservation() {
     return (
         <div className={cx("wrapper")}>
             <div className={cx("search")}>
-                <span>Quan sát</span>
+                <span>QUAN SÁT</span>
                 <div className={cx("right-items")}>
                     <div className={cx("wrapper-find-animal")}>
                         <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
@@ -92,19 +92,12 @@ function YourObservation() {
                 </div>
             </div>
             <div className={cx("statistic")}>
-                <span className={cx("title")}>Toàn cầu</span>
+                <span className={cx("title")}>Quan sát của bạn</span>
                 <div className={cx("parameter")}>
                     <button className={cx("nav", "active")}>
                         <span className={cx("number")}>{animalPost.length}</span>
                         <div className={cx("description")}>
                             <span>QUAN SÁT</span>
-                            <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
-                        </div>
-                    </button>
-                    <button className={cx("nav")}>
-                        <span className={cx("number")}>{animals.length}</span>
-                        <div className={cx("description")}>
-                            <span>LOÀI</span>
                             <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                         </div>
                     </button>
@@ -115,13 +108,7 @@ function YourObservation() {
                     <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
                 </div>
             </button> */}
-                    <button className={cx("nav")}>
-                        <span className={cx("number")}>{users.length - 1}</span>
-                        <div className={cx("description")}>
-                            <span>NGƯỜI QUAN SÁT</span>{" "}
-                            <FontAwesomeIcon icon={faCircleRight} className={cx("arrow-right-icon")} />
-                        </div>
-                    </button>
+
                 </div>
             </div>
             <div className={cx("content")}>

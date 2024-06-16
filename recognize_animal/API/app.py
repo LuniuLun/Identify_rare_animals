@@ -146,6 +146,7 @@ def get_id_by_scientific_name(scientific_name):
         if animal['scientific_name'] == scientific_name:
             return animal['id']
     return None
+
 @app.route("/recognize_animal", methods=["POST"])
 def recognize_animal():
     try:
@@ -182,16 +183,13 @@ def recognize_animal():
 
         if result_tuple is not None:
             predicted_label = result_tuple['predicted_label']['predicted_label']
-            print(predicted_label)
             confidence = result_tuple['predicted_label']['confidence']
             confidence_without_percentage = int(float(confidence.replace('%', '')))  # Convert to float first, then to int
-            print(confidence_without_percentage)  # Outputs: 74
-            if(confidence_without_percentage >= 80):
+
+            if confidence_without_percentage >= 60:
                 id_animal = get_id_by_scientific_name(predicted_label)
-                print(id_animal)
-                url = "http://192.168.0.107/"
-                # Convert the ID to a string and send it as a POST request
-                timeout_seconds = 5  # Set the timeout to 0.5 seconds
+                url = "http://192.168.43.8"
+                timeout_seconds = 5  # Set the timeout to 5 seconds
                 try:
                     # Send the ID as a form-encoded request
                     response = requests.post(url, data=str(id_animal), timeout=timeout_seconds)
@@ -211,10 +209,14 @@ def recognize_animal():
 
         return jsonify(result_dict)
 
+    except ConnectionResetError as cre:
+        print("Lỗi mạng:", cre)
+        return jsonify({"error": "Mạng không ổn định, vui lòng thử lại sau."}), 500
     except Exception as e:
         # Ghi log lỗi hoặc trả về trong phản hồi JSON
         print("Lỗi:", e)
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     try:

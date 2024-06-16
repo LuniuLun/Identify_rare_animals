@@ -10,7 +10,7 @@ const cx = classNames.bind(styles);
 
 function Admin() {
     const [findAnimaInput, setFindAnimalInput] = useState("");
-    const [currentIdAnimal, setCurrentIdAnimal] = useState();
+    const [currentIdAnimal, setCurrentIdAnimal] = useState(1);
     const [animal, setAnimal] = useState([]);
     const [avaAnimal, setAvaAnimal] = useState("");
     const [speciesName, setSpeciesName] = useState("");
@@ -24,9 +24,10 @@ function Admin() {
     const [countries, setCountries] = useState("");
     const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(false);
-
+    const [role, setRole] = useState();
     useEffect(() => {
-        const roleAcc = sessionStorage.getItem("roleAcc");
+        setRole(sessionStorage.getItem("role"));
+        const roleAcc = sessionStorage.getItem("role");
         if (roleAcc && roleAcc === "0") {
             setLoading(true);
         } else {
@@ -40,13 +41,23 @@ function Admin() {
             .then((res) => {
                 if (res.data !== null) {
                     setAnimal(res.data);
-                    setCurrentIdAnimal(res.data[0].iDAnimal);
+                    const currentEditAnimalAdmin = sessionStorage.getItem("currentEditAnimalAdmin");
+                    if (currentEditAnimalAdmin !== null) {
+                        console.log(currentEditAnimalAdmin);
+                        setCurrentIdAnimal(parseInt(currentEditAnimalAdmin));                    
+                        setAvaAnimal(res.data[currentEditAnimalAdmin - 1].animalAva);
+                        setSpeciesName(res.data[currentEditAnimalAdmin - 1].animalName);
+                        setScientificName(res.data[currentEditAnimalAdmin - 1].animalScientificName);
+                    } else {
+                        setCurrentIdAnimal(res.data[0].iDAnimal);        
+                        sessionStorage.setItem("currentEditAnimalAdmin", currentIdAnimal);                    
+                        setAvaAnimal(res.data[0].animalAva);
+                        setSpeciesName(res.data[0].animalName);
+                        setScientificName(res.data[0].animalScientificName);
+                    }
                     console.log(res.data);
-                    setAvaAnimal(res.data[0].animalAva);
-                    setSpeciesName(res.data[0].animalName);
-                    setScientificName(res.data[0].animalScientificName);
                     axios
-                        .get("http://localhost:8080/api/v1/animals/detailbyidanimal/" + res.data[0].iDAnimal)
+                        .get("http://localhost:8080/api/v1/animals/detailbyidanimal/" + currentEditAnimalAdmin)
                         .then((res) => {
                             setDangerLevel(res.data.levelOfDanger);
                             setRemainingAmount(res.data.theRemainAmount);
@@ -61,6 +72,8 @@ function Admin() {
                 }
             })
             .catch((e) => console.log(e));
+
+
     }, []);
 
     const getDetailAnimal = (iDAnimal) => {
@@ -81,6 +94,8 @@ function Admin() {
                 setStatus(res.data.status);
             })
             .catch((e) => console.log(e));
+
+        sessionStorage.setItem("currentEditAnimalAdmin", iDAnimal);
     };
 
     const handleFindAnimal = () => {
@@ -145,9 +160,16 @@ function Admin() {
                             <Link to={"/"} className={cx("logo")}>
                                 <p>R</p>aniland
                             </Link>
-                            <button className={cx("wrapper-find-icon")}>
-                                <FontAwesomeIcon icon={faMagnifyingGlass} className={cx("find-icon")} />
-                            </button>
+                            <Link className={cx("link")} to={"/"}>
+                                <span>Khám phá</span>
+                            </Link>
+                            {role === "0" ? (
+                                <Link className={cx("link")} to={"/admin"}>
+                                    <span>Quản lí thông tin động vật</span>
+                                </Link>
+                            ) : (
+                                <></>
+                            )}
                         </div>
                         <div className={cx("left-item")}>
                             <div className={cx("link")}>
