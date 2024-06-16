@@ -188,7 +188,7 @@ def recognize_animal():
 
             if confidence_without_percentage >= 60:
                 id_animal = get_id_by_scientific_name(predicted_label)
-                url = "http://192.168.34.135"
+                url = "http://192.168.43.8"
                 timeout_seconds = 5  # Set the timeout to 5 seconds
                 try:
                     # Send the ID as a form-encoded request

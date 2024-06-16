@@ -26,7 +26,7 @@ function Header() {
   const [userAva, setUserAva] = useState("");
   const [animalImage, setAnimalImage] = useState("");
   const [idAnimal, setIdAnimal] = useState("");
-  const [imageUrl, setImageUrl] = useState("http://192.168.34.135/cam-lo.jpg");
+  const [imageUrl, setImageUrl] = useState("http://192.168.43.8/cam-lo.jpg");
   const [role, setRole] = useState();
   const [showWarning, setShowWarning] = useState(false);
   const [contentWarning, setContentWarning] = useState("");
